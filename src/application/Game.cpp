@@ -98,6 +98,8 @@ namespace rob
 
             if (m_state->IsQuiting())
                 break;
+
+            HandleStateChange(m_state->NextState());
         }
     }
 
