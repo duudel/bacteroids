@@ -16,10 +16,10 @@
 namespace rob
 {
 
-    class GameTime
+    class VirtualTime
     {
     public:
-        GameTime()
+        VirtualTime()
             : m_time(0)
             , m_last(0)
             , m_paused(true)
@@ -67,14 +67,14 @@ namespace rob
             return m_time;
         }
 
-//        double GetDeltaTime() const
-//        {
-//        }
-
     private:
         Time_t m_time;
         Time_t m_last;
         bool m_paused;
+    };
+
+    class GameTime
+    {
     };
 
     static const size_t STATIC_MEMORY_SIZE = 4 * 1024 * 1024;
