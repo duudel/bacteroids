@@ -7,6 +7,8 @@
 #include "../resource/MasterCache.h"
 #include "../renderer/Renderer.h"
 
+#include "MicroTicker.h"
+
 #include "../Log.h"
 
 #include <SDL2/SDL.h>
@@ -17,7 +19,62 @@ namespace rob
     class GameTime
     {
     public:
+        GameTime()
+            : m_time(0)
+            , m_last(0)
+            , m_paused(true)
+        { }
 
+        void Restart(MicroTicker &ticker)
+        {
+            m_time = 0;
+            Resume(ticker);
+        }
+
+        void Pause()
+        {
+            m_paused = true;
+        }
+
+        void Resume(MicroTicker &ticker)
+        {
+            m_last = ticker.GetTicks();
+            m_paused = false;
+        }
+
+        void Update(MicroTicker &ticker)
+        {
+            if (!m_paused)
+            {
+                Time_t t = ticker.GetTicks();
+                m_time += t - m_last;
+                m_last = t;
+            }
+        }
+
+        double GetTime() const
+        {
+            return m_time / 1000000.0;
+        }
+
+        Time_t GetTimeMillis() const
+        {
+            return m_time / 1000;
+        }
+
+        Time_t GetTimeMicros() const
+        {
+            return m_time;
+        }
+
+//        double GetDeltaTime() const
+//        {
+//        }
+
+    private:
+        Time_t m_time;
+        Time_t m_last;
+        bool m_paused;
     };
 
     static const size_t STATIC_MEMORY_SIZE = 4 * 1024 * 1024;
