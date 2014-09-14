@@ -48,7 +48,7 @@ namespace rob
     private:
         bool Setup();
 
-    private:
+    protected:
         LinearAllocator m_staticAlloc;
         Window *m_window;
         Graphics *m_graphics;

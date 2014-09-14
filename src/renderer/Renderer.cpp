@@ -116,23 +116,11 @@ namespace rob
         CompileShaderProgram(m_graphics, g_colorVertexShader, g_colorFragmentShader,
                              m_colorVertexShader, m_colorFragmentShader, m_colorProgram);
 
-        struct Vertex
-        {
-            float xyzw[4];
-        } quad[] = {
-            { -1.0f, -1.0f, 0.0f, 0.0f },
-            { 1.0f, -1.0f, 1.0f, 0.0f },
-            { -1.0f, 1.0f, 0.0f, 1.0f },
-            { 1.0f, -1.0f, 1.0f, 0.0f },
-            { 1.0f, 1.0f, 1.0f, 1.0f },
-            { -1.0f, 1.0f, 0.0f, 1.0f }
-        };
 
         m_vertexBuffer = m_graphics->CreateVertexBuffer();
         m_graphics->BindVertexBuffer(m_vertexBuffer);
         VertexBuffer *vb = m_graphics->GetVertexBuffer(m_vertexBuffer);
-        vb->Resize(sizeof(quad), false);
-        vb->Write(0, sizeof(quad), quad);
+        vb->Resize(4 * 1024 * 1024, false);
     }
 
     Renderer::~Renderer()
@@ -153,13 +141,6 @@ namespace rob
         m_graphics->GetViewport(&x, &y, &w, &h);
         *screenW = w;
         *screenH = h;
-    }
-
-    void Renderer::RenderQuad()
-    {
-        m_graphics->BindVertexBuffer(m_vertexBuffer);
-        m_graphics->BindShaderProgram(m_shaderProgram);
-        m_graphics->DrawTriangleArrays(0, 6);
     }
 
     void Renderer::SetColor(const Color &color)
@@ -210,16 +191,30 @@ namespace rob
     void Renderer::DrawCirlce(float x, float y, float radius)
     {
         const float pi = 3.14f;
-        const size_t segments = 32;
-        ColorVertex vertices[segments];
+        const size_t segments = 24;
+        const size_t quarter = segments / 4;
+        const size_t vertexCount = segments;
+        ColorVertex vertices[vertexCount];
 
         float angle = 0.0f;
         const float deltaAngle = 2.0f * pi / segments;
-        for (size_t i = 0; i < segments; i++, angle += deltaAngle)
+        for (size_t i = 0; i < quarter; i++, angle += deltaAngle)
         {
-            const float px = x - std::cos(angle) * radius;
-            const float py = y + std::sin(angle) * radius;
-            vertices[i] = { px, py, m_color.r, m_color.g, m_color.b, m_color.a };
+//            const float px = x - std::cos(angle) * radius;
+//            const float py = y - std::sin(angle) * radius;
+//            vertices[i] = { px, py, m_color.r, m_color.g, m_color.b, m_color.a };
+
+            const float sn = std::sin(angle) * radius;
+            const float cs = std::cos(angle) * radius;
+
+            const size_t i0 = i;
+            const size_t i1 = i0 + quarter;
+            const size_t i2 = i1 + quarter;
+            const size_t i3 = i2 + quarter;
+            vertices[i0] = { x - cs, y - sn, m_color.r, m_color.g, m_color.b, m_color.a };
+            vertices[i1] = { x + sn, y - cs, m_color.r, m_color.g, m_color.b, m_color.a };
+            vertices[i2] = { x + cs, y + sn, m_color.r, m_color.g, m_color.b, m_color.a };
+            vertices[i3] = { x - sn, y + cs, m_color.r, m_color.g, m_color.b, m_color.a };
         };
 
         m_graphics->BindVertexBuffer(m_vertexBuffer);
@@ -228,17 +223,78 @@ namespace rob
         m_graphics->SetAttrib(0, 2, sizeof(ColorVertex), 0);
         m_graphics->SetAttrib(1, 4, sizeof(ColorVertex), sizeof(float) * 2);
         m_graphics->BindShaderProgram(m_colorProgram);
-        m_graphics->DrawLineLoopArrays(0, segments);
+        m_graphics->DrawLineLoopArrays(0, vertexCount);
     }
 
     void Renderer::DrawFilledCirlce(float x, float y, float radius)
     {
+        const float pi = 3.14f;
+        const size_t segments = 24;
+        const size_t quarter = segments / 4;
+        const size_t vertexCount = segments + 1;
+        ColorVertex vertices[vertexCount];
 
+        float angle = 0.0f;
+        const float deltaAngle = 2.0f * pi / segments;
+        vertices[0] = { x - radius, y, m_color.r, m_color.g, m_color.b, m_color.a };
+        for (size_t i = 0; i < quarter; i++, angle += deltaAngle)
+        {
+            const float sn = std::sin(angle) * radius;
+            const float cs = std::cos(angle) * radius;
+
+            const size_t i0 = 1 + i;
+            const size_t i1 = i0 + quarter;
+            const size_t i2 = i1 + quarter;
+            const size_t i3 = i2 + quarter;
+            vertices[i0] = { x - cs, y - sn, m_color.r, m_color.g, m_color.b, m_color.a };
+            vertices[i1] = { x + sn, y - cs, m_color.r, m_color.g, m_color.b, m_color.a };
+            vertices[i2] = { x + cs, y + sn, m_color.r, m_color.g, m_color.b, m_color.a };
+            vertices[i3] = { x - sn, y + cs, m_color.r, m_color.g, m_color.b, m_color.a };
+        };
+
+        m_graphics->BindVertexBuffer(m_vertexBuffer);
+        VertexBuffer *buffer = m_graphics->GetVertexBuffer(m_vertexBuffer);
+        buffer->Write(0, sizeof(vertices), vertices);
+        m_graphics->SetAttrib(0, 2, sizeof(ColorVertex), 0);
+        m_graphics->SetAttrib(1, 4, sizeof(ColorVertex), sizeof(float) * 2);
+        m_graphics->BindShaderProgram(m_colorProgram);
+        m_graphics->DrawTriangleFanArrays(0, vertexCount);
     }
 
     void Renderer::DrawFilledCirlce(float x, float y, float radius, const Color &center)
     {
+        const float pi = 3.14f;
+        const size_t segments = 24;
+        const size_t quarter = segments / 4;
+        const size_t vertexCount = segments + 2;
+        ColorVertex vertices[vertexCount];
 
+        float angle = 0.0f;
+        const float deltaAngle = 2.0f * pi / segments;
+        vertices[0] = { x, y, center.r, center.g, center.b, center.a };
+        for (size_t i = 0; i < quarter; i++, angle += deltaAngle)
+        {
+            const float sn = std::sin(angle) * radius;
+            const float cs = std::cos(angle) * radius;
+
+            const size_t i0 = 1 + i;
+            const size_t i1 = i0 + quarter;
+            const size_t i2 = i1 + quarter;
+            const size_t i3 = i2 + quarter;
+            vertices[i0] = { x - cs, y - sn, m_color.r, m_color.g, m_color.b, m_color.a };
+            vertices[i1] = { x + sn, y - cs, m_color.r, m_color.g, m_color.b, m_color.a };
+            vertices[i2] = { x + cs, y + sn, m_color.r, m_color.g, m_color.b, m_color.a };
+            vertices[i3] = { x - sn, y + cs, m_color.r, m_color.g, m_color.b, m_color.a };
+        };
+        vertices[2 + segments - 1] = vertices[1];
+
+        m_graphics->BindVertexBuffer(m_vertexBuffer);
+        VertexBuffer *buffer = m_graphics->GetVertexBuffer(m_vertexBuffer);
+        buffer->Write(0, sizeof(vertices), vertices);
+        m_graphics->SetAttrib(0, 2, sizeof(ColorVertex), 0);
+        m_graphics->SetAttrib(1, 4, sizeof(ColorVertex), sizeof(float) * 2);
+        m_graphics->BindShaderProgram(m_colorProgram);
+        m_graphics->DrawTriangleFanArrays(0, vertexCount);
     }
 
 } // rob

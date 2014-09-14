@@ -21,8 +21,6 @@ namespace rob
 
         void GetScreenSize(int *screenW, int *screenH) const;
 
-        void RenderQuad();
-
         void SetColor(const Color &color);
         void DrawRectangle(float x0, float y0, float x1, float y1);
         void DrawFilledRectangle(float x0, float y0, float x1, float y1);
