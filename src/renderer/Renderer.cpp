@@ -1,0 +1,190 @@
+
+#include "Renderer.h"
+#include "../graphics/Graphics.h"
+#include "../graphics/Shader.h"
+#include "../graphics/ShaderProgram.h"
+#include "../graphics/VertexBuffer.h"
+
+#include "../memory/LinearAllocator.h"
+
+#include "../Log.h"
+
+#include <GL/glew.h>
+
+namespace rob
+{
+
+    #define GLSL(x) "#version 120\n" #x
+
+    static const char * const g_vertexShader = GLSL(
+        attribute vec4 a_tile;
+        varying vec2 v_uv;
+        void main()
+        {
+            gl_Position = vec4(a_tile.xy, 0.0, 1.0);
+            v_uv = a_tile.zw;
+        }
+    );
+
+    static const char * const g_fragmentShader = GLSL(
+        uniform sampler2D u_texture;
+        varying vec2 v_uv;
+        void main()
+        {
+            vec4 color = texture2D(u_texture, v_uv);
+//            vec4 color = vec4(v_uv, 0.0, 1.0);
+            gl_FragColor = color;
+        }
+    );
+
+    static const char * const g_colorVertexShader = GLSL(
+        attribute vec2 a_position;
+        attribute vec4 a_color;
+        varying vec4 v_color;
+        void main()
+        {
+            gl_Position = vec4(a_position, 0.0, 1.0);
+            v_color = a_color;
+        }
+    );
+
+    static const char * const g_colorFragmentShader = GLSL(
+        varying vec4 v_color;
+        void main()
+        {
+            gl_FragColor = v_color;
+        }
+    );
+
+    void CompileShaderProgram(Graphics *graphics, const char * const vert, const char * const frag,
+                              VertexShaderHandle &vs, FragmentShaderHandle &fs, ShaderProgramHandle &p)
+    {
+        vs = graphics->CreateVertexShader();
+        fs = graphics->CreateFragmentShader();
+        p = graphics->CreateShaderProgram();
+
+        VertexShader *vertShader = graphics->GetVertexShader(vs);
+        vertShader->SetSource(vert);
+        if (!vertShader->Compile())
+        {
+            char buffer[512];
+            vertShader->GetCompileInfo(buffer, 512);
+            log::Error(&buffer[0]);
+            return;
+        }
+
+        FragmentShader *fragShader = graphics->GetFragmentShader(fs);
+        fragShader->SetSource(frag);
+        if (!fragShader->Compile())
+        {
+            char buffer[512];
+            fragShader->GetCompileInfo(buffer, 512);
+            log::Error(&buffer[0]);
+            return;
+        }
+
+        ShaderProgram *program = graphics->GetShaderProgram(p);
+        program->SetShaders(vertShader, fragShader);
+        if (!program->Link())
+        {
+            char buffer[512];
+            program->GetLinkInfo(buffer, 512);
+            log::Error(&buffer[0]);
+            return;
+        }
+
+//        GLint loc = ::glGetUniformLocation(program->GetObject(), "u_texture");
+//        graphics->BindShaderProgram(p);
+//        ::glUniform1i(loc, 0);
+    }
+
+
+    Renderer::Renderer(Graphics *graphics, LinearAllocator &alloc)
+        : m_alloc(alloc)
+        , m_graphics(graphics)
+        , m_vertexShader(InvalidHandle)
+        , m_fragmentShader(InvalidHandle)
+        , m_shaderProgram(InvalidHandle)
+        , m_vertexBuffer(InvalidHandle)
+        , m_colorVertexShader(InvalidHandle)
+        , m_colorFragmentShader(InvalidHandle)
+        , m_colorProgram(InvalidHandle)
+    {
+        CompileShaderProgram(m_graphics, g_vertexShader, g_fragmentShader,
+                             m_vertexShader, m_fragmentShader, m_shaderProgram);
+        CompileShaderProgram(m_graphics, g_colorVertexShader, g_colorFragmentShader,
+                             m_colorVertexShader, m_colorFragmentShader, m_colorProgram);
+
+        struct Vertex
+        {
+            float xyzw[4];
+        } quad[] = {
+            { -1.0f, -1.0f, 0.0f, 0.0f },
+            { 1.0f, -1.0f, 1.0f, 0.0f },
+            { -1.0f, 1.0f, 0.0f, 1.0f },
+            { 1.0f, -1.0f, 1.0f, 0.0f },
+            { 1.0f, 1.0f, 1.0f, 1.0f },
+            { -1.0f, 1.0f, 0.0f, 1.0f }
+        };
+
+        m_vertexBuffer = m_graphics->CreateVertexBuffer();
+        m_graphics->BindVertexBuffer(m_vertexBuffer);
+        VertexBuffer *vb = m_graphics->GetVertexBuffer(m_vertexBuffer);
+        vb->Resize(sizeof(quad), false);
+        vb->Write(0, sizeof(quad), quad);
+    }
+
+    Renderer::~Renderer()
+    {
+        m_graphics->DestroyShaderProgram(m_shaderProgram);
+        m_graphics->DestroyVertexShader(m_vertexShader);
+        m_graphics->DestroyFragmentShader(m_fragmentShader);
+        m_graphics->DestroyVertexBuffer(m_vertexBuffer);
+
+        m_graphics->DestroyShaderProgram(m_colorProgram);
+        m_graphics->DestroyVertexShader(m_colorVertexShader);
+        m_graphics->DestroyFragmentShader(m_colorFragmentShader);
+    }
+
+    void Renderer::GetScreenSize(int *screenW, int *screenH) const
+    {
+        int x, y, w, h;
+        m_graphics->GetViewport(&x, &y, &w, &h);
+        *screenW = w;
+        *screenH = h;
+    }
+
+    void Renderer::RenderQuad()
+    {
+        m_graphics->BindVertexBuffer(m_vertexBuffer);
+        m_graphics->BindShaderProgram(m_shaderProgram);
+        m_graphics->DrawTriangleArrays(0, 6);
+    }
+
+    void Renderer::SetColor(const Color &color)
+    { m_color = color; }
+
+    void Renderer::DrawRectangle(float x0, float y0, float x1, float y1)
+    {
+        struct ColorVertex
+        {
+            float x, y;
+            float r, g, b, a;
+        };
+        const ColorVertex vertices[] =
+        {
+            { x0, y0, m_color.r, m_color.g, m_color.b, m_color.a },
+            { x1, y0, m_color.r, m_color.g, m_color.b, m_color.a },
+            { x1, y1, m_color.r, m_color.g, m_color.b, m_color.a },
+            { x0, y1, m_color.r, m_color.g, m_color.b, m_color.a }
+        };
+        m_graphics->BindVertexBuffer(m_vertexBuffer);
+        VertexBuffer *buffer = m_graphics->GetVertexBuffer(m_vertexBuffer);
+        buffer->Write(0, sizeof(vertices), vertices);
+        m_graphics->SetAttrib(0, 2, sizeof(ColorVertex), 0);
+        m_graphics->SetAttrib(1, 4, sizeof(ColorVertex), sizeof(float) * 2);
+        m_graphics->BindShaderProgram(m_colorProgram);
+        m_graphics->DrawLineLoopArrays(0, 4);
+    }
+
+} // rob
