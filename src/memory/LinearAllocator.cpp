@@ -1,5 +1,6 @@
 
 #include "LinearAllocator.h"
+#include "PtrAlign.h"
 #include "../Assert.h"
 
 namespace rob
@@ -43,10 +44,19 @@ namespace rob
 
     void* LinearAllocator::Allocate(size_t size)
     {
-        if (m_head + size > m_end)
-            return 0;
         char *ptr = m_head;
-        m_head += size;
+        if (ptr + size > m_end)
+            return 0;
+        m_head = ptr + size;
+        return ptr;
+    }
+
+    void* LinearAllocator::Allocate(size_t size, size_t alignment)
+    {
+        char *ptr = ptr_align(m_head, alignment);
+        if (ptr + size > m_end)
+            return 0;
+        m_head = ptr + size;
         return ptr;
     }
 

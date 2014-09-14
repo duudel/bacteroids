@@ -19,7 +19,7 @@ namespace rob
         : m_windowDataBuffer()
         , m_data(nullptr)
     {
-        m_data = reinterpret_cast<WindowData*>(m_windowDataBuffer);
+        m_data = reinterpret_cast<WindowData*>(m_windowDataBuffer.m_value);
         m_data->m_window = nullptr;
         m_data->m_context = nullptr;
 

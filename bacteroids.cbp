@@ -79,11 +79,13 @@
 		<Unit filename="src/input/Keyboard.h" />
 		<Unit filename="src/input/Mouse.h" />
 		<Unit filename="src/main.cpp" />
+		<Unit filename="src/memory/AlignedStorage.h" />
 		<Unit filename="src/memory/Freelist.cpp" />
 		<Unit filename="src/memory/Freelist.h" />
 		<Unit filename="src/memory/LinearAllocator.cpp" />
 		<Unit filename="src/memory/LinearAllocator.h" />
 		<Unit filename="src/memory/Pool.h" />
+		<Unit filename="src/memory/PtrAlign.h" />
 		<Unit filename="src/renderer/Color.cpp" />
 		<Unit filename="src/renderer/Color.h" />
 		<Unit filename="src/renderer/Renderer.cpp" />

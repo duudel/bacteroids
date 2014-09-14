@@ -39,8 +39,9 @@ namespace rob
         }
         const size_t imageSize = width * height * st_format;
 
-        LinearAllocator alloc(imageSize);
-        char *imageData = static_cast<char*>(alloc.Allocate(imageSize));
+        const size_t IMAGE_DATA_ALIGN = 4;
+        LinearAllocator alloc(imageSize + IMAGE_DATA_ALIGN - 1);
+        char *imageData = static_cast<char*>(alloc.Allocate(imageSize, IMAGE_DATA_ALIGN));
 
         in.read(imageData, imageSize);
 

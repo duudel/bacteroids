@@ -24,13 +24,14 @@ namespace rob
         size_t GetAllocatedSize() const;
 
         void* Allocate(size_t size);
+        void* Allocate(size_t size, size_t alignment);
 
         void Reset();
 
         template <class T, class... Args>
         T* new_object(Args&& ...args)
         {
-            void *ptr = Allocate(sizeof(T));
+            void *ptr = Allocate(sizeof(T), alignof(T));
             return new (ptr) T(args...);
         }
 

@@ -51,7 +51,7 @@ namespace rob
             ROB_ASSERT(m_start == nullptr);
             m_start = static_cast<T*>(start);
             m_end = m_start + size / sizeof(T);
-            m_objects.AddElements(start, size, sizeof(T));
+            m_objects.AddElements(start, size, sizeof(T), alignof(T));
         }
 
     private:

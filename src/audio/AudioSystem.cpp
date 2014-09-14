@@ -26,7 +26,7 @@ namespace rob
         ::Mix_AllocateChannels(16);
 
         const size_t allocSize = 1024;
-        m_sounds.SetMemory(alloc.Allocate(allocSize), allocSize);
+        m_sounds.SetMemory(alloc.Allocate(allocSize, alignof(Sound)), allocSize);
     }
 
     AudioSystem::~AudioSystem()
