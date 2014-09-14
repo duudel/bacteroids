@@ -2,7 +2,7 @@
 #ifndef H_ROB_MICRO_TICKER_H
 #define H_ROB_MICRO_TICKER_H
 
-#include <cstdint>
+#include "../Types.h"
 
 namespace rob
 {
