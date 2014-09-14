@@ -5,7 +5,7 @@
 
 #include "../renderer/Renderer.h"
 
-#include "../Log.h"
+#include "../math/Math.h"
 
 #include <random>
 
