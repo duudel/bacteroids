@@ -48,6 +48,8 @@
 		<Unit filename="src/application/GameState.h" />
 		<Unit filename="src/application/MicroTicker.cpp" />
 		<Unit filename="src/application/MicroTicker.h" />
+		<Unit filename="src/application/VirtualTime.cpp" />
+		<Unit filename="src/application/VirtualTime.h" />
 		<Unit filename="src/application/Window.cpp" />
 		<Unit filename="src/application/Window.h" />
 		<Unit filename="src/audio/AudioSystem.cpp" />
