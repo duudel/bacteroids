@@ -10,6 +10,7 @@
 #include "../Log.h"
 
 #include <GL/glew.h>
+#include <cmath>
 
 namespace rob
 {
@@ -164,13 +165,14 @@ namespace rob
     void Renderer::SetColor(const Color &color)
     { m_color = color; }
 
+    struct ColorVertex
+    {
+        float x, y;
+        float r, g, b, a;
+    };
+
     void Renderer::DrawRectangle(float x0, float y0, float x1, float y1)
     {
-        struct ColorVertex
-        {
-            float x, y;
-            float r, g, b, a;
-        };
         const ColorVertex vertices[] =
         {
             { x0, y0, m_color.r, m_color.g, m_color.b, m_color.a },
@@ -185,6 +187,58 @@ namespace rob
         m_graphics->SetAttrib(1, 4, sizeof(ColorVertex), sizeof(float) * 2);
         m_graphics->BindShaderProgram(m_colorProgram);
         m_graphics->DrawLineLoopArrays(0, 4);
+    }
+
+    void Renderer::DrawFilledRectangle(float x0, float y0, float x1, float y1)
+    {
+        const ColorVertex vertices[] =
+        {
+            { x0, y0, m_color.r, m_color.g, m_color.b, m_color.a },
+            { x1, y0, m_color.r, m_color.g, m_color.b, m_color.a },
+            { x0, y1, m_color.r, m_color.g, m_color.b, m_color.a },
+            { x1, y1, m_color.r, m_color.g, m_color.b, m_color.a }
+        };
+        m_graphics->BindVertexBuffer(m_vertexBuffer);
+        VertexBuffer *buffer = m_graphics->GetVertexBuffer(m_vertexBuffer);
+        buffer->Write(0, sizeof(vertices), vertices);
+        m_graphics->SetAttrib(0, 2, sizeof(ColorVertex), 0);
+        m_graphics->SetAttrib(1, 4, sizeof(ColorVertex), sizeof(float) * 2);
+        m_graphics->BindShaderProgram(m_colorProgram);
+        m_graphics->DrawTriangleStripArrays(0, 4);
+    }
+
+    void Renderer::DrawCirlce(float x, float y, float radius)
+    {
+        const float pi = 3.14f;
+        const size_t segments = 32;
+        ColorVertex vertices[segments];
+
+        float angle = 0.0f;
+        const float deltaAngle = 2.0f * pi / segments;
+        for (size_t i = 0; i < segments; i++, angle += deltaAngle)
+        {
+            const float px = x - std::cos(angle) * radius;
+            const float py = y + std::sin(angle) * radius;
+            vertices[i] = { px, py, m_color.r, m_color.g, m_color.b, m_color.a };
+        };
+
+        m_graphics->BindVertexBuffer(m_vertexBuffer);
+        VertexBuffer *buffer = m_graphics->GetVertexBuffer(m_vertexBuffer);
+        buffer->Write(0, sizeof(vertices), vertices);
+        m_graphics->SetAttrib(0, 2, sizeof(ColorVertex), 0);
+        m_graphics->SetAttrib(1, 4, sizeof(ColorVertex), sizeof(float) * 2);
+        m_graphics->BindShaderProgram(m_colorProgram);
+        m_graphics->DrawLineLoopArrays(0, segments);
+    }
+
+    void Renderer::DrawFilledCirlce(float x, float y, float radius)
+    {
+
+    }
+
+    void Renderer::DrawFilledCirlce(float x, float y, float radius, const Color &center)
+    {
+
     }
 
 } // rob

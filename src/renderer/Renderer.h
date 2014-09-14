@@ -25,6 +25,10 @@ namespace rob
 
         void SetColor(const Color &color);
         void DrawRectangle(float x0, float y0, float x1, float y1);
+        void DrawFilledRectangle(float x0, float y0, float x1, float y1);
+        void DrawCirlce(float x, float y, float radius);
+        void DrawFilledCirlce(float x, float y, float radius);
+        void DrawFilledCirlce(float x, float y, float radius, const Color &center);
 
     private:
         LinearAllocator &m_alloc;

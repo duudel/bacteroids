@@ -38,7 +38,7 @@ namespace rob
         template <class T>
         void del_object(T *object)
         {
-            object->~T();
+            if (object) object->~T();
         }
 
     private:

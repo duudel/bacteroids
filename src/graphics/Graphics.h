@@ -73,6 +73,9 @@ namespace rob
         void SetAttrib(size_t attr, size_t size, size_t stride, size_t offset);
 
         void DrawTriangleArrays(size_t first, size_t count);
+        void DrawTriangleStripArrays(size_t first, size_t count);
+        void DrawTriangleFanArrays(size_t first, size_t count);
+        void DrawLineArrays(size_t first, size_t count);
         void DrawLineLoopArrays(size_t first, size_t count);
 
 

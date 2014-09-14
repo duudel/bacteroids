@@ -105,7 +105,6 @@ namespace rob
 
         const size_t freeMemory = STATIC_MEMORY_SIZE - m_staticAlloc.GetAllocatedSize();
         m_stateAlloc.SetMemory(m_staticAlloc.Allocate(freeMemory), freeMemory);
-        m_state = m_stateAlloc.new_object<GameState>();
     }
 
     Game::~Game()
@@ -119,13 +118,34 @@ namespace rob
         ::SDL_Quit();
     }
 
-    void Game::Run()
+    bool Game::Setup()
     {
         if (!m_graphics->IsInitialized())
+        {
+            log::Error("Graphics was not initialized, aborting...");
+            return false;
+        }
+
+        if (!Initialize())
+        {
+            log::Error("Could not initialize game, aborting...");
+            return false;
+        }
+
+        if (m_state == nullptr)
+        {
+            log::Error("Game state not initialized by Game::Initialize(), aborting...");
+            return false;
+        }
+        return true;
+    }
+
+    void Game::Run()
+    {
+        if (!Setup())
             return;
 
         GameTime gameTime;
-
         while (m_window->HandleEvents(this))
         {
             m_graphics->Clear();
@@ -137,30 +157,6 @@ namespace rob
 
             if (m_state->IsQuiting())
                 break;
-
-//            switch (m_state->NextState())
-//            {
-//            case NO_STATE_CHANGE:
-//                break;
-//            case STATE_MAIN_MENU:
-//                m_stateAlloc.del_object(m_state);
-//                m_stateAlloc.Reset();
-//                m_state = m_stateAlloc.new_object<MainMenu>(m_renderer, m_cache);
-//                break;
-//            case STATE_NEW_GAME:
-//                m_stateAlloc.del_object(m_state);
-//                m_stateAlloc.Reset();
-////                m_state = m_stateAlloc.new_object<Intro>(m_renderer, m_cache);
-//                m_state = m_stateAlloc.new_object<MainMenu>(m_renderer, m_cache);
-//                break;
-//            case STATE_EDITOR:
-//                m_stateAlloc.del_object(m_state);
-//                m_stateAlloc.Reset();
-//                m_state = m_stateAlloc.new_object<Editor>(m_renderer, m_cache, m_stateAlloc);
-//                break;
-//            default:
-//                log::Error("Invalid state change");
-//            }
         }
     }
 

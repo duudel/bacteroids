@@ -206,6 +206,24 @@ namespace rob
         GL_CHECK;
     }
 
+    void Graphics::DrawTriangleStripArrays(size_t first, size_t count)
+    {
+        ::glDrawArrays(GL_TRIANGLE_STRIP, first, count);
+        GL_CHECK;
+    }
+
+    void Graphics::DrawTriangleFanArrays(size_t first, size_t count)
+    {
+        ::glDrawArrays(GL_TRIANGLE_FAN, first, count);
+        GL_CHECK;
+    }
+
+    void Graphics::DrawLineArrays(size_t first, size_t count)
+    {
+        ::glDrawArrays(GL_LINES, first, count);
+        GL_CHECK;
+    }
+
     void Graphics::DrawLineLoopArrays(size_t first, size_t count)
     {
         ::glDrawArrays(GL_LINE_LOOP, first, count);

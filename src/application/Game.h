@@ -22,15 +22,31 @@ namespace rob
         Game();
         ~Game();
 
+        virtual bool Initialize() { return true; }
+
         void Run();
 
-        void OnResize(int w, int h);
-        void OnKeyPress(Key key, uint32_t mods);
-        void OnKeyDown(Key key, uint32_t mods);
-        void OnKeyUp(Key key, uint32_t mods);
-        void OnMouseDown(MouseButton button, int x, int y);
-        void OnMouseUp(MouseButton button, int x, int y);
-        void OnMouseMove(int x, int y);
+        virtual void OnResize(int w, int h);
+        virtual void OnKeyPress(Key key, uint32_t mods);
+        virtual void OnKeyDown(Key key, uint32_t mods);
+        virtual void OnKeyUp(Key key, uint32_t mods);
+        virtual void OnMouseDown(MouseButton button, int x, int y);
+        virtual void OnMouseUp(MouseButton button, int x, int y);
+        virtual void OnMouseMove(int x, int y);
+
+    protected:
+        virtual void HandleStateChange(int state) { }
+
+        template <class State, class... Args>
+        void ChangeState(Args ...args)
+        {
+            m_stateAlloc.del_object(m_state);
+            m_stateAlloc.Reset();
+            m_state = m_stateAlloc.new_object<State>(args...);
+        }
+
+    private:
+        bool Setup();
 
     private:
         LinearAllocator m_staticAlloc;
