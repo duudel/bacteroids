@@ -1,0 +1,27 @@
+
+#ifndef H_ROB_MICRO_TICKER_H
+#define H_ROB_MICRO_TICKER_H
+
+#include <cstdint>
+
+namespace rob
+{
+
+    typedef uint64_t Time_t;
+
+    class MicroTicker
+    {
+    public:
+        void Init();
+
+        Time_t GetTicks();
+
+    private:
+        Time_t m_frequency;
+        Time_t m_startTicks;
+        Time_t m_errorTicks;
+    };
+
+} // rob
+
+#endif // H_ROB_MICRO_TICKER_H

@@ -7,6 +7,8 @@
 #include "../resource/MasterCache.h"
 #include "../renderer/Renderer.h"
 
+#include "MicroTicker.h"
+
 #include "../Log.h"
 
 #include <SDL2/SDL.h>
@@ -14,46 +16,66 @@
 namespace rob
 {
 
-    typedef uint64_t Time_t;
-
-    class MicroTicker
+    class VirtualTime
     {
     public:
-        void Init()
+        VirtualTime()
+            : m_time(0)
+            , m_last(0)
+            , m_paused(true)
+        { }
+
+        void Restart(MicroTicker &ticker)
         {
-            m_frequency = SDL_GetPerformanceFrequency();
-            m_startTicks = SDL_GetPerformanceCounter();
-            m_errorTicks = 0;
+            m_time = 0;
+            Resume(ticker);
         }
 
-        Time_t GetTicks()
+        void Pause()
         {
-            Time_t deltaTicks = SDL_GetPerformanceCounter() - m_startTicks;
+            m_paused = true;
+        }
 
-            Time_t seconds = deltaTicks / m_frequency;
-            deltaTicks -= seconds * m_frequency;
+        void Resume(MicroTicker &ticker)
+        {
+            m_last = ticker.GetTicks();
+            m_paused = false;
+        }
 
-            m_errorTicks += deltaTicks*1000000ULL;
-            Time_t micros = m_errorTicks / m_frequency;
-            m_errorTicks -= micros * m_frequency;
+        void Update(MicroTicker &ticker)
+        {
+            if (!m_paused)
+            {
+                Time_t t = ticker.GetTicks();
+                m_time += t - m_last;
+                m_last = t;
+            }
+        }
 
-            return seconds*1000000ULL + micros;
+        double GetTime() const
+        {
+            return m_time / 1000000.0;
+        }
+
+        Time_t GetTimeMillis() const
+        {
+            return m_time / 1000;
+        }
+
+        Time_t GetTimeMicros() const
+        {
+            return m_time;
         }
 
     private:
-        Time_t m_frequency;
-        Time_t m_startTicks;
-        Time_t m_errorTicks;
+        Time_t m_time;
+        Time_t m_last;
+        bool m_paused;
     };
-
-
 
     class GameTime
     {
-    public:
-
     };
-
 
     static const size_t STATIC_MEMORY_SIZE = 4 * 1024 * 1024;
 
