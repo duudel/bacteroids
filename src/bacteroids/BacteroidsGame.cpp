@@ -2,6 +2,7 @@
 #include "BacteroidsGame.h"
 #include "../application/GameState.h"
 #include "../application/MicroTicker.h"
+#include "../application/VirtualTime.h"
 
 #include "../renderer/Renderer.h"
 
@@ -58,27 +59,46 @@ namespace bact
             , m_renderer(renderer)
         {
             m_ticker.Init();
+            m_time.Restart(m_ticker);
             m_random.Seed(m_ticker.GetTicks());
         }
 
+        void OnKeyPress(Key key, uint32_t mods)
+        {
+            if (m_time.IsPaused())
+                m_time.Resume(m_ticker);
+            else
+                m_time.Pause();
+        }
+
         void Update(const GameTime &gameTime) override
-        { }
+        {
+            m_time.Update(m_ticker);
+            radius = 0.9f + Sin(m_time.GetTime() * 3.14) * 0.1f;
+        }
 
         void Render(const GameTime &gameTime) override
         {
-            m_renderer->SetColor(Color(1.0f, 0.0f, 0.0f));
-            m_renderer->DrawFilledCirlce(0.0f, 0.0f, 1.0f);
+//            m_renderer->SetColor(Color(0.5f, 0.05f, 0.05f));
+//            m_renderer->DrawFilledCirlce(0.0f, 0.0f, 1.0f * radius, Color(1.0f, 0.5f, 0.0f, 0.5f));
+            m_renderer->SetColor(Color(0.85f, 0.4f, 0.0f));
+            m_renderer->DrawFilledCirlce(0.0f, 0.0f, 1.01f * radius);
+            m_renderer->SetColor(Color(0.8f, 0.0f, 0.0f));
+            m_renderer->DrawFilledCirlce(0.0f, 0.0f, 1.0f * radius, Color(1.0f, 0.5f, 0.0f, 1.0f));
             m_renderer->SetColor(Color(1.0f, 0.5f, 0.0f));
-            m_renderer->DrawFilledCirlce(0.0f, 0.0f, 0.9f, Color(0.5f, 0.05f, 0.05f, 0.5f));
-            m_renderer->SetColor(Color(1.0f, 1.0f, 0.0f));
-            m_renderer->DrawCirlce(0.0f, 0.0f, 1.0f);
+            m_renderer->DrawFilledCirlce(0.0f, 0.0f, 0.9f * radius, Color(0.5f, 0.05f, 0.05f, 0.5f));
+//            m_renderer->SetColor(Color(1.0f, 0.8f, 0.2f));
+//            m_renderer->DrawCirlce(0.0f, 0.0f, 1.0f * radius);
         }
     private:
         MasterCache *m_cache;
         Renderer *m_renderer;
 
         MicroTicker m_ticker;
+        VirtualTime m_time;
         Random m_random;
+
+        float radius;
     };
 
     bool Bacteroids::Initialize()

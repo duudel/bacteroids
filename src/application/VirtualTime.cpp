@@ -47,4 +47,9 @@ namespace rob
         return m_time;
     }
 
+    bool VirtualTime::IsPaused() const
+    {
+        return m_paused;
+    }
+
 } // rob

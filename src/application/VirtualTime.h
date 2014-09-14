@@ -20,6 +20,8 @@ namespace rob
         double GetTime() const;
         Time_t GetTimeMicros() const;
 
+        bool IsPaused() const;
+
     private:
         Time_t m_time;
         Time_t m_last;
