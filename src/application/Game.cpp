@@ -14,46 +14,11 @@
 namespace rob
 {
 
-    typedef uint64_t Time_t;
-
-    class MicroTicker
-    {
-    public:
-        void Init()
-        {
-            m_frequency = SDL_GetPerformanceFrequency();
-            m_startTicks = SDL_GetPerformanceCounter();
-            m_errorTicks = 0;
-        }
-
-        Time_t GetTicks()
-        {
-            Time_t deltaTicks = SDL_GetPerformanceCounter() - m_startTicks;
-
-            Time_t seconds = deltaTicks / m_frequency;
-            deltaTicks -= seconds * m_frequency;
-
-            m_errorTicks += deltaTicks*1000000ULL;
-            Time_t micros = m_errorTicks / m_frequency;
-            m_errorTicks -= micros * m_frequency;
-
-            return seconds*1000000ULL + micros;
-        }
-
-    private:
-        Time_t m_frequency;
-        Time_t m_startTicks;
-        Time_t m_errorTicks;
-    };
-
-
-
     class GameTime
     {
     public:
 
     };
-
 
     static const size_t STATIC_MEMORY_SIZE = 4 * 1024 * 1024;
 
