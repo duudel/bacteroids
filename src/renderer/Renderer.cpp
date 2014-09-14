@@ -7,10 +7,11 @@
 
 #include "../memory/LinearAllocator.h"
 
+#include "../math/Math.h"
+
 #include "../Log.h"
 
 #include <GL/glew.h>
-#include <cmath>
 
 namespace rob
 {
@@ -190,22 +191,19 @@ namespace rob
 
     void Renderer::DrawCirlce(float x, float y, float radius)
     {
-        const float pi = 3.14f;
         const size_t segments = 24;
         const size_t quarter = segments / 4;
         const size_t vertexCount = segments;
         ColorVertex vertices[vertexCount];
 
         float angle = 0.0f;
-        const float deltaAngle = 2.0f * pi / segments;
+        const float deltaAngle = 2.0f * PI_f / segments;
         for (size_t i = 0; i < quarter; i++, angle += deltaAngle)
         {
-//            const float px = x - std::cos(angle) * radius;
-//            const float py = y - std::sin(angle) * radius;
-//            vertices[i] = { px, py, m_color.r, m_color.g, m_color.b, m_color.a };
-
-            const float sn = std::sin(angle) * radius;
-            const float cs = std::cos(angle) * radius;
+            float sn, cs;
+            rob::SinCos(angle, sn, cs);
+            sn *= radius;
+            cs *= radius;
 
             const size_t i0 = i;
             const size_t i1 = i0 + quarter;
@@ -228,19 +226,20 @@ namespace rob
 
     void Renderer::DrawFilledCirlce(float x, float y, float radius)
     {
-        const float pi = 3.14f;
         const size_t segments = 24;
         const size_t quarter = segments / 4;
         const size_t vertexCount = segments + 1;
         ColorVertex vertices[vertexCount];
 
         float angle = 0.0f;
-        const float deltaAngle = 2.0f * pi / segments;
+        const float deltaAngle = 2.0f * PI_f / segments;
         vertices[0] = { x - radius, y, m_color.r, m_color.g, m_color.b, m_color.a };
         for (size_t i = 0; i < quarter; i++, angle += deltaAngle)
         {
-            const float sn = std::sin(angle) * radius;
-            const float cs = std::cos(angle) * radius;
+            float sn, cs;
+            rob::SinCos(angle, sn, cs);
+            sn *= radius;
+            cs *= radius;
 
             const size_t i0 = 1 + i;
             const size_t i1 = i0 + quarter;
@@ -263,19 +262,20 @@ namespace rob
 
     void Renderer::DrawFilledCirlce(float x, float y, float radius, const Color &center)
     {
-        const float pi = 3.14f;
         const size_t segments = 24;
         const size_t quarter = segments / 4;
         const size_t vertexCount = segments + 2;
         ColorVertex vertices[vertexCount];
 
         float angle = 0.0f;
-        const float deltaAngle = 2.0f * pi / segments;
+        const float deltaAngle = 2.0f * PI_f / segments;
         vertices[0] = { x, y, center.r, center.g, center.b, center.a };
         for (size_t i = 0; i < quarter; i++, angle += deltaAngle)
         {
-            const float sn = std::sin(angle) * radius;
-            const float cs = std::cos(angle) * radius;
+            float sn, cs;
+            rob::SinCos(angle, sn, cs);
+            sn *= radius;
+            cs *= radius;
 
             const size_t i0 = 1 + i;
             const size_t i1 = i0 + quarter;

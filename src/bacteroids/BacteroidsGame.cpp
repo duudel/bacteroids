@@ -4,6 +4,8 @@
 
 #include "../renderer/Renderer.h"
 
+#include "../math/Math.h"
+
 namespace bact
 {
 

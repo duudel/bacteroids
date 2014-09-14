@@ -31,6 +31,7 @@
 		<Compiler>
 			<Add option="-std=c++11" />
 			<Add option="-Wall" />
+			<Add option="-msse2" />
 		</Compiler>
 		<Linker>
 			<Add option="-lmingw32" />
@@ -83,6 +84,15 @@
 		<Unit filename="src/input/Keyboard.h" />
 		<Unit filename="src/input/Mouse.h" />
 		<Unit filename="src/main.cpp" />
+		<Unit filename="src/math/Constants.h" />
+		<Unit filename="src/math/Functions.h" />
+		<Unit filename="src/math/Math.h" />
+		<Unit filename="src/math/Matrix4.h" />
+		<Unit filename="src/math/Types.h" />
+		<Unit filename="src/math/Vector4.h" />
+		<Unit filename="src/math/simd/NoSimd.h" />
+		<Unit filename="src/math/simd/SSE2.h" />
+		<Unit filename="src/math/simd/Simd.h" />
 		<Unit filename="src/memory/AlignedStorage.h" />
 		<Unit filename="src/memory/Freelist.cpp" />
 		<Unit filename="src/memory/Freelist.h" />
