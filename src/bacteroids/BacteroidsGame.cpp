@@ -17,6 +17,35 @@ namespace bact
 
     using namespace rob;
 
+    class Bacter
+    {
+    public:
+        Bacter()
+            : m_position(0.0f, 0.0f, 0.0f, 1.0f)
+            , m_radius(25.0f)
+        { }
+
+        void SetPosition(float x, float y)
+        { m_position = vec4f(x, y, 0.0f, 1.0f); }
+        void SetRadius(float r)
+        { m_radius = r; }
+
+        void Update(const GameTime &gameTime)
+        {
+
+        }
+
+        void Render(Renderer *renderer)
+        {
+            renderer->SetColor(Color(0.8f, 1.0f, 0.5f));
+            renderer->DrawFilledCirlce(m_position.x, m_position.y, m_radius, Color(0.6f, 0.6f, 0.2f, 0.2f));
+        }
+    private:
+        vec4f m_position;
+        vec4f m_velocity;
+        float m_radius;
+    };
+
     class BacteroidsState : public GameState
     {
     public:
@@ -58,16 +87,14 @@ namespace bact
         void Render(const GameTime &gameTime) override
         {
             m_renderer->SetTime(m_time.GetTime());
-//            m_renderer->SetColor(Color(0.5f, 0.05f, 0.05f));
-//            m_renderer->DrawFilledCirlce(0.0f, 0.0f, 1.0f * radius, Color(1.0f, 0.5f, 0.0f, 0.5f));
-            m_renderer->SetColor(Color(0.85f, 0.4f, 0.0f));
-            m_renderer->DrawFilledCirlce(0.0f, 0.0f, 1.01f * radius);
-            m_renderer->SetColor(Color(0.8f, 0.0f, 0.0f));
-            m_renderer->DrawFilledCirlce(0.0f, 0.0f, 1.0f * radius, Color(1.0f, 0.5f, 0.0f, 1.0f));
-            m_renderer->SetColor(Color(1.0f, 0.5f, 0.0f));
-            m_renderer->DrawFilledCirlce(0.0f, 0.0f, 0.9f * radius, Color(0.5f, 0.05f, 0.05f, 0.5f));
-//            m_renderer->SetColor(Color(1.0f, 0.8f, 0.2f));
-//            m_renderer->DrawCirlce(0.0f, 0.0f, 1.0f * radius);
+            m_bactrer.Render(m_renderer);
+
+//            m_renderer->SetColor(Color(0.85f, 0.4f, 0.0f));
+//            m_renderer->DrawFilledCirlce(0.0f, 0.0f, 1.01f * radius);
+//            m_renderer->SetColor(Color(0.8f, 0.0f, 0.0f));
+//            m_renderer->DrawFilledCirlce(0.0f, 0.0f, 1.0f * radius, Color(1.0f, 0.5f, 0.0f, 1.0f));
+//            m_renderer->SetColor(Color(1.0f, 0.5f, 0.0f));
+//            m_renderer->DrawFilledCirlce(0.0f, 0.0f, 0.9f * radius, Color(0.5f, 0.05f, 0.05f, 0.5f));
         }
     private:
         MasterCache *m_cache;
@@ -78,6 +105,8 @@ namespace bact
         Random m_random;
 
         float radius;
+
+        Bacter m_bactrer;
     };
 
     bool Bacteroids::Initialize()
