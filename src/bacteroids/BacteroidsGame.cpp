@@ -88,11 +88,13 @@ namespace bact
         {
             m_time.Update(m_ticker);
             radius = 0.9f + Sin(m_time.GetTime() * 3.14) * 0.1f;
-            radius *= 100.0f;
+//            radius *= 100.0f;
+            radius = 100.0f;
         }
 
         void Render(const GameTime &gameTime) override
         {
+            m_renderer->SetTime(m_time.GetTime());
 //            m_renderer->SetColor(Color(0.5f, 0.05f, 0.05f));
 //            m_renderer->DrawFilledCirlce(0.0f, 0.0f, 1.0f * radius, Color(1.0f, 0.5f, 0.0f, 0.5f));
             m_renderer->SetColor(Color(0.85f, 0.4f, 0.0f));

@@ -25,6 +25,7 @@ namespace rob
 
         void GetScreenSize(int *screenW, int *screenH) const;
         void SetProjection(const mat4f &projection);
+        void SetTime(float time);
 
         void SetColor(const Color &color);
         void DrawRectangle(float x0, float y0, float x1, float y1);

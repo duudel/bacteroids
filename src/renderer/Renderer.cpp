@@ -39,15 +39,42 @@ namespace rob
             gl_FragColor = color;
         }
     );
+//            float aX = a_position.x;
+//            float aY = a_position.y;
+//            float rX = cos(t + a * 10);
+//            float rY = sin(t * 1.5 - a * 9);
+//            float tX = rX + rY;
+//            float tY = rX - rY;
+//            vec2 offset = vec2(tX, tY) * 5;
 
     static const char * const g_colorVertexShader = GLSL(
         uniform mat4 u_projection;
+        uniform float u_time;
         attribute vec2 a_position;
         attribute vec4 a_color;
         varying vec4 v_color;
         void main()
         {
-            gl_Position = u_projection * vec4(a_position, 0.0, 1.0);
+            vec2 pos = a_position;
+            float t = u_time * 10;
+            float a = atan(pos.x, pos.y);
+//            float a = 0; //a_position.x + a_position.y;
+//            float aX = a * 10 + t;
+//            float aY = a * 10 + t;
+//            float aX = a_position.x + a_position.y + u_time * 10;
+//            float aY = a_position.y - a_position.x + u_time * 10;
+//            float aX = a_position.x;
+//            float aY = a_position.y;
+//            float rX = sin(t + a * 10);
+//            float rY = sin(t * 1.5 - a * 9);
+//            float rX = sin(t + a * 10);
+            float rY = sin(t + a * 9);
+            float r = 5 + (rY * 5 * sin(t));
+//            vec2 offset = vec2(r, r) * 5;
+
+            vec2 offset = vec2(0.0);
+            if (dot(pos, pos) > 0.01) offset = normalize(a_position) * r;
+            gl_Position = u_projection * vec4(a_position + offset, 0.0, 1.0);
             v_color = a_color;
         }
     );
@@ -100,6 +127,7 @@ namespace rob
         }
 
         m_graphics->AddProgramUniform(p, m_globals.projection);
+        m_graphics->AddProgramUniform(p, m_globals.time);
     }
 
 
@@ -115,7 +143,9 @@ namespace rob
         , m_colorProgram(InvalidHandle)
     {
         m_globals.projection = m_graphics->CreateUniform("u_projection", UniformType::Mat4);
+        m_globals.time = m_graphics->CreateUniform("u_time", UniformType::Float);
         m_graphics->SetUniform(m_globals.projection, mat4f::Identity);
+        m_graphics->SetUniform(m_globals.time, 0.0f);
 
         CompileShaderProgram(g_vertexShader, g_fragmentShader,
                              m_vertexShader, m_fragmentShader, m_shaderProgram);
@@ -150,9 +180,10 @@ namespace rob
     }
 
     void Renderer::SetProjection(const mat4f &projection)
-    {
-        m_graphics->SetUniform(m_globals.projection, projection);
-    }
+    { m_graphics->SetUniform(m_globals.projection, projection); }
+
+    void Renderer::SetTime(float time)
+    { m_graphics->SetUniform(m_globals.time, time); }
 
     void Renderer::SetColor(const Color &color)
     { m_color = color; }
@@ -199,9 +230,11 @@ namespace rob
         m_graphics->DrawTriangleStripArrays(0, 4);
     }
 
+    static const size_t CIRCLE_SEGMENTS = 64;
+
     void Renderer::DrawCirlce(float x, float y, float radius)
     {
-        const size_t segments = 24;
+        const size_t segments = CIRCLE_SEGMENTS;
         const size_t quarter = segments / 4;
         const size_t vertexCount = segments;
         ColorVertex vertices[vertexCount];
@@ -236,14 +269,14 @@ namespace rob
 
     void Renderer::DrawFilledCirlce(float x, float y, float radius)
     {
-        const size_t segments = 24;
+        const size_t segments = CIRCLE_SEGMENTS;
         const size_t quarter = segments / 4;
-        const size_t vertexCount = segments + 1;
+        const size_t vertexCount = segments + 2;
         ColorVertex vertices[vertexCount];
 
         float angle = 0.0f;
         const float deltaAngle = 2.0f * PI_f / segments;
-        vertices[0] = { x - radius, y, m_color.r, m_color.g, m_color.b, m_color.a };
+        vertices[0] = { x, y, m_color.r, m_color.g, m_color.b, m_color.a };
         for (size_t i = 0; i < quarter; i++, angle += deltaAngle)
         {
             float sn, cs;
@@ -260,6 +293,7 @@ namespace rob
             vertices[i2] = { x + cs, y + sn, m_color.r, m_color.g, m_color.b, m_color.a };
             vertices[i3] = { x - sn, y + cs, m_color.r, m_color.g, m_color.b, m_color.a };
         };
+        vertices[2 + segments - 1] = vertices[1];
 
         m_graphics->BindVertexBuffer(m_vertexBuffer);
         VertexBuffer *buffer = m_graphics->GetVertexBuffer(m_vertexBuffer);
@@ -272,7 +306,7 @@ namespace rob
 
     void Renderer::DrawFilledCirlce(float x, float y, float radius, const Color &center)
     {
-        const size_t segments = 24;
+        const size_t segments = CIRCLE_SEGMENTS;
         const size_t quarter = segments / 4;
         const size_t vertexCount = segments + 2;
         ColorVertex vertices[vertexCount];
