@@ -12,7 +12,7 @@ namespace simd
     template <>
     struct Simd<float>
     {
-        typedef __m128  v4;
+        typedef __m128  v4 __attribute__((aligned(16)));
         typedef v4      v4_arg;
         typedef v4&     v4_argr;
         typedef float   type;

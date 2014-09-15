@@ -7,6 +7,9 @@
 #include "../renderer/Renderer.h"
 
 #include "../math/Math.h"
+#include "../math/Projection.h"
+
+#include "../Log.h"
 
 #include <random>
 
@@ -63,7 +66,28 @@ namespace bact
             m_random.Seed(m_ticker.GetTicks());
         }
 
-        void OnKeyPress(Key key, uint32_t mods)
+        void OnResize(int w, int h) override
+        {
+//            simd::Simd<float, 0>::v4 v4 __attribute__((aligned(16)));
+//            v4 = simd::Simd<float, 0>::Set(w);
+//            mat4f m(w);
+//            log::Info("Align: ", alignof(m));
+//            log::Info("Align r0: ", alignof(m.row0));
+//            log::Info("Align r1: ", alignof(m.row1));
+//            log::Info("Align r2: ", alignof(m.row2));
+//            log::Info("Align r3: ", alignof(m.row3));
+
+            int x0 = -w / 2;
+            int x1 = w / 2;
+            int y0 = -h / 2;
+            int y1 = h / 2;
+
+            m_renderer->SetProjection(Projection_Orthogonal_lh(x0, x1, y0, y1, -1, 1));
+//            m_renderer->SetProjection(Projection_Orthogonal_lh(0, w, 0, h, -1, 1));
+//            m_renderer->SetProjection(mat4f(5));
+        }
+
+        void OnKeyPress(Key key, uint32_t mods) override
         {
             if (m_time.IsPaused())
                 m_time.Resume(m_ticker);
@@ -75,6 +99,7 @@ namespace bact
         {
             m_time.Update(m_ticker);
             radius = 0.9f + Sin(m_time.GetTime() * 3.14) * 0.1f;
+            radius *= 100.0f;
         }
 
         void Render(const GameTime &gameTime) override

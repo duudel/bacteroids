@@ -12,7 +12,7 @@ namespace rob
 
     /// Row major 4x4 matrix.
     template <class T, size_t S>
-    struct Matrix4
+    struct __attribute__((aligned(16))) Matrix4
     {
         typedef simd::Simd<T, S> simd_;
         typedef typename simd::Simd<T, S>::v4 v4;
@@ -22,17 +22,17 @@ namespace rob
         union {
             struct
             {
-                T m00, m01, m02, m03;
-                T m10, m11, m12, m13;
-                T m20, m21, m22, m23;
-                T m30, m31, m32, m33;
-            };
-            struct
-            {
                 v4 row0;
                 v4 row1;
                 v4 row2;
                 v4 row3;
+            };
+            struct
+            {
+                T m00, m01, m02, m03;
+                T m10, m11, m12, m13;
+                T m20, m21, m22, m23;
+                T m30, m31, m32, m33;
             };
         };
 

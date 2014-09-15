@@ -6,6 +6,8 @@
 #include "../resource/ResourceID.h"
 #include "Color.h"
 
+#include "../math/Types.h"
+
 namespace rob
 {
 
@@ -20,6 +22,7 @@ namespace rob
         ~Renderer();
 
         void GetScreenSize(int *screenW, int *screenH) const;
+        void SetProjection(const mat4f &projection);
 
         void SetColor(const Color &color);
         void DrawRectangle(float x0, float y0, float x1, float y1);
@@ -29,8 +32,19 @@ namespace rob
         void DrawFilledCirlce(float x, float y, float radius, const Color &center);
 
     private:
+        void CompileShaderProgram(const char * const vert, const char * const frag,
+                                  VertexShaderHandle &vs, FragmentShaderHandle &fs,
+                                  ShaderProgramHandle &p);
+
+    private:
         LinearAllocator &m_alloc;
         Graphics *m_graphics;
+
+        struct GlobalUniforms
+        {
+            UniformHandle projection;
+            UniformHandle time;
+        } m_globals;
 
         VertexShaderHandle      m_vertexShader;
         FragmentShaderHandle    m_fragmentShader;

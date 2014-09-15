@@ -1,0 +1,8 @@
+rob TODO
+--------
+
+Reference counting for uniforms:
+    - shader destroyed -> decrement references of linked uniforms
+    - reference count == 0 -> destroy uniform
+    - add a virtual user (reference) for global uniforms to prevent
+      destroying them

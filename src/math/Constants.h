@@ -9,6 +9,10 @@ namespace rob
     constexpr float PI_f    = float(3.14159265359);
     constexpr double PI_d   = double(3.14159265359);
 
+    constexpr float DEG2RAD     = PI / real(180.0);
+    constexpr float DEG2RAD_f   = PI_f / 180.0f;
+    constexpr double DEG2RAD_d  = PI_d / 180.0;
+
     #define DECL_OP(T, op) \
         friend T operator op (const PI_t &pi, T x) \
         { return T(pi) op x; } \

@@ -146,10 +146,6 @@ namespace rob
             VertexBuffer *vb = m_vertexBuffers.Get(buffer);
             ::glBindBuffer(GL_ARRAY_BUFFER, vb->GetObject());
             GL_CHECK;
-//            ::glEnableVertexAttribArray(0);
-//            GL_CHECK;
-//            ::glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-//            GL_CHECK;
         }
     }
 
@@ -174,45 +170,51 @@ namespace rob
 
     void Graphics::BindShaderProgram(ShaderProgramHandle program)
     {
-        if (m_bind.shaderProgram == program)
-            return;
+        ShaderProgram *p = (program != InvalidHandle) ?
+            m_shaderPrograms.Get(program) : nullptr;
 
-        m_bind.shaderProgram = program;
-        if (program == InvalidHandle)
+        if (m_bind.shaderProgram != program)
         {
-            ::glUseProgram(0);
-            GL_CHECK;
+            m_bind.shaderProgram = program;
+            if (program == InvalidHandle)
+            {
+                ::glUseProgram(0);
+                GL_CHECK;
+            }
+            else
+            {
+                ::glUseProgram(p->GetObject());
+                GL_CHECK;
+            }
         }
-        else
-        {
-            ShaderProgram *p = m_shaderPrograms.Get(program);
-            ::glUseProgram(p->GetObject());
-            GL_CHECK;
-            p->UpdateUniforms(this);
-        }
+        if (p) p->UpdateUniforms(this);
     }
 
     void Graphics::SetUniform(UniformHandle u, int value)
     {
         Uniform *uniform = GetUniform(u);
+        ROB_ASSERT(uniform->m_type == UniformType::Int);
         uniform->SetValue(value);
     }
 
     void Graphics::SetUniform(UniformHandle u, float value)
     {
         Uniform *uniform = GetUniform(u);
+        ROB_ASSERT(uniform->m_type == UniformType::Float);
         uniform->SetValue(value);
     }
 
     void Graphics::SetUniform(UniformHandle u, const vec4f &value)
     {
         Uniform *uniform = GetUniform(u);
+        ROB_ASSERT(uniform->m_type == UniformType::Vec4);
         uniform->SetValue(value);
     }
 
     void Graphics::SetUniform(UniformHandle u, const mat4f &value)
     {
         Uniform *uniform = GetUniform(u);
+        ROB_ASSERT(uniform->m_type == UniformType::Mat4);
         uniform->SetValue(value);
     }
 

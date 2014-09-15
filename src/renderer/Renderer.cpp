@@ -60,16 +60,16 @@ namespace rob
         }
     );
 
-    UniformHandle g_u_projection = InvalidHandle;
 
-    void CompileShaderProgram(Graphics *graphics, const char * const vert, const char * const frag,
-                              VertexShaderHandle &vs, FragmentShaderHandle &fs, ShaderProgramHandle &p)
+    void Renderer::CompileShaderProgram(const char * const vert, const char * const frag,
+                                        VertexShaderHandle &vs, FragmentShaderHandle &fs,
+                                        ShaderProgramHandle &p)
     {
-        vs = graphics->CreateVertexShader();
-        fs = graphics->CreateFragmentShader();
-        p = graphics->CreateShaderProgram();
+        vs = m_graphics->CreateVertexShader();
+        fs = m_graphics->CreateFragmentShader();
+        p = m_graphics->CreateShaderProgram();
 
-        VertexShader *vertShader = graphics->GetVertexShader(vs);
+        VertexShader *vertShader = m_graphics->GetVertexShader(vs);
         vertShader->SetSource(vert);
         if (!vertShader->Compile())
         {
@@ -79,7 +79,7 @@ namespace rob
             return;
         }
 
-        FragmentShader *fragShader = graphics->GetFragmentShader(fs);
+        FragmentShader *fragShader = m_graphics->GetFragmentShader(fs);
         fragShader->SetSource(frag);
         if (!fragShader->Compile())
         {
@@ -89,7 +89,7 @@ namespace rob
             return;
         }
 
-        ShaderProgram *program = graphics->GetShaderProgram(p);
+        ShaderProgram *program = m_graphics->GetShaderProgram(p);
         program->SetShaders(vertShader, fragShader);
         if (!program->Link())
         {
@@ -99,11 +99,7 @@ namespace rob
             return;
         }
 
-        graphics->AddProgramUniform(p, g_u_projection);
-
-//        GLint loc = ::glGetUniformLocation(program->GetObject(), "u_texture");
-//        graphics->BindShaderProgram(p);
-//        ::glUniform1i(loc, 0);
+        m_graphics->AddProgramUniform(p, m_globals.projection);
     }
 
 
@@ -118,12 +114,12 @@ namespace rob
         , m_colorFragmentShader(InvalidHandle)
         , m_colorProgram(InvalidHandle)
     {
-        g_u_projection = m_graphics->CreateUniform("u_projection", UniformType::Mat4);
-        m_graphics->SetUniform(g_u_projection, mat4f::Identity);
+        m_globals.projection = m_graphics->CreateUniform("u_projection", UniformType::Mat4);
+        m_graphics->SetUniform(m_globals.projection, mat4f::Identity);
 
-        CompileShaderProgram(m_graphics, g_vertexShader, g_fragmentShader,
+        CompileShaderProgram(g_vertexShader, g_fragmentShader,
                              m_vertexShader, m_fragmentShader, m_shaderProgram);
-        CompileShaderProgram(m_graphics, g_colorVertexShader, g_colorFragmentShader,
+        CompileShaderProgram(g_colorVertexShader, g_colorFragmentShader,
                              m_colorVertexShader, m_colorFragmentShader, m_colorProgram);
 
 
@@ -151,6 +147,11 @@ namespace rob
         m_graphics->GetViewport(&x, &y, &w, &h);
         *screenW = w;
         *screenH = h;
+    }
+
+    void Renderer::SetProjection(const mat4f &projection)
+    {
+        m_graphics->SetUniform(m_globals.projection, projection);
     }
 
     void Renderer::SetColor(const Color &color)

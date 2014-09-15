@@ -23,6 +23,8 @@ namespace rob
         virtual void Update(const GameTime &gameTime) { }
         virtual void Render(const GameTime &gameTime) { }
 
+        virtual void OnResize(int w, int h) { }
+
         virtual void OnKeyPress(Key key, uint32_t mods) { }
         virtual void OnKeyDown(Key key, uint32_t mods) { }
         virtual void OnKeyUp(Key key, uint32_t mods) { }

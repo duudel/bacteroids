@@ -104,7 +104,10 @@ namespace rob
     }
 
     void Game::OnResize(int w, int h)
-    { m_graphics->SetViewport(0, 0, w, h); }
+    {
+        m_graphics->SetViewport(0, 0, w, h);
+        m_state->OnResize(w, h);
+    }
 
     void Game::OnKeyPress(Key key, uint32_t mods)
     { m_state->OnKeyPress(key, mods); }
