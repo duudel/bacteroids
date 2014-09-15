@@ -35,7 +35,6 @@ namespace rob
         void main()
         {
             vec4 color = texture2D(u_texture, v_uv);
-//            vec4 color = vec4(v_uv, 0.0, 1.0);
             gl_FragColor = color;
         }
     );
@@ -74,13 +73,11 @@ namespace rob
     );
 
 
-    void Renderer::CompileShaderProgram(const char * const vert, const char * const frag,
-                                        VertexShaderHandle &vs, FragmentShaderHandle &fs,
-                                        ShaderProgramHandle &p)
+    ShaderProgramHandle Renderer::CompileShaderProgram(const char * const vert, const char * const frag)
     {
-        vs = m_graphics->CreateVertexShader();
-        fs = m_graphics->CreateFragmentShader();
-        p = m_graphics->CreateShaderProgram();
+        VertexShaderHandle vs = m_graphics->CreateVertexShader();
+        FragmentShaderHandle fs = m_graphics->CreateFragmentShader();
+        ShaderProgramHandle p = m_graphics->CreateShaderProgram();
 
         VertexShader *vertShader = m_graphics->GetVertexShader(vs);
         vertShader->SetSource(vert);
@@ -89,7 +86,7 @@ namespace rob
             char buffer[512];
             vertShader->GetCompileInfo(buffer, 512);
             log::Error(&buffer[0]);
-            return;
+            return InvalidHandle;
         }
 
         FragmentShader *fragShader = m_graphics->GetFragmentShader(fs);
@@ -99,7 +96,7 @@ namespace rob
             char buffer[512];
             fragShader->GetCompileInfo(buffer, 512);
             log::Error(&buffer[0]);
-            return;
+            return InvalidHandle;
         }
 
         ShaderProgram *program = m_graphics->GetShaderProgram(p);
@@ -109,35 +106,33 @@ namespace rob
             char buffer[512];
             program->GetLinkInfo(buffer, 512);
             log::Error(&buffer[0]);
-            return;
+            return InvalidHandle;
         }
+
+        m_graphics->DestroyVertexShader(vs);
+        m_graphics->DestroyFragmentShader(fs);
 
         m_graphics->AddProgramUniform(p, m_globals.projection);
         m_graphics->AddProgramUniform(p, m_globals.time);
+        return p;
     }
 
 
     Renderer::Renderer(Graphics *graphics, LinearAllocator &alloc)
         : m_alloc(alloc)
         , m_graphics(graphics)
-        , m_vertexShader(InvalidHandle)
-        , m_fragmentShader(InvalidHandle)
-        , m_shaderProgram(InvalidHandle)
         , m_vertexBuffer(InvalidHandle)
-        , m_colorVertexShader(InvalidHandle)
-        , m_colorFragmentShader(InvalidHandle)
+        , m_shaderProgram(InvalidHandle)
         , m_colorProgram(InvalidHandle)
+        , m_color()
     {
         m_globals.projection = m_graphics->CreateUniform("u_projection", UniformType::Mat4);
         m_globals.time = m_graphics->CreateUniform("u_time", UniformType::Float);
         m_graphics->SetUniform(m_globals.projection, mat4f::Identity);
         m_graphics->SetUniform(m_globals.time, 0.0f);
 
-        CompileShaderProgram(g_vertexShader, g_fragmentShader,
-                             m_vertexShader, m_fragmentShader, m_shaderProgram);
-        CompileShaderProgram(g_colorVertexShader, g_colorFragmentShader,
-                             m_colorVertexShader, m_colorFragmentShader, m_colorProgram);
-
+        m_shaderProgram = CompileShaderProgram(g_vertexShader, g_fragmentShader);
+        m_colorProgram = CompileShaderProgram(g_colorVertexShader, g_colorFragmentShader);
 
         m_vertexBuffer = m_graphics->CreateVertexBuffer();
         m_graphics->BindVertexBuffer(m_vertexBuffer);
@@ -147,15 +142,16 @@ namespace rob
 
     Renderer::~Renderer()
     {
-        m_graphics->DestroyShaderProgram(m_shaderProgram);
-        m_graphics->DestroyVertexShader(m_vertexShader);
-        m_graphics->DestroyFragmentShader(m_fragmentShader);
         m_graphics->DestroyVertexBuffer(m_vertexBuffer);
-
+        m_graphics->DestroyShaderProgram(m_shaderProgram);
         m_graphics->DestroyShaderProgram(m_colorProgram);
-        m_graphics->DestroyVertexShader(m_colorVertexShader);
-        m_graphics->DestroyFragmentShader(m_colorFragmentShader);
     }
+
+    Graphics* Renderer::GetGraphics()
+    { return m_graphics; }
+
+    const GlobalUniforms& Renderer::GetGlobals() const
+    { return m_globals; }
 
     void Renderer::GetScreenSize(int *screenW, int *screenH) const
     {

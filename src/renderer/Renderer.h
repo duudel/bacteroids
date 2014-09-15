@@ -15,6 +15,12 @@ namespace rob
     class MasterCache;
     class LinearAllocator;
 
+    struct GlobalUniforms
+    {
+        UniformHandle projection;
+        UniformHandle time;
+    };
+
     class Renderer
     {
     public:
@@ -22,6 +28,11 @@ namespace rob
         Renderer(const Renderer&) = delete;
         Renderer& operator = (const Renderer&) = delete;
         ~Renderer();
+
+        ShaderProgramHandle CompileShaderProgram(const char * const vert, const char * const frag);
+
+        Graphics* GetGraphics();
+        const GlobalUniforms& GetGlobals() const;
 
         void GetScreenSize(int *screenW, int *screenH) const;
         void SetProjection(const mat4f &projection);
@@ -35,29 +46,15 @@ namespace rob
         void DrawFilledCirlce(float x, float y, float radius, const Color &center);
 
     private:
-        void CompileShaderProgram(const char * const vert, const char * const frag,
-                                  VertexShaderHandle &vs, FragmentShaderHandle &fs,
-                                  ShaderProgramHandle &p);
-
-    private:
         LinearAllocator &m_alloc;
         Graphics *m_graphics;
 
-        struct GlobalUniforms
-        {
-            UniformHandle projection;
-            UniformHandle time;
-        } m_globals;
-
-        VertexShaderHandle      m_vertexShader;
-        FragmentShaderHandle    m_fragmentShader;
-        ShaderProgramHandle     m_shaderProgram;
+        GlobalUniforms m_globals;
 
         VertexBufferHandle      m_vertexBuffer;
-
-        VertexShaderHandle      m_colorVertexShader;
-        FragmentShaderHandle    m_colorFragmentShader;
+        ShaderProgramHandle     m_shaderProgram;
         ShaderProgramHandle     m_colorProgram;
+
         Color m_color;
     };
 

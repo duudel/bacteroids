@@ -1,16 +1,20 @@
 
 #include "BacteroidsGame.h"
+
 #include "../application/GameState.h"
 #include "../application/MicroTicker.h"
 #include "../application/VirtualTime.h"
 
 #include "../renderer/Renderer.h"
+#include "../graphics/Graphics.h"
 
 #include "../math/Math.h"
 #include "../math/Projection.h"
 #include "../math/Random.h"
 
 #include "../Log.h"
+
+#include "Shaders.h"
 
 namespace bact
 {
@@ -31,15 +35,14 @@ namespace bact
         { m_radius = r; }
 
         void Update(const GameTime &gameTime)
-        {
-
-        }
+        { }
 
         void Render(Renderer *renderer)
         {
             renderer->SetColor(Color(0.8f, 1.0f, 0.5f));
             renderer->DrawFilledCirlce(m_position.x, m_position.y, m_radius, Color(0.6f, 0.6f, 0.2f, 0.2f));
         }
+
     private:
         vec4f m_position;
         vec4f m_velocity;
@@ -56,6 +59,14 @@ namespace bact
             m_ticker.Init();
             m_time.Restart(m_ticker);
             m_random.Seed(m_ticker.GetTicks());
+
+            m_bacterShader = m_renderer->CompileShaderProgram(g_bacterShader.m_vertexShader,
+                                                              g_bacterShader.m_fragmentShader);
+        }
+
+        ~BacteroidsState()
+        {
+            m_renderer->GetGraphics()->DestroyShaderProgram(m_bacterShader);
         }
 
         void OnResize(int w, int h) override
@@ -79,22 +90,12 @@ namespace bact
         void Update(const GameTime &gameTime) override
         {
             m_time.Update(m_ticker);
-            radius = 0.9f + Sin(m_time.GetTime() * 3.14) * 0.1f;
-//            radius *= 100.0f;
-            radius = 100.0f;
         }
 
         void Render(const GameTime &gameTime) override
         {
             m_renderer->SetTime(m_time.GetTime());
-            m_bactrer.Render(m_renderer);
-
-//            m_renderer->SetColor(Color(0.85f, 0.4f, 0.0f));
-//            m_renderer->DrawFilledCirlce(0.0f, 0.0f, 1.01f * radius);
-//            m_renderer->SetColor(Color(0.8f, 0.0f, 0.0f));
-//            m_renderer->DrawFilledCirlce(0.0f, 0.0f, 1.0f * radius, Color(1.0f, 0.5f, 0.0f, 1.0f));
-//            m_renderer->SetColor(Color(1.0f, 0.5f, 0.0f));
-//            m_renderer->DrawFilledCirlce(0.0f, 0.0f, 0.9f * radius, Color(0.5f, 0.05f, 0.05f, 0.5f));
+            m_bacter.Render(m_renderer);
         }
     private:
         MasterCache *m_cache;
@@ -104,9 +105,9 @@ namespace bact
         VirtualTime m_time;
         Random m_random;
 
-        float radius;
+        ShaderProgramHandle m_bacterShader;
 
-        Bacter m_bactrer;
+        Bacter m_bacter;
     };
 
     bool Bacteroids::Initialize()
