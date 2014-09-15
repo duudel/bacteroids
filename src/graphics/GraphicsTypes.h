@@ -11,6 +11,7 @@ namespace rob
     class VertexShader;
     class FragmentShader;
     class ShaderProgram;
+    class Uniform;
 
     typedef unsigned int GraphicsHandle;
 
@@ -20,8 +21,15 @@ namespace rob
     typedef GraphicsHandle VertexShaderHandle;
     typedef GraphicsHandle FragmentShaderHandle;
     typedef GraphicsHandle ShaderProgramHandle;
+    typedef GraphicsHandle UniformHandle;
 
     static const GraphicsHandle InvalidHandle = ~0;
+
+    enum class UniformType
+    {
+        Int, Float,
+        Vec4, Mat4
+    };
 
 } // rob
 

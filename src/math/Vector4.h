@@ -29,6 +29,11 @@ namespace rob
         inline Vector4(T x, T y, T z, T w) { v = simd_::Set(x, y, z, w); }
         inline Vector4(const Vector4 &vec) { v = vec.v; }
 
+        void CopyTo(float (&vec)[4]) const
+        {
+            vec[0] = x; vec[1] = y; vec[2] = z; vec[3] = w;
+        }
+
         inline Vector4& operator = (const Vector4 &vec)
         {
             v = vec.v;

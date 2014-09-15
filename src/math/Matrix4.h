@@ -68,6 +68,14 @@ namespace rob
             row3 = mat.row3;
         }
 
+        void CopyTo(float (&mat)[16]) const
+        {
+            mat[0]  = m00; mat[1]  = m01; mat[2]  = m02; mat[3]  = m03;
+            mat[4]  = m10; mat[5]  = m11; mat[6]  = m12; mat[7]  = m13;
+            mat[8]  = m20; mat[9]  = m21; mat[10] = m22; mat[11] = m23;
+            mat[12] = m30; mat[13] = m31; mat[14] = m32; mat[15] = m33;
+        }
+
         inline Matrix4& operator = (const Matrix4 &mat)
         {
             row0 = mat.row0;

@@ -1,6 +1,10 @@
 
 #include "ShaderProgram.h"
 #include "Shader.h"
+#include "Uniform.h"
+#include "Graphics.h"
+
+#include "../Assert.h"
 
 #include <GL/glew.h>
 
@@ -10,6 +14,7 @@ namespace rob
     ShaderProgram::ShaderProgram()
         : m_object()
         , m_linked(false)
+        , m_uniformCount(0)
     { m_object = ::glCreateProgram(); }
 
     ShaderProgram::~ShaderProgram()
@@ -47,5 +52,38 @@ namespace rob
 
     void ShaderProgram::GetLinkInfo(char *buffer, size_t bufferSize) const
     { ::glGetProgramInfoLog(m_object, bufferSize, 0, buffer); }
+
+    void ShaderProgram::AddUniform(UniformHandle handle, const char *name)
+    {
+        for (size_t i = 0; i < m_uniformCount; i++)
+        {
+            UniformInfo &info = m_uniforms[i];
+            if (info.handle == handle) break;
+        }
+        ROB_ASSERT(m_uniformCount < MAX_UNIFORMS);
+        UniformInfo &info = m_uniforms[m_uniformCount];
+        info.handle = handle;
+        info.generation = -1;
+        info.location = GetLocation(name);
+        if (info.location != -1)
+            m_uniformCount++;
+    }
+
+    void ShaderProgram::UpdateUniforms(Graphics *graphics)
+    {
+        for (size_t i = 0; i < m_uniformCount; i++)
+        {
+            UniformInfo &info = m_uniforms[i];
+            const Uniform* u = graphics->GetUniform(info.handle);
+            if (info.generation != u->m_generation)
+            {
+                u->m_upload(info.location, &u->m_value);
+                info.generation = u->m_generation;
+            }
+        }
+    }
+
+    GLint ShaderProgram::GetLocation(const char *name) const
+    { return ::glGetUniformLocation(m_object, name); }
 
 } // rob

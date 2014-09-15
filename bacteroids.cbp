@@ -81,6 +81,8 @@
 		<Unit filename="src/graphics/ShaderProgram.h" />
 		<Unit filename="src/graphics/Texture.cpp" />
 		<Unit filename="src/graphics/Texture.h" />
+		<Unit filename="src/graphics/Uniform.cpp" />
+		<Unit filename="src/graphics/Uniform.h" />
 		<Unit filename="src/graphics/VertexBuffer.cpp" />
 		<Unit filename="src/graphics/VertexBuffer.h" />
 		<Unit filename="src/input/Keyboard.h" />

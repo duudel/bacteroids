@@ -20,6 +20,8 @@ namespace rob
 
     typedef Vector4<float32>    vec4f;
     typedef Vector4<int32_t>    vec4i;
+    typedef Matrix4<float32>    mat4f;
+    typedef Matrix4<int32_t>    mat4i;
 
 } // rob
 

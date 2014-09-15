@@ -98,6 +98,8 @@ namespace bact
         VirtualTime m_time;
         Random m_random;
 
+
+
         float radius;
     };
 

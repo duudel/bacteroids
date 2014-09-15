@@ -19,6 +19,7 @@ namespace rob
     #define GLSL(x) "#version 120\n" #x
 
     static const char * const g_vertexShader = GLSL(
+        uniform mat4 u_projection;
         attribute vec4 a_tile;
         varying vec2 v_uv;
         void main()
@@ -40,12 +41,13 @@ namespace rob
     );
 
     static const char * const g_colorVertexShader = GLSL(
+        uniform mat4 u_projection;
         attribute vec2 a_position;
         attribute vec4 a_color;
         varying vec4 v_color;
         void main()
         {
-            gl_Position = vec4(a_position, 0.0, 1.0);
+            gl_Position = u_projection * vec4(a_position, 0.0, 1.0);
             v_color = a_color;
         }
     );
@@ -57,6 +59,8 @@ namespace rob
             gl_FragColor = v_color;
         }
     );
+
+    UniformHandle g_u_projection = InvalidHandle;
 
     void CompileShaderProgram(Graphics *graphics, const char * const vert, const char * const frag,
                               VertexShaderHandle &vs, FragmentShaderHandle &fs, ShaderProgramHandle &p)
@@ -95,6 +99,8 @@ namespace rob
             return;
         }
 
+        graphics->AddProgramUniform(p, g_u_projection);
+
 //        GLint loc = ::glGetUniformLocation(program->GetObject(), "u_texture");
 //        graphics->BindShaderProgram(p);
 //        ::glUniform1i(loc, 0);
@@ -112,6 +118,9 @@ namespace rob
         , m_colorFragmentShader(InvalidHandle)
         , m_colorProgram(InvalidHandle)
     {
+        g_u_projection = m_graphics->CreateUniform("u_projection", UniformType::Mat4);
+        m_graphics->SetUniform(g_u_projection, mat4f::Identity);
+
         CompileShaderProgram(m_graphics, g_vertexShader, g_fragmentShader,
                              m_vertexShader, m_fragmentShader, m_shaderProgram);
         CompileShaderProgram(m_graphics, g_colorVertexShader, g_colorFragmentShader,

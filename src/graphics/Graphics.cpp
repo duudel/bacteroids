@@ -6,6 +6,7 @@
 #include "IndexBuffer.h"
 #include "Shader.h"
 #include "ShaderProgram.h"
+#include "Uniform.h"
 
 #include "../memory/LinearAllocator.h"
 
@@ -39,6 +40,7 @@ namespace rob
         m_vertexShaders.SetMemory(alloc.Allocate(blockSize), blockSize);
         m_fragmentShaders.SetMemory(alloc.Allocate(blockSize), blockSize);
         m_shaderPrograms.SetMemory(alloc.Allocate(blockSize), blockSize);
+        m_uniforms.SetMemory(alloc.Allocate(blockSize), blockSize);
 
         m_initialized = true;
     }
@@ -186,7 +188,32 @@ namespace rob
             ShaderProgram *p = m_shaderPrograms.Get(program);
             ::glUseProgram(p->GetObject());
             GL_CHECK;
+            p->UpdateUniforms(this);
         }
+    }
+
+    void Graphics::SetUniform(UniformHandle u, int value)
+    {
+        Uniform *uniform = GetUniform(u);
+        uniform->SetValue(value);
+    }
+
+    void Graphics::SetUniform(UniformHandle u, float value)
+    {
+        Uniform *uniform = GetUniform(u);
+        uniform->SetValue(value);
+    }
+
+    void Graphics::SetUniform(UniformHandle u, const vec4f &value)
+    {
+        Uniform *uniform = GetUniform(u);
+        uniform->SetValue(value);
+    }
+
+    void Graphics::SetUniform(UniformHandle u, const mat4f &value)
+    {
+        Uniform *uniform = GetUniform(u);
+        uniform->SetValue(value);
     }
 
 
@@ -307,5 +334,42 @@ namespace rob
 
     void Graphics::DestroyShaderProgram(ShaderProgramHandle program)
     { m_shaderPrograms.Return(GetShaderProgram(program)); }
+
+
+
+
+    template <size_t N>
+    static void CopyToFixedString(char (&dest)[N], const char *src)
+    {
+        size_t i = 0;
+        for (; i < N && *src; i++, src++)
+            dest[i] = *src;
+        dest[i] = 0;
+    }
+
+    // Uniforms
+
+    UniformHandle Graphics::CreateUniform(const char *name, UniformType type)
+    {
+        Uniform *uniform = m_uniforms.Obtain();
+        uniform->m_type         = type;
+        uniform->m_generation   = 0;
+        uniform->m_upload       = Uniform::GetUploadFuncFromType(type);
+        CopyToFixedString(uniform->m_name, name);
+        return m_uniforms.IndexOf(uniform);
+    }
+
+    Uniform* Graphics::GetUniform(UniformHandle uniform)
+    { return m_uniforms.Get(uniform); }
+
+    void Graphics::DestroyUniform(UniformHandle uniform)
+    { m_uniforms.Return(GetUniform(uniform)); }
+
+    void Graphics::AddProgramUniform(ShaderProgramHandle program, UniformHandle uniform)
+    {
+        ShaderProgram *p = GetShaderProgram(program);
+        Uniform *u = GetUniform(uniform);
+        p->AddUniform(uniform, u->m_name);
+    }
 
 } // rob

@@ -3,6 +3,7 @@
 #define H_ROB_GRAPHICS_H
 
 #include "GraphicsTypes.h"
+#include "../math/Types.h"
 
 #include "../memory/Pool.h"
 
@@ -70,6 +71,11 @@ namespace rob
         void BindIndexBuffer(IndexBufferHandle buffer);
         void BindShaderProgram(ShaderProgramHandle program);
 
+        void SetUniform(UniformHandle u, int value);
+        void SetUniform(UniformHandle u, float value);
+        void SetUniform(UniformHandle u, const vec4f &value);
+        void SetUniform(UniformHandle u, const mat4f &value);
+
         void SetAttrib(size_t attr, size_t size, size_t stride, size_t offset);
 
         void DrawTriangleArrays(size_t first, size_t count);
@@ -103,6 +109,12 @@ namespace rob
         ShaderProgram* GetShaderProgram(ShaderProgramHandle program);
         void DestroyShaderProgram(ShaderProgramHandle program);
 
+        UniformHandle CreateUniform(const char *name, UniformType type);
+        Uniform* GetUniform(UniformHandle uniform);
+        void DestroyUniform(UniformHandle uniform);
+
+        void AddProgramUniform(ShaderProgramHandle program, UniformHandle uniform);
+
     private:
         void InitState();
 
@@ -121,6 +133,7 @@ namespace rob
         Pool<VertexShader>  m_vertexShaders;
         Pool<FragmentShader>m_fragmentShaders;
         Pool<ShaderProgram> m_shaderPrograms;
+        Pool<Uniform>       m_uniforms;
 
         bool m_initialized;
 
