@@ -23,6 +23,9 @@ namespace rob
         m_data->m_window = nullptr;
         m_data->m_context = nullptr;
 
+        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
+        SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
+
         m_data->m_window = SDL_CreateWindow("Robbin in the Hood",
                                             SDL_WINDOWPOS_UNDEFINED,
                                             SDL_WINDOWPOS_UNDEFINED,

@@ -39,13 +39,6 @@ namespace rob
             gl_FragColor = color;
         }
     );
-//            float aX = a_position.x;
-//            float aY = a_position.y;
-//            float rX = cos(t + a * 10);
-//            float rY = sin(t * 1.5 - a * 9);
-//            float tX = rX + rY;
-//            float tY = rX - rY;
-//            vec2 offset = vec2(tX, tY) * 5;
 
     static const char * const g_colorVertexShader = GLSL(
         uniform mat4 u_projection;
@@ -56,25 +49,18 @@ namespace rob
         void main()
         {
             vec2 pos = a_position;
-            float t = u_time * 10;
-            float a = atan(pos.x, pos.y);
-//            float a = 0; //a_position.x + a_position.y;
-//            float aX = a * 10 + t;
-//            float aY = a * 10 + t;
-//            float aX = a_position.x + a_position.y + u_time * 10;
-//            float aY = a_position.y - a_position.x + u_time * 10;
-//            float aX = a_position.x;
-//            float aY = a_position.y;
-//            float rX = sin(t + a * 10);
-//            float rY = sin(t * 1.5 - a * 9);
-//            float rX = sin(t + a * 10);
-            float rY = sin(t + a * 9);
-            float r = 5 + (rY * 5 * sin(t));
-//            vec2 offset = vec2(r, r) * 5;
-
             vec2 offset = vec2(0.0);
-            if (dot(pos, pos) > 0.01) offset = normalize(a_position) * r;
-            gl_Position = u_projection * vec4(a_position + offset, 0.0, 1.0);
+            float len = length(pos);
+            if (len > 0.01)
+            {
+                float t = u_time * 10;
+                float a = atan(pos.x, pos.y);
+                float w = sin(t*1.5 + a*13) * 2.3;
+                float u = sin(-t*1.3 + a*7) * 3;
+                float r = (w + u)/65.0 * len;
+                offset = normalize(pos) * r;
+            }
+            gl_Position = u_projection * vec4(pos + offset, 0.0, 1.0);
             v_color = a_color;
         }
     );
@@ -230,7 +216,7 @@ namespace rob
         m_graphics->DrawTriangleStripArrays(0, 4);
     }
 
-    static const size_t CIRCLE_SEGMENTS = 64;
+    static const size_t CIRCLE_SEGMENTS = 48;
 
     void Renderer::DrawCirlce(float x, float y, float radius)
     {
