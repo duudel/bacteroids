@@ -12,10 +12,10 @@ namespace rob
 
     /// Row major 4x4 matrix.
     template <class T, size_t S>
-    struct __attribute__((aligned(16))) Matrix4
+    struct Matrix4
     {
         typedef simd::Simd<T, S> simd_;
-        typedef typename simd::Simd<T, S>::v4 v4 __attribute__((aligned(16)));
+        typedef typename simd::Simd<T, S>::v4 v4;
 
         typedef Vector4<T, S> vec4;
 
