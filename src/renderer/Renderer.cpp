@@ -41,46 +41,21 @@ namespace rob
 
     static const char * const g_colorVertexShader = GLSL(
         uniform mat4 u_projection;
-        uniform float u_time;
         attribute vec2 a_position;
         attribute vec4 a_color;
         varying vec4 v_color;
-        varying float v_dist;
         void main()
         {
-            vec2 pos = a_position;
-            vec2 offset = vec2(0.0);
-            float len = length(pos);
-            float dist = 0.0;
-            if (len > 0.01)
-            {
-                float t = u_time * 10;
-                float a = atan(pos.x, pos.y);
-                float w = sin(t*1.5 + a*13) * 2.3;
-                float u = sin(-t*1.3 + a*7) * 3;
-                float r = (w + u)/65.0 * len;
-                offset = normalize(pos) * r;
-                dist = 1.0;
-            }
-            gl_Position = u_projection * vec4(pos + offset, 0.0, 1.0);
+            gl_Position = u_projection * vec4(a_position, 0.0, 1.0);
             v_color = a_color;
-            v_dist = dist;
         }
     );
 
     static const char * const g_colorFragmentShader = GLSL(
         varying vec4 v_color;
-        varying float v_dist;
         void main()
         {
-//            float d = clamp(v_dist - 0.5, 0.0, 1.0);
-//            d = abs(d - 0.25) / 0.25;
-//            gl_FragColor = vec4(v_color.rgb, d);
-            float d = v_dist - 0.5;
-            d = abs(d - 0.25) / 0.25;
-            d = 1.0 - clamp(d - 0.2, 0.0, 1.0);
-            gl_FragColor = vec4(v_color.rgb, d*d);
-//            gl_FragColor = v_color;
+            gl_FragColor = v_color;
         }
     );
 
@@ -125,6 +100,7 @@ namespace rob
         m_graphics->DestroyFragmentShader(fs);
 
         m_graphics->AddProgramUniform(p, m_globals.projection);
+        m_graphics->AddProgramUniform(p, m_globals.position);
         m_graphics->AddProgramUniform(p, m_globals.time);
         return p;
     }
@@ -139,6 +115,7 @@ namespace rob
         , m_color()
     {
         m_globals.projection = m_graphics->CreateUniform("u_projection", UniformType::Mat4);
+        m_globals.position = m_graphics->CreateUniform("u_position", UniformType::Vec4);
         m_globals.time = m_graphics->CreateUniform("u_time", UniformType::Float);
         m_graphics->SetUniform(m_globals.projection, mat4f::Identity);
         m_graphics->SetUniform(m_globals.time, 0.0f);
@@ -178,6 +155,13 @@ namespace rob
 
     void Renderer::SetTime(float time)
     { m_graphics->SetUniform(m_globals.time, time); }
+
+
+    void Renderer::BindShader(ShaderProgramHandle shader)
+    { m_graphics->BindShaderProgram(shader); }
+
+    void Renderer::BindColorShader()
+    { BindShader(m_colorProgram); }
 
     void Renderer::SetColor(const Color &color)
     { m_color = color; }
@@ -220,11 +204,11 @@ namespace rob
         buffer->Write(0, sizeof(vertices), vertices);
         m_graphics->SetAttrib(0, 2, sizeof(ColorVertex), 0);
         m_graphics->SetAttrib(1, 4, sizeof(ColorVertex), sizeof(float) * 2);
-        m_graphics->BindShaderProgram(m_colorProgram);
         m_graphics->DrawTriangleStripArrays(0, 4);
     }
 
     static const size_t CIRCLE_SEGMENTS = 48;
+//    static const size_t CIRCLE_SEGMENTS = 320;
 
     void Renderer::DrawCirlce(float x, float y, float radius)
     {
@@ -252,12 +236,13 @@ namespace rob
             vertices[i3] = { x - sn, y + cs, m_color.r, m_color.g, m_color.b, m_color.a };
         };
 
+        m_graphics->SetUniform(m_globals.position, vec4f(x, y, 0.0f, 1.0f));
+
         m_graphics->BindVertexBuffer(m_vertexBuffer);
         VertexBuffer *buffer = m_graphics->GetVertexBuffer(m_vertexBuffer);
         buffer->Write(0, sizeof(vertices), vertices);
         m_graphics->SetAttrib(0, 2, sizeof(ColorVertex), 0);
         m_graphics->SetAttrib(1, 4, sizeof(ColorVertex), sizeof(float) * 2);
-        m_graphics->BindShaderProgram(m_colorProgram);
         m_graphics->DrawLineLoopArrays(0, vertexCount);
     }
 
@@ -289,12 +274,13 @@ namespace rob
         };
         vertices[2 + segments - 1] = vertices[1];
 
+        m_graphics->SetUniform(m_globals.position, vec4f(x, y, 0.0f, 1.0f));
+
         m_graphics->BindVertexBuffer(m_vertexBuffer);
         VertexBuffer *buffer = m_graphics->GetVertexBuffer(m_vertexBuffer);
         buffer->Write(0, sizeof(vertices), vertices);
         m_graphics->SetAttrib(0, 2, sizeof(ColorVertex), 0);
         m_graphics->SetAttrib(1, 4, sizeof(ColorVertex), sizeof(float) * 2);
-        m_graphics->BindShaderProgram(m_colorProgram);
         m_graphics->DrawTriangleFanArrays(0, vertexCount);
     }
 
@@ -326,12 +312,13 @@ namespace rob
         };
         vertices[2 + segments - 1] = vertices[1];
 
+        m_graphics->SetUniform(m_globals.position, vec4f(x, y, 0.0f, 1.0f));
+
         m_graphics->BindVertexBuffer(m_vertexBuffer);
         VertexBuffer *buffer = m_graphics->GetVertexBuffer(m_vertexBuffer);
         buffer->Write(0, sizeof(vertices), vertices);
         m_graphics->SetAttrib(0, 2, sizeof(ColorVertex), 0);
         m_graphics->SetAttrib(1, 4, sizeof(ColorVertex), sizeof(float) * 2);
-        m_graphics->BindShaderProgram(m_colorProgram);
         m_graphics->DrawTriangleFanArrays(0, vertexCount);
     }
 

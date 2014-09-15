@@ -81,6 +81,9 @@ namespace rob
     void Graphics::Clear()
     { ::glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); }
 
+    void Graphics::SetClearColor(float r, float g, float b)
+    { ::glClearColor(r, g, b, 1.0f); }
+
 
     void Graphics::SetTexture(size_t unit, TextureHandle texture)
     {
@@ -195,6 +198,11 @@ namespace rob
         Uniform *uniform = GetUniform(u);
         ROB_ASSERT(uniform->m_type == UniformType::Int);
         uniform->SetValue(value);
+        if (m_bind.shaderProgram != InvalidHandle)
+        {
+            ShaderProgram *p = m_shaderPrograms.Get(m_bind.shaderProgram);
+            p->UpdateUniforms(this);
+        }
     }
 
     void Graphics::SetUniform(UniformHandle u, float value)
@@ -202,6 +210,11 @@ namespace rob
         Uniform *uniform = GetUniform(u);
         ROB_ASSERT(uniform->m_type == UniformType::Float);
         uniform->SetValue(value);
+        if (m_bind.shaderProgram != InvalidHandle)
+        {
+            ShaderProgram *p = m_shaderPrograms.Get(m_bind.shaderProgram);
+            p->UpdateUniforms(this);
+        }
     }
 
     void Graphics::SetUniform(UniformHandle u, const vec4f &value)
@@ -209,6 +222,11 @@ namespace rob
         Uniform *uniform = GetUniform(u);
         ROB_ASSERT(uniform->m_type == UniformType::Vec4);
         uniform->SetValue(value);
+        if (m_bind.shaderProgram != InvalidHandle)
+        {
+            ShaderProgram *p = m_shaderPrograms.Get(m_bind.shaderProgram);
+            p->UpdateUniforms(this);
+        }
     }
 
     void Graphics::SetUniform(UniformHandle u, const mat4f &value)
@@ -216,6 +234,11 @@ namespace rob
         Uniform *uniform = GetUniform(u);
         ROB_ASSERT(uniform->m_type == UniformType::Mat4);
         uniform->SetValue(value);
+        if (m_bind.shaderProgram != InvalidHandle)
+        {
+            ShaderProgram *p = m_shaderPrograms.Get(m_bind.shaderProgram);
+            p->UpdateUniforms(this);
+        }
     }
 
 

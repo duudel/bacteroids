@@ -26,7 +26,7 @@ namespace bact
     public:
         Bacter()
             : m_position(0.0f, 0.0f, 0.0f, 1.0f)
-            , m_radius(100.0f)
+            , m_radius(55.0f)
         { }
 
         void SetPosition(float x, float y)
@@ -39,8 +39,9 @@ namespace bact
 
         void Render(Renderer *renderer)
         {
-            renderer->SetColor(Color(0.8f, 1.0f, 0.5f));
-            renderer->DrawFilledCirlce(m_position.x, m_position.y, m_radius, Color(0.6f, 0.6f, 0.2f, 0.2f));
+            renderer->SetColor(Color(1.0f, 1.2f, 0.6f));
+//            renderer->DrawFilledCirlce(m_position.x, m_position.y, m_radius);
+            renderer->DrawFilledCirlce(m_position.x, m_position.y, m_radius, Color(0.0f, 0.5f, 0.5f, 1.0f));
         }
 
     private:
@@ -60,8 +61,12 @@ namespace bact
             m_time.Restart(m_ticker);
             m_random.Seed(m_ticker.GetTicks());
 
+            m_renderer->GetGraphics()->SetClearColor(0.05f, 0.13f, 0.15f);
+
             m_bacterShader = m_renderer->CompileShaderProgram(g_bacterShader.m_vertexShader,
                                                               g_bacterShader.m_fragmentShader);
+
+            m_bacter2.SetPosition(58.0f, 0.0f);
         }
 
         ~BacteroidsState()
@@ -95,7 +100,10 @@ namespace bact
         void Render(const GameTime &gameTime) override
         {
             m_renderer->SetTime(m_time.GetTime());
+            m_renderer->BindShader(m_bacterShader);
             m_bacter.Render(m_renderer);
+            m_renderer->BindShader(m_bacterShader);
+            m_bacter2.Render(m_renderer);
         }
     private:
         MasterCache *m_cache;
@@ -108,6 +116,7 @@ namespace bact
         ShaderProgramHandle m_bacterShader;
 
         Bacter m_bacter;
+        Bacter m_bacter2;
     };
 
     bool Bacteroids::Initialize()

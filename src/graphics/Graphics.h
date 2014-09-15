@@ -58,6 +58,7 @@ namespace rob
         void GetViewport(int *x, int *y, int *w, int *h) const;
 
         void Clear();
+        void SetClearColor(float r, float g, float b);
 
         void SetTexture(size_t unit, TextureHandle texture);
         void SetVertexBuffer(VertexBufferHandle buffer);
