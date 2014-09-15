@@ -38,13 +38,9 @@ namespace rob
         m_cache = m_staticAlloc.new_object<MasterCache>(m_graphics, m_audio, m_staticAlloc);
         m_renderer = m_staticAlloc.new_object<Renderer>(m_graphics, m_staticAlloc);
 
-        int w, h;
-        m_window->GetSize(&w, &h);
-        m_graphics->SetViewport(0, 0, w, h);
-
-        log::Info("Static memory used: ", m_staticAlloc.GetAllocatedSize(), " bytes");
-
         const size_t freeMemory = STATIC_MEMORY_SIZE - m_staticAlloc.GetAllocatedSize();
+        log::Info("Static memory used: ", m_staticAlloc.GetAllocatedSize(), " B from ",
+                  STATIC_MEMORY_SIZE, " B total", " (", freeMemory ," B free)");
         m_stateAlloc.SetMemory(m_staticAlloc.Allocate(freeMemory), freeMemory);
     }
 
@@ -78,6 +74,11 @@ namespace rob
             log::Error("Game state not initialized by Game::Initialize(), aborting...");
             return false;
         }
+
+        int w, h;
+        m_window->GetSize(&w, &h);
+        OnResize(w, h);
+
         return true;
     }
 

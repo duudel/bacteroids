@@ -14,6 +14,9 @@ namespace rob
     {
     public:
         Window();
+        Window(const Window&) = delete;
+        Window& operator = (const Window&) = delete;
+
         ~Window();
 
         bool HandleEvents(Game *game);
@@ -23,7 +26,6 @@ namespace rob
         void GetSize(int *w, int *h) const;
 
     private:
-        char c;
         // Reserve enough space for SDL window data
         static const unsigned SIZE_OF_WIN_DATA_BUFFER = 6 * sizeof(void*);
         AlignedStorage<SIZE_OF_WIN_DATA_BUFFER, sizeof(void*)> m_windowDataBuffer;

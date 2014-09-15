@@ -15,10 +15,14 @@ namespace rob
     {
     public:
         Pool()
-            : m_start(nullptr)
+            : m_objects()
+            , m_start(nullptr)
             , m_end(nullptr)
             , m_allocations(0)
         { }
+
+        Pool(const Pool&) = delete;
+        Pool& operator = (const Pool&) = delete;
 
         ~Pool()
         { ROB_ASSERT(m_allocations == 0); }

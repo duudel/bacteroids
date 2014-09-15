@@ -12,6 +12,8 @@ namespace rob
     {
     public:
         explicit SoundCache(AudioSystem *audio);
+        SoundCache(const SoundCache&) = delete;
+        SoundCache& operator = (const SoundCache&) = delete;
         ~SoundCache();
 
         using ResourceCache::Get;

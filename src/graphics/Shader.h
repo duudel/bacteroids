@@ -12,7 +12,7 @@ namespace rob
     {
     public:
         explicit Shader(GLenum shaderType);
-        ~Shader();
+        virtual ~Shader();
 
         GLuint GetObject() const;
 

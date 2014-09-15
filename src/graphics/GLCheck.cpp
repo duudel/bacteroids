@@ -17,7 +17,7 @@ namespace rob
         default:
             return "UNKNOWN_ERROR";
         }
-    };
+    }
 
     void GLCheck(const char * const file, const int line)
     {

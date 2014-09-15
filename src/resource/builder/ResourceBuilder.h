@@ -12,6 +12,8 @@ namespace rob
     {
     public:
         ResourceBuilder();
+        ResourceBuilder(const ResourceBuilder&) = delete;
+        ResourceBuilder& operator = (const ResourceBuilder&) = delete;
         virtual ~ResourceBuilder() { }
 
         bool TryBuild(const std::string &filename, const std::string &destFilename);

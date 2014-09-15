@@ -9,6 +9,7 @@ namespace rob
     MasterCache::MasterCache(Graphics *graphics, AudioSystem *audio, LinearAllocator &alloc)
         : m_textures(graphics)
         , m_sounds(audio)
+        , m_resources()
     {
         Scan("data/");
     }

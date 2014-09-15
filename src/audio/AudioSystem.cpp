@@ -16,6 +16,7 @@ namespace rob
     };
 
     AudioSystem::AudioSystem(LinearAllocator &alloc)
+        : m_sounds()
     {
         if (::Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) != 0)
         {
@@ -40,7 +41,7 @@ namespace rob
         Sound *sound = m_sounds.Obtain();
 
         sound->chunk = ::Mix_LoadWAV(filename);
-        if (sound->chunk == 0)
+        if (sound->chunk == nullptr)
         {
             log::Error("Could not load sound ", filename, ": ", ::Mix_GetError());
             m_sounds.Return(sound);

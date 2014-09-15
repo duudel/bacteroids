@@ -15,7 +15,7 @@ namespace rob
     struct __attribute__((aligned(16))) Matrix4
     {
         typedef simd::Simd<T, S> simd_;
-        typedef typename simd::Simd<T, S>::v4 v4;
+        typedef typename simd::Simd<T, S>::v4 v4 __attribute__((aligned(16)));
 
         typedef Vector4<T, S> vec4;
 
@@ -174,7 +174,11 @@ namespace rob
             v4 temp2 = simd_::Dot(mat.row2, vec.v);
             v4 temp3 = simd_::Dot(mat.row3, vec.v);
 
-    #ifdef DE_USE_SIMD
+    // NOTE: this is for testing both simd optimized and non-simd versions of the method.
+    // Non-simd version is faster to do without transpose, but simd is faster with it.
+    // This could possibly be abstracted away by introducing a new method:
+    //   simd_::MoveMasked(dst, src1, mask2, src2, mask2), or similar.
+    #ifdef ROB_USE_SIMD
         if (S)
         {
             r.x = temp0[0];

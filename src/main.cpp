@@ -5,6 +5,8 @@
 
 #include "resource/Builder/MasterBuilder.h"
 
+int main(int argc, char *argv[]) __attribute__((force_align_arg_pointer));
+
 int main(int argc, char *argv[])
 {
     rob::MasterBuilder builder;

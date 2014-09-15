@@ -51,7 +51,7 @@ namespace rob
     }
 
     void ShaderProgram::GetLinkInfo(char *buffer, size_t bufferSize) const
-    { ::glGetProgramInfoLog(m_object, bufferSize, 0, buffer); }
+    { ::glGetProgramInfoLog(m_object, bufferSize, nullptr, buffer); }
 
     void ShaderProgram::AddUniform(UniformHandle handle, const char *name)
     {

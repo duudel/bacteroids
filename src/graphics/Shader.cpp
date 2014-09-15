@@ -40,7 +40,7 @@ namespace rob
     }
 
     void Shader::GetCompileInfo(char *buffer, size_t bufferSize) const
-    { ::glGetShaderInfoLog(m_object, bufferSize, 0, buffer); }
+    { ::glGetShaderInfoLog(m_object, bufferSize, nullptr, buffer); }
 
 
     VertexShader::VertexShader()

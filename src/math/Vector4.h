@@ -12,6 +12,7 @@ namespace rob
     {
         typedef typename simd::Simd<T, S> simd_;
         typedef typename simd::Simd<T, S>::v4 v4;
+
         union {
             v4 v;
             struct { T x, y, z, w; };

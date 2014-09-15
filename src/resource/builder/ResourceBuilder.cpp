@@ -10,7 +10,9 @@ namespace rob
     ResourceBuilder* ResourceBuilder::m_tail = nullptr;
 
     ResourceBuilder::ResourceBuilder()
-        : m_next(nullptr)
+        : m_extensions()
+        , m_newExtension()
+        , m_next(nullptr)
     {
         if (m_head)
         {

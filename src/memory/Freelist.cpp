@@ -12,7 +12,7 @@ namespace rob
     void* Freelist::Obtain()
     {
         if (m_next == nullptr)
-            return 0;
+            return nullptr;
 
         Freelist *head = m_next;
         m_next = head->m_next;

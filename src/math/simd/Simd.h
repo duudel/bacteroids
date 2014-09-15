@@ -2,10 +2,10 @@
 #ifndef H_ROB_MATH_SIMD_SIMD_H
 #define H_ROB_MATH_SIMD_SIMD_H
 
-//#ifdef __SSE2__
-//#define ROB_USE_SIMD            1
-//#define ROB_PLATFORM_SIMD_SSE2  1
-//#endif // __SSE2__
+#ifdef __SSE2__
+#define ROB_USE_SIMD            1
+#define ROB_PLATFORM_SIMD_SSE2  1
+#endif // __SSE2__
 
 #define ROB_SIMD_NON_NATIVE  inline
 #define ROB_SIMD_NATIVE      inline

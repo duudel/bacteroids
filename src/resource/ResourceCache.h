@@ -13,6 +13,10 @@ namespace rob
     class ResourceCache
     {
     public:
+        ResourceCache() : m_resources() { }
+        ResourceCache(const ResourceCache&) = delete;
+        ResourceCache& operator = (const ResourceCache&) = delete;
+
         T Get(ResourceID id, const char * const filename)
         {
             auto it = m_resources.find(id);

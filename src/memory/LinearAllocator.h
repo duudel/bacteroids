@@ -14,6 +14,7 @@ namespace rob
     public:
         LinearAllocator(const LinearAllocator &) = delete;
         LinearAllocator(LinearAllocator &) = delete;
+        LinearAllocator& operator = (LinearAllocator &) = delete;
 
         LinearAllocator();
         LinearAllocator(size_t size);

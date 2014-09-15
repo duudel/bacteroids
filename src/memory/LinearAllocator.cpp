@@ -46,7 +46,7 @@ namespace rob
     {
         char *ptr = m_head;
         if (ptr + size > m_end)
-            return 0;
+            return nullptr;
         m_head = ptr + size;
         return ptr;
     }
@@ -55,7 +55,7 @@ namespace rob
     {
         char *ptr = ptr_align(m_head, alignment);
         if (ptr + size > m_end)
-            return 0;
+            return nullptr;
         m_head = ptr + size;
         return ptr;
     }

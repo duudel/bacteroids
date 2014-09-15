@@ -14,6 +14,8 @@ namespace rob
     {
     public:
         explicit TextureCache(Graphics *graphics);
+        TextureCache(const TextureCache&) = delete;
+        TextureCache& operator = (const TextureCache&) = delete;
         ~TextureCache();
 
         using ResourceCache::Get;

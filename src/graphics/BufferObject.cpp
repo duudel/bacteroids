@@ -11,6 +11,8 @@ namespace rob
     BufferObject::BufferObject(GLenum target)
         : m_object()
         , m_target(target)
+        , m_sizeBytes(0)
+        , m_dynamic(false)
     {
         ::glGenBuffers(1, &m_object);
         GL_CHECK;
@@ -32,7 +34,7 @@ namespace rob
     {
         m_sizeBytes = sizeBytes;
         m_dynamic = dynamic;
-        ::glBufferData(m_target, sizeBytes, 0,
+        ::glBufferData(m_target, sizeBytes, nullptr,
                        dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW);
         GL_CHECK;
     }

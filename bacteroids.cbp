@@ -29,7 +29,10 @@
 			</Target>
 		</Build>
 		<Compiler>
+			<Add option="-pedantic" />
+			<Add option="-Wzero-as-null-pointer-constant" />
 			<Add option="-std=c++11" />
+			<Add option="-Wextra" />
 			<Add option="-Wall" />
 			<Add option="-msse2" />
 		</Compiler>

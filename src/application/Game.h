@@ -20,6 +20,8 @@ namespace rob
     {
     public:
         Game();
+        Game(const Game&) = delete;
+        Game& operator = (const Game&) = delete;
         ~Game();
 
         virtual bool Initialize() { return true; }

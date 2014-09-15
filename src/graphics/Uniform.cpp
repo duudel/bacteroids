@@ -29,7 +29,7 @@ namespace rob
         case UniformType::Vec4: return Uniform_UploadVec4;
         case UniformType::Mat4: return Uniform_UploadMat4;
         }
-        return 0;
+        return nullptr;
     }
 
     void Uniform::SetValue(int value)

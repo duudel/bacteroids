@@ -19,6 +19,8 @@ namespace rob
     {
     public:
         Renderer(Graphics *graphics, LinearAllocator &alloc);
+        Renderer(const Renderer&) = delete;
+        Renderer& operator = (const Renderer&) = delete;
         ~Renderer();
 
         void GetScreenSize(int *screenW, int *screenH) const;
