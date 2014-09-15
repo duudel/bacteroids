@@ -26,7 +26,7 @@ namespace bact
     public:
         Bacter()
             : m_position(0.0f, 0.0f, 0.0f, 1.0f)
-            , m_radius(25.0f)
+            , m_radius(100.0f)
         { }
 
         void SetPosition(float x, float y)

@@ -45,11 +45,13 @@ namespace rob
         attribute vec2 a_position;
         attribute vec4 a_color;
         varying vec4 v_color;
+        varying float v_dist;
         void main()
         {
             vec2 pos = a_position;
             vec2 offset = vec2(0.0);
             float len = length(pos);
+            float dist = 0.0;
             if (len > 0.01)
             {
                 float t = u_time * 10;
@@ -58,17 +60,27 @@ namespace rob
                 float u = sin(-t*1.3 + a*7) * 3;
                 float r = (w + u)/65.0 * len;
                 offset = normalize(pos) * r;
+                dist = 1.0;
             }
             gl_Position = u_projection * vec4(pos + offset, 0.0, 1.0);
             v_color = a_color;
+            v_dist = dist;
         }
     );
 
     static const char * const g_colorFragmentShader = GLSL(
         varying vec4 v_color;
+        varying float v_dist;
         void main()
         {
-            gl_FragColor = v_color;
+//            float d = clamp(v_dist - 0.5, 0.0, 1.0);
+//            d = abs(d - 0.25) / 0.25;
+//            gl_FragColor = vec4(v_color.rgb, d);
+            float d = v_dist - 0.5;
+            d = abs(d - 0.25) / 0.25;
+            d = 1.0 - clamp(d - 0.2, 0.0, 1.0);
+            gl_FragColor = vec4(v_color.rgb, d*d);
+//            gl_FragColor = v_color;
         }
     );
 
