@@ -161,16 +161,16 @@ namespace bact
 
             SetViewport(m_screenVp);
             float aspect = m_screenVp.w / m_screenVp.h;
-            float h2 = 600.0f / 2.0f;
+            float h2 = m_screenVp.h;// / 2.0f;
             float w2 = h2 * aspect;
             renderer.SetProjection(Projection_Orthogonal_lh(0,
                                                             w2,
                                                             h2,
-                                                            -100.0f, -1, 1));
+                                                            0.0f, -1, 1));
 
-            renderer.SetColor(Color(1.05f, 1.13f, 1.15f));
+            renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
             renderer.BindFontShader();
-            renderer.DrawText(0, 0, "Heei!");
+            renderer.DrawText(0, 0, "Heei maailma! This is bacteroids");
         }
     private:
         Random m_random;

@@ -56,10 +56,13 @@ namespace rob
         uint16_t m_horiSpacing;
         uint16_t m_lineSpacing;
 
-        static const size_t MAX_GLYPHS = 512;
+        static const size_t MAX_GLYPHS = 256;
         Glyph       m_glyph[MAX_GLYPHS];
         uint32_t    m_characterToGlyph[MAX_GLYPHS];
         size_t m_glyphCount;
+
+        int16_t m_kerning[MAX_GLYPHS];
+
 
         static const size_t MAX_TEXTURE_PAGES = 4;
         TextureHandle m_textures[MAX_TEXTURE_PAGES];

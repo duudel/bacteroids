@@ -310,36 +310,37 @@ namespace rob
         m_graphics->DrawTriangleFanArrays(0, vertexCount);
     }
 
-    void Renderer::AddFontVertex(FontVertex *&vertex, const Glyph &glyph,
-                                 float &cursorX, float &cursorY,
-                                 const size_t textureW, const size_t textureH)
+    void Renderer::AddFontVertex(FontVertex *&vertex, const float x, const float y, const float u, const float v)
+    {
+        FontVertex &vert = *vertex++;
+        vert.x = x; vert.y = y; vert.u = u; vert.v = v;
+        vert.r = m_color.r; vert.g = m_color.g; vert.b = m_color.b; vert.a = m_color.a;
+    }
+
+    void Renderer::AddFontQuad(FontVertex *&vertex, const Glyph &glyph,
+                               float &cursorX, float &cursorY,
+                               const size_t textureW, const size_t textureH)
     {
         const float gW = float(glyph.m_width);
-        const float gH = -float(glyph.m_height);
+        const float gH = float(glyph.m_height);
 
         const float uvW = gW / textureW;
-        const float uvH = gH / textureH;
+        const float uvH = -gH / textureH;
 
         const float uvX = float(glyph.m_x) / textureW;
         const float uvY = -float(glyph.m_y) / textureH;
 
         const float cX = cursorX + glyph.m_offsetX;
-        const float cY = cursorY - glyph.m_offsetY;
+        const float cY = cursorY + glyph.m_offsetY;
 
-        *vertex++ = { cX, cY, uvX, uvY,
-                        m_color.r, m_color.g, m_color.b, m_color.a };
-        *vertex++ = { cX + gW, cY, uvX + uvW, uvY,
-                        m_color.r, m_color.g, m_color.b, m_color.a };
-        *vertex++ = { cX, cY + gH, uvX, uvY + uvH,
-                        m_color.r, m_color.g, m_color.b, m_color.a };
-        *vertex++ = { cX, cY + gH, uvX, uvY + uvH,
-                        m_color.r, m_color.g, m_color.b, m_color.a };
-        *vertex++ = { cX + gW, cY, uvX + uvW, uvY,
-                        m_color.r, m_color.g, m_color.b, m_color.a };
-        *vertex++ = { cX + gW, cY + gH, uvX + uvW, uvY + uvH,
-                        m_color.r, m_color.g, m_color.b, m_color.a };
+        AddFontVertex(vertex, cX,       cY,         uvX,        uvY);
+        AddFontVertex(vertex, cX + gW,  cY,         uvX + uvW,  uvY);
+        AddFontVertex(vertex, cX,       cY + gH,    uvX,        uvY + uvH);
+        AddFontVertex(vertex, cX,       cY + gH,    uvX,        uvY + uvH);
+        AddFontVertex(vertex, cX + gW,  cY,         uvX + uvW,  uvY);
+        AddFontVertex(vertex, cX + gW,  cY + gH,    uvX + uvW,  uvY + uvH);
 
-        cursorX += glyph.m_advance;
+        cursorX += glyph.m_advance; // - glyph.m_offsetX;
     }
 
     void Renderer::DrawText(float x, float y, const char *text)
@@ -368,14 +369,14 @@ namespace rob
             const size_t textureW = texture->GetWidth();
             const size_t textureH = texture->GetHeight();
 
-            AddFontVertex(vertex, glyph, cursorX, cursorY, textureW, textureH);
+            AddFontQuad(vertex, glyph, cursorX, cursorY, textureW, textureH);
             for (; (c = *text); text++)
             {
                 const Glyph &glyph = m_font.GetGlyph(c);
                 if (glyph.m_textureIdx != texturePage)
                     break;
 
-                AddFontVertex(vertex, glyph, cursorX, cursorY, textureW, textureH);
+                AddFontQuad(vertex, glyph, cursorX, cursorY, textureW, textureH);
             }
 
             const size_t vertexCount = vertex - verticesStart;
