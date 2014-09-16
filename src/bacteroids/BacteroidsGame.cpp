@@ -31,8 +31,8 @@ namespace bact
         int x, y, w, h;
     };
 
-    const float PLAY_AREA_W         = 800.0f;
-    const float PLAY_AREA_H         = 600.0f;
+    const float PLAY_AREA_W         = 20.0f;
+    const float PLAY_AREA_H         = 15.0f;
     const float PLAY_AREA_LEFT      = -PLAY_AREA_W / 2.0f;
     const float PLAY_AREA_RIGHT     = -PLAY_AREA_LEFT;
     const float PLAY_AREA_BOTTOM    = -PLAY_AREA_H / 2.0f;
@@ -102,7 +102,7 @@ namespace bact
 
         void SpawnBacter()
         {
-            const float DIST = 300.0f;
+            const float DIST = 8.0f;
 
             Bacter *bacter = m_bacters.Obtain();
             float r = m_random.GetReal(0.0f, 2.0f*PI_f);
@@ -127,7 +127,7 @@ namespace bact
                     if (m_bacters.size < MAX_BACTERS)
                     {
                         Bacter *b = m_bacters.Obtain();
-                        m_bacters[i]->Clone(b);
+                        m_bacters[i]->Clone(b, m_random);
                     }
                 }
             }
@@ -140,9 +140,14 @@ namespace bact
 
         void Render() override
         {
-            SetViewport(m_playAreaVp);
-
             Renderer &renderer = GetRenderer();
+
+            SetViewport(m_playAreaVp);
+            renderer.SetProjection(Projection_Orthogonal_lh(PLAY_AREA_LEFT,
+                                                            PLAY_AREA_RIGHT,
+                                                            PLAY_AREA_BOTTOM,
+                                                            PLAY_AREA_TOP, -1, 1));
+
             renderer.BindColorShader();
             renderer.SetColor(Color(0.05f, 0.13f, 0.15f));
             renderer.DrawFilledRectangle(PLAY_AREA_LEFT, PLAY_AREA_BOTTOM, PLAY_AREA_RIGHT, PLAY_AREA_TOP);
@@ -154,9 +159,18 @@ namespace bact
                 m_bacters[i]->Render(&renderer, m_uniforms.anim);
             }
 
+            SetViewport(m_screenVp);
+            float aspect = m_screenVp.w / m_screenVp.h;
+            float h2 = 600.0f / 2.0f;
+            float w2 = h2 * aspect;
+            renderer.SetProjection(Projection_Orthogonal_lh(0,
+                                                            w2,
+                                                            h2,
+                                                            -100.0f, -1, 1));
+
             renderer.SetColor(Color(1.05f, 1.13f, 1.15f));
             renderer.BindFontShader();
-            renderer.DrawText(40, 40, "Heei!");
+            renderer.DrawText(0, 0, "Heei!");
         }
     private:
         Random m_random;

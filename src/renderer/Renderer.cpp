@@ -369,7 +369,7 @@ namespace rob
             const size_t textureH = texture->GetHeight();
 
             AddFontVertex(vertex, glyph, cursorX, cursorY, textureW, textureH);
-            while (char c = *text++)
+            for (; (c = *text); text++)
             {
                 const Glyph &glyph = m_font.GetGlyph(c);
                 if (glyph.m_textureIdx != texturePage)
