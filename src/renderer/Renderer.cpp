@@ -340,7 +340,7 @@ namespace rob
         AddFontVertex(vertex, cX + gW,  cY,         uvX + uvW,  uvY);
         AddFontVertex(vertex, cX + gW,  cY + gH,    uvX + uvW,  uvY + uvH);
 
-        cursorX += glyph.m_advance; // - glyph.m_offsetX;
+        cursorX += glyph.m_advance;
     }
 
     void Renderer::DrawText(float x, float y, const char *text)

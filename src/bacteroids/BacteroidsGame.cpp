@@ -160,13 +160,9 @@ namespace bact
             }
 
             SetViewport(m_screenVp);
-            float aspect = m_screenVp.w / m_screenVp.h;
-            float h2 = m_screenVp.h;// / 2.0f;
-            float w2 = h2 * aspect;
-            renderer.SetProjection(Projection_Orthogonal_lh(0,
-                                                            w2,
-                                                            h2,
-                                                            0.0f, -1, 1));
+            const float w = m_screenVp.w;
+            const float h = m_screenVp.h;
+            renderer.SetProjection(Projection_Orthogonal_lh(0, w, h, 0.0f, -1, 1));
 
             renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
             renderer.BindFontShader();
