@@ -57,7 +57,7 @@ namespace rob
 
     const Glyph& Font::GetGlyph(uint32_t character) const
     {
-        ROB_ASSERT(character < MAX_GLYPHS)
+        ROB_ASSERT(character < MAX_GLYPHS);
         const uint32_t index = m_characterToGlyph[character];
         return m_glyph[index];
     }

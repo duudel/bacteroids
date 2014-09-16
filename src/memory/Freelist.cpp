@@ -31,13 +31,14 @@ namespace rob
         char *it = static_cast<char*>(start);
         const char * const end = it + size;
 
+        const size_t alignedSize = align(elementSize, elementAlign);
+
         it = ptr_align(it, elementAlign);
         char *s = it;
-        while (it + elementSize < end)
+        while (it + elementSize <= end)
         {
             Return(static_cast<void*>(it));
-            it += elementSize;
-            it = ptr_align(it, elementAlign);
+            it += alignedSize;
         }
         return s;
     }

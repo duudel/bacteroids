@@ -2,7 +2,7 @@
 #ifndef H_ROB_ASSERT_H
 #define H_ROB_ASSERT_H
 
-#ifdef _DEBUG
+#if defined(DEBUG_)
 #define ROB_ASSERT(x) if (!(x)) rob::Assert(#x, __FILE__, __LINE__)
 #else
 #define ROB_ASSERT(x)
