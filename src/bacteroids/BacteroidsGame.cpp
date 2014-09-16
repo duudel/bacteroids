@@ -96,25 +96,26 @@ namespace bact
     class BacteroidsState : public GameState
     {
     public:
-        BacteroidsState(MasterCache *cache, Renderer *renderer)
-            : m_cache(cache)
-            , m_renderer(renderer)
+        BacteroidsState()
         {
             m_ticker.Init();
             m_time.Restart(m_ticker);
             m_random.Seed(m_ticker.GetTicks());
+        }
 
-            m_renderer->GetGraphics()->SetClearColor(0.05f, 0.13f, 0.15f);
-
-            m_bacterShader = m_renderer->CompileShaderProgram(g_bacterShader.m_vertexShader,
+        bool Initialize() override
+        {
+            GetRenderer().GetGraphics()->SetClearColor(0.05f, 0.13f, 0.15f);
+            m_bacterShader = GetRenderer().CompileShaderProgram(g_bacterShader.m_vertexShader,
                                                               g_bacterShader.m_fragmentShader);
 
             m_bacter2.SetPosition(58.0f, 0.0f);
+            return true;
         }
 
         ~BacteroidsState()
         {
-            m_renderer->GetGraphics()->DestroyShaderProgram(m_bacterShader);
+            GetRenderer().GetGraphics()->DestroyShaderProgram(m_bacterShader);
         }
 
         void OnResize(int w, int h) override
@@ -123,8 +124,7 @@ namespace bact
             int x1 = w / 2;
             int y0 = -h / 2;
             int y1 = h / 2;
-
-            m_renderer->SetProjection(Projection_Orthogonal_lh(x0, x1, y0, y1, -1, 1));
+            GetRenderer().SetProjection(Projection_Orthogonal_lh(x0, x1, y0, y1, -1, 1));
         }
 
         void OnKeyPress(Key key, uint32_t mods) override
@@ -142,16 +142,14 @@ namespace bact
 
         void Render(const GameTime &gameTime) override
         {
-            m_renderer->SetTime(m_time.GetTime());
-            m_renderer->BindShader(m_bacterShader);
-            m_bacter.Render(m_renderer);
-            m_renderer->BindShader(m_bacterShader);
-            m_bacter2.Render(m_renderer);
+            Renderer &renderer = GetRenderer();
+            renderer.SetTime(m_time.GetTime());
+            renderer.BindShader(m_bacterShader);
+            m_bacter.Render(&renderer);
+            renderer.BindShader(m_bacterShader);
+            m_bacter2.Render(&renderer);
         }
     private:
-        MasterCache *m_cache;
-        Renderer *m_renderer;
-
         MicroTicker m_ticker;
         VirtualTime m_time;
         Random m_random;
@@ -166,7 +164,7 @@ namespace bact
 
     bool Bacteroids::Initialize()
     {
-        ChangeState<BacteroidsState>(m_cache, m_renderer);
+        ChangeState<BacteroidsState>();
         return true;
     }
 
