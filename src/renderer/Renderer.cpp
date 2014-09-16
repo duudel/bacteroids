@@ -4,6 +4,7 @@
 #include "../graphics/Shader.h"
 #include "../graphics/ShaderProgram.h"
 #include "../graphics/VertexBuffer.h"
+#include "../graphics/Texture.h"
 #include "Font.h"
 
 #include "../math/Math.h"
@@ -117,15 +118,18 @@ namespace rob
         return p;
     }
 
+    static const size_t RENDERER_MEMORY = 4 * 1024;
     static const size_t MAX_VERTEX_BUFFER_SIZE = 4 * 1024 * 1024;
 
     Renderer::Renderer(Graphics *graphics, LinearAllocator &alloc)
-        : m_vb_alloc(alloc.Allocate(MAX_VERTEX_BUFFER_SIZE), MAX_VERTEX_BUFFER_SIZE)
+        : m_alloc(alloc.Allocate(RENDERER_MEMORY), RENDERER_MEMORY)
+        , m_vb_alloc(alloc.Allocate(MAX_VERTEX_BUFFER_SIZE), MAX_VERTEX_BUFFER_SIZE)
         , m_graphics(graphics)
         , m_vertexBuffer(InvalidHandle)
         , m_shaderProgram(InvalidHandle)
         , m_colorProgram(InvalidHandle)
         , m_color()
+        , m_font(nullptr)
     {
         m_globals.projection = m_graphics->CreateUniform("u_projection", UniformType::Mat4);
         m_globals.position = m_graphics->CreateUniform("u_position", UniformType::Vec4);
@@ -136,6 +140,8 @@ namespace rob
         m_shaderProgram = CompileShaderProgram(g_vertexShader, g_fragmentShader);
         m_colorProgram = CompileShaderProgram(g_colorVertexShader, g_colorFragmentShader);
 
+        m_font = m_alloc.new_object<Font>();
+
         m_vertexBuffer = m_graphics->CreateVertexBuffer();
         m_graphics->BindVertexBuffer(m_vertexBuffer);
         VertexBuffer *vb = m_graphics->GetVertexBuffer(m_vertexBuffer);
@@ -144,6 +150,7 @@ namespace rob
 
     Renderer::~Renderer()
     {
+        m_alloc.del_object(m_font);
         m_graphics->DestroyVertexBuffer(m_vertexBuffer);
         m_graphics->DestroyShaderProgram(m_shaderProgram);
         m_graphics->DestroyShaderProgram(m_colorProgram);
@@ -337,17 +344,77 @@ namespace rob
 
         const size_t maxVertexCount = std::strlen(text) * 6;
         FontVertex * const verticesStart = m_vb_alloc.AllocateArray<FontVertex>(maxVertexCount);
+        float cursorX = x;
+        float cursorY = y;
         while (*text)
         {
-            size_t vertexCount = 0;
             FontVertex *vertex = verticesStart;
-            for (char c = *text; *text; c = *text++, vertex++)
+
+            char c = *text;
+            const Glyph &glyph = m_font->GetGlyph(c);
+
+            uint16_t texturePage = glyph.m_textureIdx;
+            const TextureHandle textureHandle = m_font->GetTexture(texturePage);
+            const Texture *texture = m_graphics->GetTexture(textureHandle);
+
+            const size_t textureW = texture->GetWidth();
+            const size_t textureH = texture->GetHeight();
+            const float uvW = float(glyph.m_width) / textureW;
+            const float uvH = float(glyph.m_height) / textureH;
+
+            const float uvX = glyph.m_x;
+            const float uvY = glyph.m_y;
+
+            const float cX = cursorX + glyph.m_offsetX;
+            const float cY = cursorY + glyph.m_offsetY;
+
+            *vertex++ = { cX, cY, uvX, uvY,
+                            m_color.r, m_color.g, m_color.b, m_color.a };
+            *vertex++ = { cX + glyph.m_width, cY, uvX + uvW, uvY,
+                            m_color.r, m_color.g, m_color.b, m_color.a };
+            *vertex++ = { cX, cY + glyph.m_height, uvX, uvY + uvH,
+                            m_color.r, m_color.g, m_color.b, m_color.a };
+            *vertex++ = { cX, cY + glyph.m_height, uvX, uvY + uvH,
+                            m_color.r, m_color.g, m_color.b, m_color.a };
+            *vertex++ = { cX + glyph.m_width, cY, uvX + uvW, uvY,
+                            m_color.r, m_color.g, m_color.b, m_color.a };
+            *vertex++ = { cX + glyph.m_width, cY + glyph.m_height, uvX + uvW, uvY + uvH,
+                            m_color.r, m_color.g, m_color.b, m_color.a };
+
+            cursorX += glyph.m_advance;
+
+            for (char c = *text; *text; c = *text++)
             {
-//                const Glyph &glyph = m_font->GetGlyph(c);
+                const Glyph &glyph = m_font->GetGlyph(c);
+                if (glyph.m_textureIdx != texturePage)
+                    break;
+
+                const float uvX = glyph.m_x;
+                const float uvY = glyph.m_y;
+
+                const float cX = cursorX + glyph.m_offsetX;
+                const float cY = cursorY + glyph.m_offsetY;
+
+                *vertex++ = { cX, cY, uvX, uvY,
+                                m_color.r, m_color.g, m_color.b, m_color.a };
+                *vertex++ = { cX + glyph.m_width, cY, uvX + uvW, uvY,
+                                m_color.r, m_color.g, m_color.b, m_color.a };
+                *vertex++ = { cX, cY + glyph.m_height, uvX, uvY + uvH,
+                                m_color.r, m_color.g, m_color.b, m_color.a };
+                *vertex++ = { cX, cY + glyph.m_height, uvX, uvY + uvH,
+                                m_color.r, m_color.g, m_color.b, m_color.a };
+                *vertex++ = { cX + glyph.m_width, cY, uvX + uvW, uvY,
+                                m_color.r, m_color.g, m_color.b, m_color.a };
+                *vertex++ = { cX + glyph.m_width, cY + glyph.m_height, uvX + uvW, uvY + uvH,
+                                m_color.r, m_color.g, m_color.b, m_color.a };
+
+                cursorX += glyph.m_advance;
             }
 
+            const size_t vertexCount = vertex - verticesStart;
             buffer->Write(0, vertexCount * sizeof(FontVertex), verticesStart);
 
+            m_graphics->BindTexture(0, textureHandle);
             m_graphics->SetAttrib(0, 4, sizeof(FontVertex), 0);
             m_graphics->SetAttrib(1, 4, sizeof(FontVertex), sizeof(float) * 4);
             m_graphics->DrawTriangleArrays(0, vertexCount);

@@ -29,9 +29,14 @@ namespace rob
 
         void SetBase(uint16_t base);
         uint16_t GetBase() const;
+
         void SetHeight(int16_t ascender, int16_t descender);
         int16_t GetAscender() const;
         int16_t GetDescender() const;
+
+        void SetHorizontalSpacing(uint16_t spacing);
+        uint16_t GetHorizontalSpacing() const;
+
         void SetLineSpacing(uint16_t spacing);
         uint16_t GetLineSpacing() const;
 
@@ -46,6 +51,7 @@ namespace rob
         uint16_t m_base;
         int16_t m_ascender;
         int16_t m_descender;
+        uint16_t m_horiSpacing;
         uint16_t m_lineSpacing;
 
         static const size_t MAX_GLYPHS = 512;

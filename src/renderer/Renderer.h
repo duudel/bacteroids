@@ -14,6 +14,7 @@ namespace rob
 
     class Graphics;
     class MasterCache;
+    class Font;
 
     struct GlobalUniforms
     {
@@ -52,6 +53,7 @@ namespace rob
         void DrawText(float x, float y, const char *text);
 
     private:
+        LinearAllocator m_alloc;
         LinearAllocator m_vb_alloc;
         Graphics *m_graphics;
 
@@ -62,6 +64,7 @@ namespace rob
         ShaderProgramHandle     m_colorProgram;
 
         Color m_color;
+        Font *m_font;
     };
 
 } // rob
