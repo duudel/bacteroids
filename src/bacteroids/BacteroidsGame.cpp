@@ -50,6 +50,49 @@ namespace bact
         float m_radius;
     };
 
+    static const size_t MAX_BACTERS = 1000;
+
+    struct BacterArray
+    {
+        size_t size;
+
+        void Init(LinearAllocator &alloc, size_t maxBacters)
+        {
+            size = 0;
+
+            size_t arrayMemory = MAX_BACTERS * sizeof(Bacter*);
+            m_bacters = (Bacter**)alloc.Allocate(arrayMemory, alignof(Bacter*));
+
+            size_t poolMemory = MAX_BACTERS * sizeof(Bacter);
+            m_bacterPool.SetMemory(alloc.Allocate(poolMemory), poolMemory);
+        }
+
+        Bacter *Obtain()
+        {
+            ROB_ASSERT(size < MAX_BACTERS);
+            m_bacters[size] = m_bacterPool.Obtain();
+            return m_bacters[size++];
+        }
+
+        void Remove(size_t i)
+        {
+            ROB_ASSERT(i < size); // means also "size > 0"
+            m_bacterPool.Return(m_bacters[i]);
+            if (--size > 0)
+                m_bacters[i] = m_bacters[size];
+        }
+
+        Bacter *operator[] (size_t i)
+        {
+            ROB_ASSERT(i < size);
+            return m_bacters[i];
+        }
+
+    private:
+        Bacter **m_bacters;
+        Pool<Bacter> m_bacterPool;
+    };
+
     class BacteroidsState : public GameState
     {
     public:
@@ -117,6 +160,8 @@ namespace bact
 
         Bacter m_bacter;
         Bacter m_bacter2;
+
+        BacterArray m_bacters;
     };
 
     bool Bacteroids::Initialize()
