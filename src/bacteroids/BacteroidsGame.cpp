@@ -19,6 +19,8 @@
 
 #include "Shaders.h"
 
+#include <SDL2/SDL.h>
+
 namespace bact
 {
 
@@ -41,7 +43,7 @@ namespace bact
     public:
         BacteroidsState()
         {
-            m_random.Seed(m_ticker.GetTicks());
+            m_random.Seed(SDL_GetTicks());
         }
 
         bool Initialize() override
@@ -113,9 +115,6 @@ namespace bact
         {
             m_time.Update();
 
-            int n = 0;
-            Bacter *clone[100];
-
             for (size_t i = 0; i < m_bacters.size; i++)
             {
                 for (size_t j = i+1; j < m_bacters.size; j++)
@@ -125,14 +124,12 @@ namespace bact
 
                 if (m_bacters[i]->ShouldClone())
                 {
-                    if (n < 100 && m_bacters.size < MAX_BACTERS)
-                        clone[n++] = m_bacters[i];
+                    if (m_bacters.size < MAX_BACTERS)
+                    {
+                        Bacter *b = m_bacters.Obtain();
+                        m_bacters[i]->Clone(b);
+                    }
                 }
-            }
-
-            for (int i = 0; i < n; i++)
-            {
-                clone[i]->Clone(m_bacters.Obtain());
             }
         }
 

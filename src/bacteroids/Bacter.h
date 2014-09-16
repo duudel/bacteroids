@@ -90,7 +90,7 @@ namespace bact
             const float MAX_V = 20.0f;
             const float ACCEL = 10.0f;
             const float FRICT = 0.1f;
-            const float GROWTH = 5.0f;
+            const float GROWTH = 25.0f;
 
             const float dt = gameTime.GetDeltaSeconds();
 
