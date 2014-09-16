@@ -176,7 +176,7 @@ namespace rob
         inline T Length() const
         {
             v4 len2 = simd_::Dot(v, v);
-            v4 len = simd_::Sqrt(len);
+            v4 len = simd_::Sqrt(len2);
             return simd_::GetX(len);
         }
 

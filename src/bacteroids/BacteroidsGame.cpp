@@ -21,6 +21,25 @@ namespace bact
 
     using namespace rob;
 
+    class Target
+    {
+    public:
+        void SetPosition(float x, float y)
+        { m_position = vec4f(x, y, 0.0f, 1.0f); }
+
+        vec4f GetPosition() const
+        { return m_position; }
+
+    private:
+        vec4f m_position;
+    };
+
+    vec4f Normalize(const vec4f &v)
+    {
+        float len = v.Length();
+        return (len > 0.1f) ? v/len : v;
+    }
+
     class Bacter
     {
     public:
@@ -35,10 +54,31 @@ namespace bact
         { m_radius = r; }
         void SetVelocity(float x, float y)
         { m_velocity = vec4f(x, y, 0.0f, 0.0f); }
+        void SetTarget(Target *target)
+        { m_target = target; }
+
+        vec4f GetPosition() const
+        { return m_position; }
+        float GetRadius() const
+        { return m_radius; }
+
+        void AddVelocity(const vec4f &v)
+        { m_velocity += v; }
 
         void Update(const GameTime &gameTime)
         {
+            if (m_target)
+            {
+                const float MAX_V = 100.0f;
+                const float ACCEL = MAX_V;
+                vec4f d = Normalize(m_target->GetPosition() - m_position);
+                vec4f v = m_velocity + d * ACCEL * gameTime.GetDeltaSeconds();
+                if (v.Length() > MAX_V && m_velocity.Length() < v.Length()) ;
+                else m_velocity = v;
+            }
+
             m_position += m_velocity * gameTime.GetDeltaSeconds();
+            m_velocity -= m_velocity * 0.01f * gameTime.GetDeltaSeconds();
         }
 
         void Render(Renderer *renderer)
@@ -52,6 +92,7 @@ namespace bact
         vec4f m_position;
         vec4f m_velocity;
         float m_radius;
+        Target *m_target;
     };
 
     static const size_t MAX_BACTERS = 1000;
@@ -141,8 +182,13 @@ namespace bact
 
             m_bacters.Init(GetAllocator());
 //            m_bacters.Obtain()->SetVelocity(m_random.GetReal(-1.0, 1.0) * 20.0f, m_random.GetReal(-1.0, 1.0) * 20.0f);
-            m_bacters.Obtain()->SetVelocity(20.0f, 20.0f);
-            m_bacters.Obtain()->SetPosition(58.0f, 0.0f);
+//            m_bacters.Obtain()->SetVelocity(20.0f, 20.0f);
+//            m_bacters.Obtain()->SetPosition(58.0f, 0.0f);
+            m_player.SetPosition(0.0f, 0.0f);
+            for (int i = 0; i < 6; i++)
+            {
+                SpawnBacter();
+            }
             return true;
         }
 
@@ -176,12 +222,40 @@ namespace bact
                 m_time.Pause();
         }
 
+        void SpawnBacter()
+        {
+            const float DIST = 300.0f;
+
+            Bacter *bacter = m_bacters.Obtain();
+            float r = m_random.GetReal(0.0f, 2.0f*PI_f);
+            bacter->SetPosition(Cos(r)*DIST, Sin(r)*DIST);
+            bacter->SetTarget(&m_player);
+        }
+
+        float Distance(const vec4f &a, const vec4f &b)
+        { return (b - a).Length(); }
+
         void Update(const GameTime &gameTime) override
         {
             m_time.Update();
 
             for (size_t i = 0; i < m_bacters.size; i++)
             {
+                vec4f a = m_bacters[i]->GetPosition();
+                float ra = m_bacters[i]->GetRadius();
+                for (size_t j = i+1; j < m_bacters.size; j++)
+                {
+                    vec4f b = m_bacters[j]->GetPosition();
+                    float rb = m_bacters[j]->GetRadius();
+                    float d = ra + rb - Distance(a, b);
+                    if (d > 0.0f)
+                    {
+                        vec4f v = Normalize(a - b) * d/2.0f;
+                        m_bacters[i]->AddVelocity(v);
+                        m_bacters[j]->AddVelocity(-v);
+                    }
+                }
+
                 m_bacters[i]->Update(gameTime);
             }
         }
@@ -212,6 +286,7 @@ namespace bact
 
         ShaderProgramHandle m_bacterShader;
 
+        Target m_player;
         BacterArray m_bacters;
 
         Viewport m_playAreaVp;
