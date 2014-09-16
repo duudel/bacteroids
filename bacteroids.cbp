@@ -60,6 +60,8 @@
 		<Unit filename="src/application/Window.h" />
 		<Unit filename="src/audio/AudioSystem.cpp" />
 		<Unit filename="src/audio/AudioSystem.h" />
+		<Unit filename="src/bacteroids/Bacter.h" />
+		<Unit filename="src/bacteroids/BacterArray.h" />
 		<Unit filename="src/bacteroids/BacteroidsGame.cpp" />
 		<Unit filename="src/bacteroids/BacteroidsGame.h" />
 		<Unit filename="src/bacteroids/Shaders.cpp" />

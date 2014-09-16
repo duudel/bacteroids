@@ -12,6 +12,7 @@ const ShaderDef g_bacterShader = {
         uniform mat4 u_projection;
         uniform vec4 u_position;
         uniform float u_time;
+        uniform float u_anim;
         attribute vec2 a_position;
         attribute vec4 a_color;
         varying vec4 v_color;
@@ -25,8 +26,8 @@ const ShaderDef g_bacterShader = {
             {
                 float t = u_time * 10;
                 float a = atan(pos.x, pos.y);
-                float w = sin(t*1.2 + a*11.0) * 2.3;
-                float u = sin(-t*1.0 + a*5.0) * 3.0;
+                float w = sin(u_anim + t*1.2 + a*11.0) * 2.3;
+                float u = sin(u_anim - t*1.0 + a*5.0) * 3.0;
                 float r = (1.0 + (w + u)/65.0) * radius;
                 pos = normalize(pos) * r;
                 dist = 1.0;
