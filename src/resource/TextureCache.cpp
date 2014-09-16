@@ -17,7 +17,7 @@ namespace rob
 
     ROB_DEFINE_RESOURCE_CACHE_DTOR(TextureCache)
 
-    TextureHandle TextureCache::Load(const char * const filename)
+    bool TextureCache::Load(const char * const filename, TextureHandle &texture)
     {
         std::ifstream in(filename, std::ios_base::binary);
         if (!in.is_open())
@@ -35,7 +35,8 @@ namespace rob
         if (!in)
         {
             log::Error("Invalid texture file ", filename);
-            return InvalidHandle;
+            texture = InvalidHandle;
+            return false;
         }
         const size_t imageSize = width * height * st_format;
 
@@ -45,12 +46,12 @@ namespace rob
 
         in.read(imageData, imageSize);
 
-        TextureHandle handle = m_graphics->CreateTexture();
-        m_graphics->BindTexture(0, handle);
-        Texture *texture = m_graphics->GetTexture(handle);
-        texture->TexImage(width, height, static_cast<Texture::Format>(st_format), imageData);
+        texture = m_graphics->CreateTexture();
+        m_graphics->BindTexture(0, texture);
+        Texture *t = m_graphics->GetTexture(texture);
+        t->TexImage(width, height, static_cast<Texture::Format>(st_format), imageData);
 
-        return handle;
+        return true;
     }
 
     void TextureCache::Unload(TextureHandle texture)

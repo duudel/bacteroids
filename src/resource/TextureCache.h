@@ -21,7 +21,7 @@ namespace rob
         using ResourceCache::Get;
         using ResourceCache::UnloadAll;
 
-        TextureHandle Load(const char * const filename);
+        bool Load(const char * const filename, TextureHandle &texture);
         void Unload(TextureHandle texture);
 
     private:

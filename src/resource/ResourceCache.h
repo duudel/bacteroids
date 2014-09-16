@@ -23,8 +23,9 @@ namespace rob
             if (it != m_resources.end())
                 return it->second;
 
-            T resource = Load(filename);
-            m_resources[id] = resource;
+            T resource;
+            if (Load(filename, resource))
+                m_resources[id] = resource;
             return resource;
         }
 
@@ -36,7 +37,7 @@ namespace rob
         }
 
     protected:
-        virtual T Load(const char * const filename) = 0;
+        virtual bool Load(const char * const filename, T &resource) = 0;
         virtual void Unload(T resource) = 0;
 
     protected:

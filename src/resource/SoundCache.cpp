@@ -12,9 +12,9 @@ namespace rob
 
     ROB_DEFINE_RESOURCE_CACHE_DTOR(SoundCache)
 
-    SoundHandle SoundCache::Load(const char * const filename)
+    bool SoundCache::Load(const char * const filename, SoundHandle &sound)
     {
-        return m_audio->LoadSound(filename);
+        return (sound = m_audio->LoadSound(filename)) != InvalidSound;
     }
 
     void SoundCache::Unload(SoundHandle sound)
