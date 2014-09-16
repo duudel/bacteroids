@@ -21,6 +21,25 @@ namespace bact
 
     using namespace rob;
 
+    class Target
+    {
+    public:
+        void SetPosition(float x, float y)
+        { m_position = vec4f(x, y, 0.0f, 1.0f); }
+
+        vec4f GetPosition() const
+        { return m_position; }
+
+    private:
+        vec4f m_position;
+    };
+
+    vec4f Normalize(const vec4f &v)
+    {
+        float len = v.Length();
+        return (len > 0.1f) ? v/len : v;
+    }
+
     class Bacter
     {
     public:
@@ -35,10 +54,31 @@ namespace bact
         { m_radius = r; }
         void SetVelocity(float x, float y)
         { m_velocity = vec4f(x, y, 0.0f, 0.0f); }
+        void SetTarget(Target *target)
+        { m_target = target; }
+
+        vec4f GetPosition() const
+        { return m_position; }
+        float GetRadius() const
+        { return m_radius; }
+
+        void AddVelocity(const vec4f &v)
+        { m_velocity += v; }
 
         void Update(const GameTime &gameTime)
         {
+            if (m_target)
+            {
+                const float MAX_V = 100.0f;
+                const float ACCEL = MAX_V;
+                vec4f d = Normalize(m_target->GetPosition() - m_position);
+                vec4f v = m_velocity + d * ACCEL * gameTime.GetDeltaSeconds();
+                if (v.Length() > MAX_V && m_velocity.Length() < v.Length()) ;
+                else m_velocity = v;
+            }
+
             m_position += m_velocity * gameTime.GetDeltaSeconds();
+            m_velocity -= m_velocity * 0.01f * gameTime.GetDeltaSeconds();
         }
 
         void Render(Renderer *renderer)
@@ -52,6 +92,7 @@ namespace bact
         vec4f m_position;
         vec4f m_velocity;
         float m_radius;
+        Target *m_target;
     };
 
     static const size_t MAX_BACTERS = 1000;
@@ -108,6 +149,18 @@ namespace bact
         Pool<Bacter> m_bacterPool;
     };
 
+    struct Viewport
+    {
+        int x, y, w, h;
+    };
+
+    const float PLAY_AREA_W         = 800.0f;
+    const float PLAY_AREA_H         = 600.0f;
+    const float PLAY_AREA_LEFT      = -PLAY_AREA_W / 2.0f;
+    const float PLAY_AREA_RIGHT     = -PLAY_AREA_LEFT;
+    const float PLAY_AREA_BOTTOM    = -PLAY_AREA_H / 2.0f;
+    const float PLAY_AREA_TOP       = -PLAY_AREA_BOTTOM;
+
     class BacteroidsState : public GameState
     {
     public:
@@ -118,14 +171,24 @@ namespace bact
 
         bool Initialize() override
         {
-            GetRenderer().GetGraphics()->SetClearColor(0.05f, 0.13f, 0.15f);
+            GetRenderer().SetProjection(Projection_Orthogonal_lh(PLAY_AREA_LEFT,
+                                                                 PLAY_AREA_RIGHT,
+                                                                 PLAY_AREA_BOTTOM,
+                                                                 PLAY_AREA_TOP, -1, 1));
+
+//            GetRenderer().GetGraphics()->SetClearColor(0.05f, 0.13f, 0.15f);
             m_bacterShader = GetRenderer().CompileShaderProgram(g_bacterShader.m_vertexShader,
                                                               g_bacterShader.m_fragmentShader);
 
             m_bacters.Init(GetAllocator());
 //            m_bacters.Obtain()->SetVelocity(m_random.GetReal(-1.0, 1.0) * 20.0f, m_random.GetReal(-1.0, 1.0) * 20.0f);
-            m_bacters.Obtain()->SetVelocity(20.0f, 20.0f);
-            m_bacters.Obtain()->SetPosition(58.0f, 0.0f);
+//            m_bacters.Obtain()->SetVelocity(20.0f, 20.0f);
+//            m_bacters.Obtain()->SetPosition(58.0f, 0.0f);
+            m_player.SetPosition(0.0f, 0.0f);
+            for (int i = 0; i < 6; i++)
+            {
+                SpawnBacter();
+            }
             return true;
         }
 
@@ -136,11 +199,19 @@ namespace bact
 
         void OnResize(int w, int h) override
         {
-            int x0 = -w / 2;
-            int x1 = w / 2;
-            int y0 = -h / 2;
-            int y1 = h / 2;
-            GetRenderer().SetProjection(Projection_Orthogonal_lh(x0, x1, y0, y1, -1, 1));
+            float x_scl = w / PLAY_AREA_W;
+            float y_scl = h / PLAY_AREA_H;
+            float scale = (x_scl < y_scl) ? x_scl : y_scl;
+
+            m_playAreaVp.w = scale * PLAY_AREA_W;
+            m_playAreaVp.h = scale * PLAY_AREA_H;
+            m_playAreaVp.x = (w - m_playAreaVp.w) / 2;
+            m_playAreaVp.y = (h - m_playAreaVp.h) / 2;
+
+            m_screenVp.x = 0;
+            m_screenVp.y = 0;
+            m_screenVp.w = w;
+            m_screenVp.h = h;
         }
 
         void OnKeyPress(Key key, uint32_t mods) override
@@ -151,19 +222,57 @@ namespace bact
                 m_time.Pause();
         }
 
+        void SpawnBacter()
+        {
+            const float DIST = 300.0f;
+
+            Bacter *bacter = m_bacters.Obtain();
+            float r = m_random.GetReal(0.0f, 2.0f*PI_f);
+            bacter->SetPosition(Cos(r)*DIST, Sin(r)*DIST);
+            bacter->SetTarget(&m_player);
+        }
+
+        float Distance(const vec4f &a, const vec4f &b)
+        { return (b - a).Length(); }
+
         void Update(const GameTime &gameTime) override
         {
             m_time.Update();
 
             for (size_t i = 0; i < m_bacters.size; i++)
             {
+                vec4f a = m_bacters[i]->GetPosition();
+                float ra = m_bacters[i]->GetRadius();
+                for (size_t j = i+1; j < m_bacters.size; j++)
+                {
+                    vec4f b = m_bacters[j]->GetPosition();
+                    float rb = m_bacters[j]->GetRadius();
+                    float d = ra + rb - Distance(a, b);
+                    if (d > 0.0f)
+                    {
+                        vec4f v = Normalize(a - b) * d/2.0f;
+                        m_bacters[i]->AddVelocity(v);
+                        m_bacters[j]->AddVelocity(-v);
+                    }
+                }
+
                 m_bacters[i]->Update(gameTime);
             }
         }
 
+        void SetViewport(Viewport &vp)
+        {
+            GetRenderer().GetGraphics()->SetViewport(vp.x, vp.y, vp.w, vp.h);
+        }
+
         void Render() override
         {
+            SetViewport(m_playAreaVp);
+
             Renderer &renderer = GetRenderer();
+            renderer.BindColorShader();
+            renderer.SetColor(Color(0.05f, 0.13f, 0.15f));
+            renderer.DrawFilledRectangle(PLAY_AREA_LEFT, PLAY_AREA_BOTTOM, PLAY_AREA_RIGHT, PLAY_AREA_TOP);
             renderer.SetTime(m_time.GetTime());
 
             for (size_t i = 0; i < m_bacters.size; i++)
@@ -177,7 +286,11 @@ namespace bact
 
         ShaderProgramHandle m_bacterShader;
 
+        Target m_player;
         BacterArray m_bacters;
+
+        Viewport m_playAreaVp;
+        Viewport m_screenVp;
     };
 
     bool Bacteroids::Initialize()

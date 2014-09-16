@@ -19,21 +19,19 @@ const ShaderDef g_bacterShader = {
         void main()
         {
             vec2 pos = a_position - u_position.xy;
-            vec2 offset = vec2(0.0);
-            float len = length(pos);
+            float radius = length(pos);
             float dist = 0.0;
-            if (len > 0.01)
+            if (radius > 0.01)
             {
-//                float t = (u_time + u_position.x + u_position.y) * 10;
                 float t = u_time * 10;
                 float a = atan(pos.x, pos.y);
-                float w = sin(t*1.2 + a*11) * 2.3;
-                float u = sin(-t*1.0 + a*5) * 3;
-                float r = (w + u)/65.0 * len;
-                offset = normalize(pos) * r;
+                float w = sin(t*1.2 + a*11.0) * 2.3;
+                float u = sin(-t*1.0 + a*5.0) * 3.0;
+                float r = (1.0 + (w + u)/65.0) * radius;
+                pos = normalize(pos) * r;
                 dist = 1.0;
             }
-            gl_Position = u_projection * vec4(a_position + offset, 0.0, 1.0);
+            gl_Position = u_projection * vec4(pos + u_position.xy, 0.0, 1.0);
             v_color = a_color;
             v_dist = dist;
         }
