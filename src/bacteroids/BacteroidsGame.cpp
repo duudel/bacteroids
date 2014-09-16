@@ -56,7 +56,12 @@ namespace bact
     {
         size_t size;
 
-        void Init(LinearAllocator &alloc, size_t maxBacters)
+        ~BacterArray()
+        {
+            RemoveAll();
+        }
+
+        void Init(LinearAllocator &alloc)
         {
             size = 0;
 
@@ -80,6 +85,14 @@ namespace bact
             m_bacterPool.Return(m_bacters[i]);
             if (--size > 0)
                 m_bacters[i] = m_bacters[size];
+        }
+
+        void RemoveAll()
+        {
+            for (size_t i = 0; i < size; i++)
+                m_bacterPool.Return(m_bacters[i]);
+
+            size = 0;
         }
 
         Bacter *operator[] (size_t i)
@@ -109,7 +122,9 @@ namespace bact
             m_bacterShader = GetRenderer().CompileShaderProgram(g_bacterShader.m_vertexShader,
                                                               g_bacterShader.m_fragmentShader);
 
-            m_bacter2.SetPosition(58.0f, 0.0f);
+            m_bacters.Init(GetAllocator());
+            m_bacters.Obtain();
+            m_bacters.Obtain()->SetPosition(58.0f, 0.0f);
             return true;
         }
 
@@ -144,10 +159,12 @@ namespace bact
         {
             Renderer &renderer = GetRenderer();
             renderer.SetTime(m_time.GetTime());
-            renderer.BindShader(m_bacterShader);
-            m_bacter.Render(&renderer);
-            renderer.BindShader(m_bacterShader);
-            m_bacter2.Render(&renderer);
+
+            for (size_t i = 0; i < m_bacters.size; i++)
+            {
+                renderer.BindShader(m_bacterShader);
+                m_bacters[i]->Render(&renderer);
+            }
         }
     private:
         MicroTicker m_ticker;
@@ -155,9 +172,6 @@ namespace bact
         Random m_random;
 
         ShaderProgramHandle m_bacterShader;
-
-        Bacter m_bacter;
-        Bacter m_bacter2;
 
         BacterArray m_bacters;
     };
