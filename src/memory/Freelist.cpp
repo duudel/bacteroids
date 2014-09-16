@@ -26,18 +26,20 @@ namespace rob
         m_next = head;
     }
 
-    void Freelist::AddElements(void *start, size_t size, size_t elementSize, size_t elementAlign)
+    char* Freelist::AddElements(void *start, size_t size, size_t elementSize, size_t elementAlign)
     {
         char *it = static_cast<char*>(start);
         const char * const end = it + size;
 
         it = ptr_align(it, elementAlign);
+        char *s = it;
         while (it + elementSize < end)
         {
             Return(static_cast<void*>(it));
             it += elementSize;
             it = ptr_align(it, elementAlign);
         }
+        return s;
     }
 
 } // rob

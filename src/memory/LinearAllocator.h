@@ -3,6 +3,7 @@
 #define H_ROB_LINEAR_ALLOCATOR_H
 
 #include "../Types.h"
+#include "PtrAlign.h"
 
 #include <new>
 
@@ -27,6 +28,13 @@ namespace rob
 
         void* Allocate(size_t size);
         void* Allocate(size_t size, size_t alignment);
+
+        template <class T>
+        T* AllocateArray(size_t count)
+        {
+            const size_t size = GetArraySize<T>(count);
+            return static_cast<T*>(Allocate(size, alignof(T)));
+        }
 
         void Reset();
 

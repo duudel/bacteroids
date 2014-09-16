@@ -7,12 +7,21 @@
 namespace rob
 {
 
-    inline char* ptr_align(char *ptr, size_t alignment)
+    inline uintptr_t align(const uintptr_t p, const size_t alignment)
+    {
+        const uintptr_t mask = alignment - 1;
+        return (p + mask) & ~mask;
+    }
+
+    inline char* ptr_align(const char *ptr, const size_t alignment)
     {
         const uintptr_t p = reinterpret_cast<uintptr_t>(ptr);
-        const uintptr_t mask = alignment - 1;
-        return reinterpret_cast<char*>((p + mask) & ~mask);
+        return reinterpret_cast<char*>(align(p, alignment));
     }
+
+    template <class T>
+    size_t GetArraySize(const size_t count)
+    { return count * align(sizeof(T), alignof(T)); }
 
 } // rob
 

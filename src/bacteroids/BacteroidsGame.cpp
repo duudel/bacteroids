@@ -33,9 +33,13 @@ namespace bact
         { m_position = vec4f(x, y, 0.0f, 1.0f); }
         void SetRadius(float r)
         { m_radius = r; }
+        void SetVelocity(float x, float y)
+        { m_velocity = vec4f(x, y, 0.0f, 0.0f); }
 
         void Update(const GameTime &gameTime)
-        { }
+        {
+            m_position += m_velocity * 0.01f;
+        }
 
         void Render(Renderer *renderer)
         {
@@ -65,11 +69,9 @@ namespace bact
         {
             size = 0;
 
-            size_t arrayMemory = MAX_BACTERS * sizeof(Bacter*);
-            m_bacters = (Bacter**)alloc.Allocate(arrayMemory, alignof(Bacter*));
-
-            size_t poolMemory = MAX_BACTERS * sizeof(Bacter);
-            m_bacterPool.SetMemory(alloc.Allocate(poolMemory), poolMemory);
+            m_bacters = alloc.AllocateArray<Bacter*>(MAX_BACTERS);
+            const size_t poolSize = GetArraySize<Bacter>(MAX_BACTERS);
+            m_bacterPool.SetMemory(alloc.AllocateArray<Bacter>(MAX_BACTERS), poolSize);
         }
 
         Bacter *Obtain()
@@ -123,7 +125,7 @@ namespace bact
                                                               g_bacterShader.m_fragmentShader);
 
             m_bacters.Init(GetAllocator());
-            m_bacters.Obtain();
+            m_bacters.Obtain()->SetVelocity(m_random.GetReal(-1.0, 1.0) * 20.0f, m_random.GetReal(-1.0, 1.0) * 20.0f);
             m_bacters.Obtain()->SetPosition(58.0f, 0.0f);
             return true;
         }
@@ -153,6 +155,11 @@ namespace bact
         void Update(const GameTime &gameTime) override
         {
             m_time.Update(m_ticker);
+
+            for (size_t i = 0; i < m_bacters.size; i++)
+            {
+                m_bacters[i]->Update(gameTime);
+            }
         }
 
         void Render(const GameTime &gameTime) override

@@ -24,7 +24,8 @@ const ShaderDef g_bacterShader = {
             float dist = 0.0;
             if (len > 0.01)
             {
-                float t = (u_time + u_position.x + u_position.y) * 10;
+//                float t = (u_time + u_position.x + u_position.y) * 10;
+                float t = u_time * 10;
                 float a = atan(pos.x, pos.y);
                 float w = sin(t*1.2 + a*11) * 2.3;
                 float u = sin(-t*1.0 + a*5) * 3;
