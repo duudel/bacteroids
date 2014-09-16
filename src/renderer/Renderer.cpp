@@ -110,7 +110,8 @@ namespace rob
         m_colorProgram = CompileShaderProgram(g_colorVertexShader, g_colorFragmentShader);
         m_fontProgram = CompileShaderProgram(g_fontVertexShader, g_fontFragmentShader);
 
-        m_font = cache->GetFont("lucida_24.fnt");
+//        m_font = cache->GetFont("lucida_24.fnt");
+        m_font = cache->GetFont("dejavu_24.fnt");
 
         m_vertexBuffer = m_graphics->CreateVertexBuffer();
         m_graphics->BindVertexBuffer(m_vertexBuffer);
@@ -343,7 +344,7 @@ namespace rob
         cursorX += glyph.m_advance;
     }
 
-    void Renderer::DrawText(float x, float y, const char *text)
+    void Renderer::DrawText(float x, float y, const char *text) //, bool kerning)
     {
         if (!m_font.IsReady()) return;
 
@@ -370,13 +371,21 @@ namespace rob
             const size_t textureH = texture->GetHeight();
 
             AddFontQuad(vertex, glyph, cursorX, cursorY, textureW, textureH);
+            char prevC = c;
             for (; (c = *text); text++)
             {
                 const Glyph &glyph = m_font.GetGlyph(c);
                 if (glyph.m_textureIdx != texturePage)
                     break;
 
+//                if (kerning)
+//                {
+//                    int16_t kerningAmount = m_font.GetKerning(prevC, c);
+//                    cursorX += kerningAmount;
+//                }
+
                 AddFontQuad(vertex, glyph, cursorX, cursorY, textureW, textureH);
+                prevC = c;
             }
 
             const size_t vertexCount = vertex - verticesStart;

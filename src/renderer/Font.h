@@ -48,6 +48,10 @@ namespace rob
 
         void AddTexture(size_t page, TextureHandle texture);
         TextureHandle GetTexture(size_t page) const;
+        size_t GetTextureCount() const;
+
+        void AddKerning(uint32_t c1, uint32_t c2, int16_t kerning);
+        int8_t GetKerning(uint32_t c1, uint32_t c2);
 
     private:
         uint16_t m_base;
@@ -57,16 +61,15 @@ namespace rob
         uint16_t m_lineSpacing;
 
         static const size_t MAX_GLYPHS = 256;
-        Glyph       m_glyph[MAX_GLYPHS];
-        uint32_t    m_characterToGlyph[MAX_GLYPHS];
+        Glyph m_glyph[MAX_GLYPHS];
         size_t m_glyphCount;
 
-        int16_t m_kerning[MAX_GLYPHS];
-
+//        static const size_t MAX_KERNING_GLYPHS = 128;
+//        int8_t m_kerning[MAX_KERNING_GLYPHS][MAX_KERNING_GLYPHS];
 
         static const size_t MAX_TEXTURE_PAGES = 4;
         TextureHandle m_textures[MAX_TEXTURE_PAGES];
-
+        size_t m_textureCount;
     };
 
 } // rob
