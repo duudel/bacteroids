@@ -371,7 +371,7 @@ namespace rob
             const size_t textureH = texture->GetHeight();
 
             AddFontQuad(vertex, glyph, cursorX, cursorY, textureW, textureH);
-            char prevC = c;
+//            char prevC = c;
             for (; (c = *text); text++)
             {
                 const Glyph &glyph = m_font.GetGlyph(c);
@@ -385,7 +385,7 @@ namespace rob
 //                }
 
                 AddFontQuad(vertex, glyph, cursorX, cursorY, textureW, textureH);
-                prevC = c;
+//                prevC = c;
             }
 
             const size_t vertexCount = vertex - verticesStart;

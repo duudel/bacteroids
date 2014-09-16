@@ -190,25 +190,25 @@ namespace rob
 
         inline void Normalize()
         {
-            v = simd_::Div(v, LengthV());
+            v = simd_::Div(v, LengthV().v);
         }
 
         inline void NormalizeFast()
         {
-            v = simd_::Mul(v, simd_::FastInvSqrt(Length2V()));
+            v = simd_::Mul(v, simd_::FastInvSqrt(Length2V().v));
         }
 
         inline Vector4 Normalized() const
         {
             Vector4 r;
-            r.v = simd_::Div(v, LengthV());
+            r.v = simd_::Div(v, LengthV().v);
             return r;
         }
 
         inline Vector4 NormalizedFast() const
         {
             Vector4 r;
-            r.v = simd_::Mul(v, simd_::FastInvSqrt(Length2V()));
+            r.v = simd_::Mul(v, simd_::FastInvSqrt(Length2V().v));
             return r;
         }
 

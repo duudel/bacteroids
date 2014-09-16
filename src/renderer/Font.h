@@ -64,7 +64,7 @@ namespace rob
         Glyph m_glyph[MAX_GLYPHS];
         size_t m_glyphCount;
 
-//        static const size_t MAX_KERNING_GLYPHS = 128;
+//        static const size_t MAX_KERNING_GLYPHS = 256;
 //        int8_t m_kerning[MAX_KERNING_GLYPHS][MAX_KERNING_GLYPHS];
 
         static const size_t MAX_TEXTURE_PAGES = 4;
