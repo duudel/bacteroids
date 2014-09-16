@@ -9,6 +9,7 @@ namespace rob
         : m_base(0)
         , m_ascender(0)
         , m_descender(0)
+        , m_horiSpacing(0)
         , m_lineSpacing(0)
     { }
 
@@ -30,6 +31,12 @@ namespace rob
     int16_t Font::GetDescender() const
     { return m_descender; }
 
+    void Font::SetHorizontalSpacing(uint16_t spacing)
+    { m_horiSpacing = spacing; }
+
+    uint16_t Font::GetHorizontalSpacing() const
+    { return m_horiSpacing; }
+
     void Font::SetLineSpacing(uint16_t spacing)
     { m_lineSpacing = spacing; }
 
@@ -50,7 +57,7 @@ namespace rob
 
     const Glyph& Font::GetGlyph(uint32_t character) const
     {
-        ROB_ASSERT(character < MAX_GLYPHS)
+        ROB_ASSERT(character < MAX_GLYPHS);
         const uint32_t index = m_characterToGlyph[character];
         return m_glyph[index];
     }

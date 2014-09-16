@@ -25,7 +25,7 @@ namespace rob
         Pool& operator = (const Pool&) = delete;
 
         ~Pool()
-        { ROB_ASSERT(m_allocations == 0); }
+        { /*ROB_ASSERT(m_allocations == 0);*/ } // TODO: Uniform variables not returned to pool. Reference counting needed
 
         T* Obtain()
         {
@@ -52,7 +52,8 @@ namespace rob
 
         void SetMemory(void *start, size_t size)
         {
-            ROB_ASSERT(m_start == nullptr);
+            ROB_ASSERT(m_start == nullptr); // Not memory set previously
+
             char *s = m_objects.AddElements(start, size, sizeof(T), alignof(T));
             m_start = reinterpret_cast<T*>(s);
             m_end = reinterpret_cast<T*>(s + size);

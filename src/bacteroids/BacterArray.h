@@ -4,7 +4,6 @@
 
 namespace bact
 {
-
     static const size_t MAX_BACTERS = 500;
 
     struct BacterArray
@@ -29,7 +28,7 @@ namespace bact
         {
             ROB_ASSERT(size < MAX_BACTERS);
             Bacter *bacter = m_bacterPool.Obtain();
-            ROB_ASSERT(bacter);
+            ROB_ASSERT(bacter != nullptr);
             m_bacters[size++] = bacter;
             return bacter;
         }
