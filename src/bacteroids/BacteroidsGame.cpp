@@ -54,6 +54,8 @@ namespace bact
         { m_radius = r; }
         void SetVelocity(float x, float y)
         { m_velocity = vec4f(x, y, 0.0f, 0.0f); }
+        void SetAnim(float anim)
+        { m_anim = anim; }
         void SetTarget(Target *target)
         { m_target = target; }
 
@@ -67,22 +69,37 @@ namespace bact
 
         void Update(const GameTime &gameTime)
         {
+            const float MAX_V = 50.0f;
+            const float ACCEL = 50.0f;
+            const float FRICT = 0.05f;
+            const float GROWTH = 5.0f;
+
+            const float dt = gameTime.GetDeltaSeconds();
+
             if (m_target)
             {
-                const float MAX_V = 100.0f;
-                const float ACCEL = MAX_V;
                 vec4f d = Normalize(m_target->GetPosition() - m_position);
-                vec4f v = m_velocity + d * ACCEL * gameTime.GetDeltaSeconds();
+                vec4f v = m_velocity + d * ACCEL * dt;
                 if (v.Length() > MAX_V && m_velocity.Length() < v.Length()) ;
                 else m_velocity = v;
             }
 
-            m_position += m_velocity * gameTime.GetDeltaSeconds();
-            m_velocity -= m_velocity * 0.01f * gameTime.GetDeltaSeconds();
+            m_position += m_velocity * dt;
+            m_velocity -= m_velocity * FRICT * dt;
+
+            if (!CanSplit())
+                m_radius += GROWTH * dt;
         }
 
-        void Render(Renderer *renderer)
+        bool CanSplit()
         {
+            const float SPLIT_RADIUS = 55.0f;
+            return m_radius > SPLIT_RADIUS;
+        }
+
+        void Render(Renderer *renderer, UniformHandle anim)
+        {
+            renderer->GetGraphics()->SetUniform(anim, m_anim);
             renderer->SetColor(Color(1.0f, 1.2f, 0.6f));
 //            renderer->DrawFilledCirlce(m_position.x, m_position.y, m_radius);
             renderer->DrawFilledCirlce(m_position.x, m_position.y, m_radius, Color(0.0f, 0.5f, 0.5f, 1.0f));
@@ -92,6 +109,7 @@ namespace bact
         vec4f m_position;
         vec4f m_velocity;
         float m_radius;
+        float m_anim;
         Target *m_target;
     };
 
@@ -171,20 +189,21 @@ namespace bact
 
         bool Initialize() override
         {
-            GetRenderer().SetProjection(Projection_Orthogonal_lh(PLAY_AREA_LEFT,
+            Renderer &renderer = GetRenderer();
+
+            renderer.SetProjection(Projection_Orthogonal_lh(PLAY_AREA_LEFT,
                                                                  PLAY_AREA_RIGHT,
                                                                  PLAY_AREA_BOTTOM,
                                                                  PLAY_AREA_TOP, -1, 1));
 
-//            GetRenderer().GetGraphics()->SetClearColor(0.05f, 0.13f, 0.15f);
-            m_bacterShader = GetRenderer().CompileShaderProgram(g_bacterShader.m_vertexShader,
-                                                              g_bacterShader.m_fragmentShader);
+            m_bacterShader = renderer.CompileShaderProgram(g_bacterShader.m_vertexShader,
+                                                           g_bacterShader.m_fragmentShader);
 
-            m_bacters.Init(GetAllocator());
-//            m_bacters.Obtain()->SetVelocity(m_random.GetReal(-1.0, 1.0) * 20.0f, m_random.GetReal(-1.0, 1.0) * 20.0f);
-//            m_bacters.Obtain()->SetVelocity(20.0f, 20.0f);
-//            m_bacters.Obtain()->SetPosition(58.0f, 0.0f);
+            m_uniforms.anim = renderer.GetGraphics()->CreateUniform("u_anim", UniformType::Float);
+            renderer.GetGraphics()->AddProgramUniform(m_bacterShader, m_uniforms.anim);
+
             m_player.SetPosition(0.0f, 0.0f);
+            m_bacters.Init(GetAllocator());
             for (int i = 0; i < 6; i++)
             {
                 SpawnBacter();
@@ -230,6 +249,7 @@ namespace bact
             float r = m_random.GetReal(0.0f, 2.0f*PI_f);
             bacter->SetPosition(Cos(r)*DIST, Sin(r)*DIST);
             bacter->SetTarget(&m_player);
+            bacter->SetAnim(m_random.GetReal(0.0f, 2.0f*PI_f));
         }
 
         float Distance(const vec4f &a, const vec4f &b)
@@ -238,6 +258,9 @@ namespace bact
         void Update(const GameTime &gameTime) override
         {
             m_time.Update();
+
+            int n = 0;
+            Bacter *split[100];
 
             for (size_t i = 0; i < m_bacters.size; i++)
             {
@@ -250,13 +273,34 @@ namespace bact
                     float d = ra + rb - Distance(a, b);
                     if (d > 0.0f)
                     {
-                        vec4f v = Normalize(a - b) * d/2.0f;
+                        vec4f v = Normalize(a - b) * d/8.0f;
+//                        vec4f v2 = v/32.0f;
+//                        a += v2;
+//                        b -= v2;
+//                        m_bacters[i]->SetPosition(a.x, a.y);
+//                        m_bacters[j]->SetPosition(b.x, b.y);
                         m_bacters[i]->AddVelocity(v);
                         m_bacters[j]->AddVelocity(-v);
                     }
                 }
 
                 m_bacters[i]->Update(gameTime);
+
+                if (m_bacters[i]->CanSplit() && n < 100)
+                {
+                    split[n++] = m_bacters[i];
+                }
+            }
+
+            for (int i = 0; i < n; i++)
+            {
+                vec4f p = split[i]->GetPosition();
+                float r = split[i]->GetRadius();
+                Bacter *bacter = m_bacters.Obtain();
+                bacter->SetPosition(p.x, p.y);
+                bacter->SetRadius(r/2.0f);
+                bacter->SetTarget(&m_player);
+                split[i]->SetRadius(r/2.0f);
             }
         }
 
@@ -278,13 +322,17 @@ namespace bact
             for (size_t i = 0; i < m_bacters.size; i++)
             {
                 renderer.BindShader(m_bacterShader);
-                m_bacters[i]->Render(&renderer);
+                m_bacters[i]->Render(&renderer, m_uniforms.anim);
             }
         }
     private:
         Random m_random;
 
         ShaderProgramHandle m_bacterShader;
+        struct
+        {
+            UniformHandle anim;
+        } m_uniforms;
 
         Target m_player;
         BacterArray m_bacters;
