@@ -42,6 +42,9 @@ namespace rob
     size_t LinearAllocator::GetAllocatedSize() const
     { return static_cast<size_t>(m_head - m_start); }
 
+    size_t LinearAllocator::GetTotalSize() const
+    { return static_cast<size_t>(m_end - m_start); }
+
     void* LinearAllocator::Allocate(size_t size)
     {
         char *ptr = m_head;

@@ -118,8 +118,34 @@ namespace rob
         m_state->OnResize(w, h);
     }
 
+    void Memory(size_t totalBytes, size_t &MB, size_t &kB, size_t &B)
+    {
+        B = totalBytes;
+        kB = B / 1024;
+        B -= kB * 1024;
+        MB = kB / 1024;
+        kB -= MB * 1024;
+    }
+
+    void ReportMemoryUsage(const size_t used, const size_t total)
+    {
+        const size_t free = total - used;
+        log::Info("State memory usage:");
+        size_t MB, kB, B;
+        Memory(used, MB, kB, B);
+        log::Info("  used:  ", MB, " MB ", kB, " kB ", B, " B");
+        Memory(free, MB, kB, B);
+        log::Info("  free:  ", MB, " MB ", kB, " kB ", B, " B");
+        Memory(total, MB, kB, B);
+        log::Info("  total: ", MB, " MB ", kB, " kB ", B, " B");
+    }
+
     void Game::OnKeyPress(Key key, uint32_t mods)
-    { m_state->OnKeyPress(key, mods); }
+    {
+        if (key == Key::F12)
+            ReportMemoryUsage(m_stateAlloc.GetAllocatedSize(), m_stateAlloc.GetTotalSize());
+        m_state->OnKeyPress(key, mods);
+    }
 
     void Game::OnKeyDown(Key key, uint32_t mods)
     { m_state->OnKeyDown(key, mods); }

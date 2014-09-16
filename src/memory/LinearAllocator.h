@@ -23,6 +23,7 @@ namespace rob
 
         void SetMemory(void *start, size_t size);
         size_t GetAllocatedSize() const;
+        size_t GetTotalSize() const;
 
         void* Allocate(size_t size);
         void* Allocate(size_t size, size_t alignment);
