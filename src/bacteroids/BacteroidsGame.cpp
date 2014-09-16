@@ -50,6 +50,62 @@ namespace bact
         float m_radius;
     };
 
+    static const size_t MAX_BACTERS = 1000;
+
+    struct BacterArray
+    {
+        size_t size;
+
+        ~BacterArray()
+        {
+            RemoveAll();
+        }
+
+        void Init(LinearAllocator &alloc)
+        {
+            size = 0;
+
+            size_t arrayMemory = MAX_BACTERS * sizeof(Bacter*);
+            m_bacters = (Bacter**)alloc.Allocate(arrayMemory, alignof(Bacter*));
+
+            size_t poolMemory = MAX_BACTERS * sizeof(Bacter);
+            m_bacterPool.SetMemory(alloc.Allocate(poolMemory), poolMemory);
+        }
+
+        Bacter *Obtain()
+        {
+            ROB_ASSERT(size < MAX_BACTERS);
+            m_bacters[size] = m_bacterPool.Obtain();
+            return m_bacters[size++];
+        }
+
+        void Remove(size_t i)
+        {
+            ROB_ASSERT(i < size); // means also "size > 0"
+            m_bacterPool.Return(m_bacters[i]);
+            if (--size > 0)
+                m_bacters[i] = m_bacters[size];
+        }
+
+        void RemoveAll()
+        {
+            for (size_t i = 0; i < size; i++)
+                m_bacterPool.Return(m_bacters[i]);
+
+            size = 0;
+        }
+
+        Bacter *operator[] (size_t i)
+        {
+            ROB_ASSERT(i < size);
+            return m_bacters[i];
+        }
+
+    private:
+        Bacter **m_bacters;
+        Pool<Bacter> m_bacterPool;
+    };
+
     class BacteroidsState : public GameState
     {
     public:
@@ -66,7 +122,9 @@ namespace bact
             m_bacterShader = GetRenderer().CompileShaderProgram(g_bacterShader.m_vertexShader,
                                                               g_bacterShader.m_fragmentShader);
 
-            m_bacter2.SetPosition(58.0f, 0.0f);
+            m_bacters.Init(GetAllocator());
+            m_bacters.Obtain();
+            m_bacters.Obtain()->SetPosition(58.0f, 0.0f);
             return true;
         }
 
@@ -101,10 +159,12 @@ namespace bact
         {
             Renderer &renderer = GetRenderer();
             renderer.SetTime(m_time.GetTime());
-            renderer.BindShader(m_bacterShader);
-            m_bacter.Render(&renderer);
-            renderer.BindShader(m_bacterShader);
-            m_bacter2.Render(&renderer);
+
+            for (size_t i = 0; i < m_bacters.size; i++)
+            {
+                renderer.BindShader(m_bacterShader);
+                m_bacters[i]->Render(&renderer);
+            }
         }
     private:
         MicroTicker m_ticker;
@@ -113,8 +173,7 @@ namespace bact
 
         ShaderProgramHandle m_bacterShader;
 
-        Bacter m_bacter;
-        Bacter m_bacter2;
+        BacterArray m_bacters;
     };
 
     bool Bacteroids::Initialize()
