@@ -1,6 +1,9 @@
 
 #include "BacteroidsGame.h"
 
+#include "Bacter.h"
+#include "BacterArray.h"
+
 #include "../application/GameState.h"
 #include "../application/MicroTicker.h"
 #include "../application/VirtualTime.h"
@@ -20,152 +23,6 @@ namespace bact
 {
 
     using namespace rob;
-
-    class Target
-    {
-    public:
-        void SetPosition(float x, float y)
-        { m_position = vec4f(x, y, 0.0f, 1.0f); }
-
-        vec4f GetPosition() const
-        { return m_position; }
-
-    private:
-        vec4f m_position;
-    };
-
-    vec4f Normalize(const vec4f &v)
-    {
-        float len = v.Length();
-        return (len > 0.1f) ? v/len : v;
-    }
-
-    class Bacter
-    {
-    public:
-        Bacter()
-            : m_position(0.0f, 0.0f, 0.0f, 1.0f)
-            , m_radius(55.0f)
-        { }
-
-        void SetPosition(float x, float y)
-        { m_position = vec4f(x, y, 0.0f, 1.0f); }
-        void SetRadius(float r)
-        { m_radius = r; }
-        void SetVelocity(float x, float y)
-        { m_velocity = vec4f(x, y, 0.0f, 0.0f); }
-        void SetAnim(float anim)
-        { m_anim = anim; }
-        void SetTarget(Target *target)
-        { m_target = target; }
-
-        vec4f GetPosition() const
-        { return m_position; }
-        float GetRadius() const
-        { return m_radius; }
-
-        void AddVelocity(const vec4f &v)
-        { m_velocity += v; }
-
-        void Update(const GameTime &gameTime)
-        {
-            const float MAX_V = 50.0f;
-            const float ACCEL = 50.0f;
-            const float FRICT = 0.05f;
-            const float GROWTH = 5.0f;
-
-            const float dt = gameTime.GetDeltaSeconds();
-
-            if (m_target)
-            {
-                vec4f d = Normalize(m_target->GetPosition() - m_position);
-                vec4f v = m_velocity + d * ACCEL * dt;
-                if (v.Length() > MAX_V && m_velocity.Length() < v.Length()) ;
-                else m_velocity = v;
-            }
-
-            m_position += m_velocity * dt;
-            m_velocity -= m_velocity * FRICT * dt;
-
-            if (!CanSplit())
-                m_radius += GROWTH * dt;
-        }
-
-        bool CanSplit()
-        {
-            const float SPLIT_RADIUS = 55.0f;
-            return m_radius > SPLIT_RADIUS;
-        }
-
-        void Render(Renderer *renderer, UniformHandle anim)
-        {
-            renderer->GetGraphics()->SetUniform(anim, m_anim);
-            renderer->SetColor(Color(1.0f, 1.2f, 0.6f));
-//            renderer->DrawFilledCirlce(m_position.x, m_position.y, m_radius);
-            renderer->DrawFilledCirlce(m_position.x, m_position.y, m_radius, Color(0.0f, 0.5f, 0.5f, 1.0f));
-        }
-
-    private:
-        vec4f m_position;
-        vec4f m_velocity;
-        float m_radius;
-        float m_anim;
-        Target *m_target;
-    };
-
-    static const size_t MAX_BACTERS = 1000;
-
-    struct BacterArray
-    {
-        size_t size;
-
-        ~BacterArray()
-        {
-            RemoveAll();
-        }
-
-        void Init(LinearAllocator &alloc)
-        {
-            size = 0;
-
-            m_bacters = alloc.AllocateArray<Bacter*>(MAX_BACTERS);
-            const size_t poolSize = GetArraySize<Bacter>(MAX_BACTERS);
-            m_bacterPool.SetMemory(alloc.AllocateArray<Bacter>(MAX_BACTERS), poolSize);
-        }
-
-        Bacter *Obtain()
-        {
-            ROB_ASSERT(size < MAX_BACTERS);
-            m_bacters[size] = m_bacterPool.Obtain();
-            return m_bacters[size++];
-        }
-
-        void Remove(size_t i)
-        {
-            ROB_ASSERT(i < size); // means also "size > 0"
-            m_bacterPool.Return(m_bacters[i]);
-            if (--size > 0)
-                m_bacters[i] = m_bacters[size];
-        }
-
-        void RemoveAll()
-        {
-            for (size_t i = 0; i < size; i++)
-                m_bacterPool.Return(m_bacters[i]);
-
-            size = 0;
-        }
-
-        Bacter *operator[] (size_t i)
-        {
-            ROB_ASSERT(i < size);
-            return m_bacters[i];
-        }
-
-    private:
-        Bacter **m_bacters;
-        Pool<Bacter> m_bacterPool;
-    };
 
     struct Viewport
     {
@@ -252,55 +109,30 @@ namespace bact
             bacter->SetAnim(m_random.GetReal(0.0f, 2.0f*PI_f));
         }
 
-        float Distance(const vec4f &a, const vec4f &b)
-        { return (b - a).Length(); }
-
         void Update(const GameTime &gameTime) override
         {
             m_time.Update();
 
             int n = 0;
-            Bacter *split[100];
+            Bacter *clone[100];
 
             for (size_t i = 0; i < m_bacters.size; i++)
             {
-                vec4f a = m_bacters[i]->GetPosition();
-                float ra = m_bacters[i]->GetRadius();
                 for (size_t j = i+1; j < m_bacters.size; j++)
-                {
-                    vec4f b = m_bacters[j]->GetPosition();
-                    float rb = m_bacters[j]->GetRadius();
-                    float d = ra + rb - Distance(a, b);
-                    if (d > 0.0f)
-                    {
-                        vec4f v = Normalize(a - b) * d/8.0f;
-//                        vec4f v2 = v/32.0f;
-//                        a += v2;
-//                        b -= v2;
-//                        m_bacters[i]->SetPosition(a.x, a.y);
-//                        m_bacters[j]->SetPosition(b.x, b.y);
-                        m_bacters[i]->AddVelocity(v);
-                        m_bacters[j]->AddVelocity(-v);
-                    }
-                }
+                    m_bacters[i]->DoCollision(m_bacters[j]);
 
                 m_bacters[i]->Update(gameTime);
 
-                if (m_bacters[i]->CanSplit() && n < 100)
+                if (m_bacters[i]->ShouldClone())
                 {
-                    split[n++] = m_bacters[i];
+                    if (n < 100 && m_bacters.size < MAX_BACTERS)
+                        clone[n++] = m_bacters[i];
                 }
             }
 
             for (int i = 0; i < n; i++)
             {
-                vec4f p = split[i]->GetPosition();
-                float r = split[i]->GetRadius();
-                Bacter *bacter = m_bacters.Obtain();
-                bacter->SetPosition(p.x, p.y);
-                bacter->SetRadius(r/2.0f);
-                bacter->SetTarget(&m_player);
-                split[i]->SetRadius(r/2.0f);
+                clone[i]->Clone(m_bacters.Obtain());
             }
         }
 
