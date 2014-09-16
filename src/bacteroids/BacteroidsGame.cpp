@@ -4,6 +4,7 @@
 #include "Bacter.h"
 #include "BacterArray.h"
 
+#include "../application/Window.h"
 #include "../application/GameState.h"
 #include "../application/MicroTicker.h"
 #include "../application/VirtualTime.h"
@@ -166,7 +167,7 @@ namespace bact
 
             renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
             renderer.BindFontShader();
-            renderer.DrawText(0, 0, "Heei maailma! This is bacteroids");
+            renderer.DrawText(0, 0, "Hello! This is bacteroids");
         }
     private:
         Random m_random;
@@ -186,6 +187,7 @@ namespace bact
 
     bool Bacteroids::Initialize()
     {
+        m_window->SetTitle("Bacteroids");
         ChangeState<BacteroidsState>();
         return true;
     }

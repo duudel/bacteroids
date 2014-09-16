@@ -16,13 +16,13 @@ namespace rob
         Window();
         Window(const Window&) = delete;
         Window& operator = (const Window&) = delete;
-
         ~Window();
 
         bool HandleEvents(Game *game);
 
         void SwapBuffers();
 
+        void SetTitle(const char * const title);
         void GetSize(int *w, int *h) const;
 
     private:
