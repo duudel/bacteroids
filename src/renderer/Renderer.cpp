@@ -4,17 +4,29 @@
 #include "../graphics/Shader.h"
 #include "../graphics/ShaderProgram.h"
 #include "../graphics/VertexBuffer.h"
-
-#include "../memory/LinearAllocator.h"
+#include "Font.h"
 
 #include "../math/Math.h"
 
 #include "../Log.h"
 
 #include <GL/glew.h>
+#include <cstring>
 
 namespace rob
 {
+
+    struct ColorVertex
+    {
+        float x, y;
+        float r, g, b, a;
+    };
+
+    struct FontVertex
+    {
+        float x, y, u, v;
+        float r, g, b, a;
+    };
 
     #define GLSL(x) "#version 120\n" #x
 
@@ -105,9 +117,10 @@ namespace rob
         return p;
     }
 
+    static const size_t MAX_VERTEX_BUFFER_SIZE = 4 * 1024 * 1024;
 
     Renderer::Renderer(Graphics *graphics, LinearAllocator &alloc)
-        : m_alloc(alloc)
+        : m_vb_alloc(alloc.Allocate(MAX_VERTEX_BUFFER_SIZE), MAX_VERTEX_BUFFER_SIZE)
         , m_graphics(graphics)
         , m_vertexBuffer(InvalidHandle)
         , m_shaderProgram(InvalidHandle)
@@ -126,7 +139,7 @@ namespace rob
         m_vertexBuffer = m_graphics->CreateVertexBuffer();
         m_graphics->BindVertexBuffer(m_vertexBuffer);
         VertexBuffer *vb = m_graphics->GetVertexBuffer(m_vertexBuffer);
-        vb->Resize(4 * 1024 * 1024, false);
+        vb->Resize(MAX_VERTEX_BUFFER_SIZE, false);
     }
 
     Renderer::~Renderer()
@@ -165,12 +178,6 @@ namespace rob
 
     void Renderer::SetColor(const Color &color)
     { m_color = color; }
-
-    struct ColorVertex
-    {
-        float x, y;
-        float r, g, b, a;
-    };
 
     void Renderer::DrawRectangle(float x0, float y0, float x1, float y1)
     {
@@ -320,6 +327,32 @@ namespace rob
         m_graphics->SetAttrib(0, 2, sizeof(ColorVertex), 0);
         m_graphics->SetAttrib(1, 4, sizeof(ColorVertex), sizeof(float) * 2);
         m_graphics->DrawTriangleFanArrays(0, vertexCount);
+    }
+
+    void Renderer::DrawText(float x, float y, const char *text)
+    {
+        m_graphics->SetUniform(m_globals.position, vec4f(x, y, 0.0f, 1.0f));
+        m_graphics->BindVertexBuffer(m_vertexBuffer);
+        VertexBuffer *buffer = m_graphics->GetVertexBuffer(m_vertexBuffer);
+
+        const size_t maxVertexCount = std::strlen(text) * 6;
+        FontVertex * const verticesStart = m_vb_alloc.AllocateArray<FontVertex>(maxVertexCount);
+        while (*text)
+        {
+            size_t vertexCount = 0;
+            FontVertex *vertex = verticesStart;
+            for (char c = *text; *text; c = *text++, vertex++)
+            {
+//                const Glyph &glyph = m_font->GetGlyph(c);
+            }
+
+            buffer->Write(0, vertexCount * sizeof(FontVertex), verticesStart);
+
+            m_graphics->SetAttrib(0, 4, sizeof(FontVertex), 0);
+            m_graphics->SetAttrib(1, 4, sizeof(FontVertex), sizeof(float) * 4);
+            m_graphics->DrawTriangleArrays(0, vertexCount);
+        }
+        m_vb_alloc.Reset();
     }
 
 } // rob

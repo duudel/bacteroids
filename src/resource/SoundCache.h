@@ -19,7 +19,7 @@ namespace rob
         using ResourceCache::Get;
         using ResourceCache::UnloadAll;
 
-        SoundHandle Load(const char * const filename);
+        bool Load(const char * const filename, SoundHandle &sound);
         void Unload(SoundHandle sound);
 
     private:

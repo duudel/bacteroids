@@ -7,13 +7,13 @@
 #include "Color.h"
 
 #include "../math/Types.h"
+#include "../memory/LinearAllocator.h"
 
 namespace rob
 {
 
     class Graphics;
     class MasterCache;
-    class LinearAllocator;
 
     struct GlobalUniforms
     {
@@ -49,8 +49,10 @@ namespace rob
         void DrawFilledCirlce(float x, float y, float radius);
         void DrawFilledCirlce(float x, float y, float radius, const Color &center);
 
+        void DrawText(float x, float y, const char *text);
+
     private:
-        LinearAllocator &m_alloc;
+        LinearAllocator m_vb_alloc;
         Graphics *m_graphics;
 
         GlobalUniforms m_globals;
