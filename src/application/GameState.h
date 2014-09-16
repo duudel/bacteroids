@@ -9,16 +9,33 @@ namespace rob
 {
 
     class GameTime;
+    class LinearAllocator;
+    class MasterCache;
+    class Renderer;
 
     class GameState
     {
     public:
         GameState()
-            : m_quit(false)
+            : m_alloc(nullptr)
+            , m_cache(nullptr)
+            , m_renderer(nullptr)
+            , m_quit(false)
             , m_nextState(0)
         { }
 
         virtual ~GameState() { }
+
+        void SetAllocator(LinearAllocator &alloc) { m_alloc = &alloc; }
+        LinearAllocator& GetAllocator() { return *m_alloc; }
+
+        void SetCache(MasterCache *cache) { m_cache = cache; }
+        MasterCache& GetCache() { return *m_cache; }
+
+        void SetRenderer(Renderer *renderer) { m_renderer = renderer; }
+        Renderer& GetRenderer() { return *m_renderer; }
+
+        virtual bool Initialize() { return true; }
 
         virtual void Update(const GameTime &gameTime) { }
         virtual void Render(const GameTime &gameTime) { }
@@ -40,6 +57,9 @@ namespace rob
         int NextState() const { return m_nextState; }
 
     private:
+        LinearAllocator *   m_alloc;
+        MasterCache *       m_cache;
+        Renderer *          m_renderer;
         bool m_quit;
         int m_nextState;
     };

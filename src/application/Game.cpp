@@ -82,6 +82,14 @@ namespace rob
         return true;
     }
 
+    void Game::InitState()
+    {
+        m_state->SetAllocator(m_stateAlloc);
+        m_state->SetCache(m_cache);
+        m_state->SetRenderer(m_renderer);
+        m_state->Initialize();
+    }
+
     void Game::Run()
     {
         if (!Setup())

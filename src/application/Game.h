@@ -45,10 +45,12 @@ namespace rob
             m_stateAlloc.del_object(m_state);
             m_stateAlloc.Reset();
             m_state = m_stateAlloc.new_object<State>(args...);
+            InitState();
         }
 
     private:
         bool Setup();
+        void InitState();
 
     protected:
         LinearAllocator m_staticAlloc;
