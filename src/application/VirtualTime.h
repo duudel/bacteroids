@@ -10,12 +10,12 @@ namespace rob
     class VirtualTime
     {
     public:
-        VirtualTime();
+        VirtualTime(MicroTicker &ticker);
 
-        void Restart(MicroTicker &ticker);
+        void Restart();
         void Pause();
-        void Resume(MicroTicker &ticker);
-        void Update(MicroTicker &ticker);
+        void Resume();
+        void Update();
 
         double GetTime() const;
         Time_t GetTimeMicros() const;
@@ -23,6 +23,7 @@ namespace rob
         bool IsPaused() const;
 
     private:
+        MicroTicker &m_ticker;
         Time_t m_time;
         Time_t m_last;
         bool m_paused;

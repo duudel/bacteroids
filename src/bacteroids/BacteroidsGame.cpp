@@ -38,7 +38,7 @@ namespace bact
 
         void Update(const GameTime &gameTime)
         {
-            m_position += m_velocity * 0.01f;
+            m_position += m_velocity * gameTime.GetDeltaSeconds();
         }
 
         void Render(Renderer *renderer)
@@ -125,8 +125,6 @@ namespace bact
     public:
         BacteroidsState()
         {
-            m_ticker.Init();
-            m_time.Restart(m_ticker);
             m_random.Seed(m_ticker.GetTicks());
         }
 
@@ -142,7 +140,8 @@ namespace bact
                                                               g_bacterShader.m_fragmentShader);
 
             m_bacters.Init(GetAllocator());
-            m_bacters.Obtain()->SetVelocity(m_random.GetReal(-1.0, 1.0) * 20.0f, m_random.GetReal(-1.0, 1.0) * 20.0f);
+//            m_bacters.Obtain()->SetVelocity(m_random.GetReal(-1.0, 1.0) * 20.0f, m_random.GetReal(-1.0, 1.0) * 20.0f);
+            m_bacters.Obtain()->SetVelocity(20.0f, 20.0f);
             m_bacters.Obtain()->SetPosition(58.0f, 0.0f);
             return true;
         }
@@ -172,14 +171,14 @@ namespace bact
         void OnKeyPress(Key key, uint32_t mods) override
         {
             if (m_time.IsPaused())
-                m_time.Resume(m_ticker);
+                m_time.Resume();
             else
                 m_time.Pause();
         }
 
         void Update(const GameTime &gameTime) override
         {
-            m_time.Update(m_ticker);
+            m_time.Update();
 
             for (size_t i = 0; i < m_bacters.size; i++)
             {
@@ -192,7 +191,7 @@ namespace bact
             GetRenderer().GetGraphics()->SetViewport(vp.x, vp.y, vp.w, vp.h);
         }
 
-        void Render(const GameTime &gameTime) override
+        void Render() override
         {
             SetViewport(m_playAreaVp);
 
@@ -209,8 +208,6 @@ namespace bact
             }
         }
     private:
-        MicroTicker m_ticker;
-        VirtualTime m_time;
         Random m_random;
 
         ShaderProgramHandle m_bacterShader;

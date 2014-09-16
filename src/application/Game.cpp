@@ -14,10 +14,6 @@
 namespace rob
 {
 
-    class GameTime
-    {
-    };
-
     static const size_t STATIC_MEMORY_SIZE = 4 * 1024 * 1024;
 
     Game::Game()
@@ -95,13 +91,12 @@ namespace rob
         if (!Setup())
             return;
 
-        GameTime gameTime;
         while (m_window->HandleEvents(this))
         {
             m_graphics->Clear();
 
-            m_state->Update(gameTime);
-            m_state->Render(gameTime);
+            m_state->DoUpdate();
+            m_state->Render();
 
             m_window->SwapBuffers();
 
