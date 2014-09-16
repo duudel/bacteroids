@@ -119,6 +119,7 @@
 		<Unit filename="src/memory/PtrAlign.h" />
 		<Unit filename="src/renderer/Color.cpp" />
 		<Unit filename="src/renderer/Color.h" />
+		<Unit filename="src/renderer/DefaultShaders.cpp" />
 		<Unit filename="src/renderer/Font.cpp" />
 		<Unit filename="src/renderer/Font.h" />
 		<Unit filename="src/renderer/Renderer.cpp" />

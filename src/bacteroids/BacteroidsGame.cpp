@@ -102,11 +102,8 @@ namespace bact
 
         void SpawnBacter()
         {
-            const float DIST = 8.0f;
-
             Bacter *bacter = m_bacters.Obtain();
-            float r = m_random.GetReal(0.0f, 2.0f*PI_f);
-            bacter->SetPosition(Cos(r)*DIST, Sin(r)*DIST);
+            bacter->SetPosition(m_random.GetDirection() * 8.0f);
             bacter->SetTarget(&m_player);
             bacter->SetAnim(m_random.GetReal(0.0f, 2.0f*PI_f));
         }
@@ -115,22 +112,31 @@ namespace bact
         {
             m_time.Update();
 
+//            int n = 0;
+//            Bacter *b[10];
+
             for (size_t i = 0; i < m_bacters.size; i++)
             {
-                for (size_t j = i+1; j < m_bacters.size; j++)
+                for (size_t j = i + 1; j < m_bacters.size; j++)
                     m_bacters[i]->DoCollision(m_bacters[j]);
 
                 m_bacters[i]->Update(gameTime);
 
                 if (m_bacters[i]->ShouldClone())
                 {
-                    if (m_bacters.size < MAX_BACTERS)
+                    if (m_bacters.size < MAX_BACTERS)// && n < 10)
                     {
+//                        b[n++] = m_bacters[i];
                         Bacter *b = m_bacters.Obtain();
                         m_bacters[i]->Clone(b, m_random);
                     }
                 }
             }
+
+//            for (int i = 0; i < n; i++)
+//            {
+//                b[i]->Clone(m_bacters.Obtain(), m_random);
+//            }
         }
 
         void SetViewport(Viewport &vp)

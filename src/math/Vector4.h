@@ -190,7 +190,7 @@ namespace rob
 
         inline void Normalize()
         {
-            v = simd_::Div(v, LengthV());
+            v = simd_::Div(v, LengthV().v);
         }
 
         inline void NormalizeFast()
