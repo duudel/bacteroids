@@ -2,8 +2,12 @@
 #ifndef H_ROB_GAME_STATE_H
 #define H_ROB_GAME_STATE_H
 
+#include "MicroTicker.h"
+#include "VirtualTime.h"
+#include "GameTime.h"
 #include "../input/Keyboard.h"
 #include "../input/Mouse.h"
+#include "../Log.h"
 
 namespace rob
 {
@@ -17,12 +21,18 @@ namespace rob
     {
     public:
         GameState()
-            : m_alloc(nullptr)
+            : m_ticker()
+            , m_time(m_ticker)
+            , m_gameTime()
+            , m_alloc(nullptr)
             , m_cache(nullptr)
             , m_renderer(nullptr)
             , m_quit(false)
             , m_nextState(0)
-        { }
+        {
+            m_ticker.Init();
+            m_time.Restart();
+        }
 
         virtual ~GameState() { }
 
@@ -35,10 +45,27 @@ namespace rob
         void SetRenderer(Renderer *renderer) { m_renderer = renderer; }
         Renderer& GetRenderer() { return *m_renderer; }
 
+
+        void DoUpdate()
+        {
+            const Time_t lastTime = m_time.GetTimeMicros();
+            m_time.Update();
+            Time_t frameTime = m_time.GetTimeMicros() - lastTime;
+            if (frameTime > 25000)
+                frameTime = 25000;
+
+            m_gameTime.Update(frameTime);
+            while (m_gameTime.Step())
+            {
+                Update(m_gameTime);
+            }
+        }
+
+
         virtual bool Initialize() { return true; }
 
         virtual void Update(const GameTime &gameTime) { }
-        virtual void Render(const GameTime &gameTime) { }
+        virtual void Render() { }
 
         virtual void OnResize(int w, int h) { }
 
@@ -55,6 +82,11 @@ namespace rob
 
         void ChangeState(int state) { m_nextState = state; }
         int NextState() const { return m_nextState; }
+
+    protected:
+        MicroTicker m_ticker;
+        VirtualTime m_time;
+        GameTime m_gameTime;
 
     private:
         LinearAllocator *   m_alloc;

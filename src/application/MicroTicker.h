@@ -7,8 +7,6 @@
 namespace rob
 {
 
-    typedef uint64_t Time_t;
-
     class MicroTicker
     {
     public:

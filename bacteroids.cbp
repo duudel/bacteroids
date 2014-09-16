@@ -50,6 +50,7 @@
 		<Unit filename="src/application/Game.cpp" />
 		<Unit filename="src/application/Game.h" />
 		<Unit filename="src/application/GameState.h" />
+		<Unit filename="src/application/GameTime.cpp" />
 		<Unit filename="src/application/GameTime.h" />
 		<Unit filename="src/application/MicroTicker.cpp" />
 		<Unit filename="src/application/MicroTicker.h" />
