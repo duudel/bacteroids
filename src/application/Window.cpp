@@ -26,7 +26,7 @@ namespace rob
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
 
-        m_data->m_window = SDL_CreateWindow("Robbin in the Hood",
+        m_data->m_window = SDL_CreateWindow("Rob engine",
                                             SDL_WINDOWPOS_UNDEFINED,
                                             SDL_WINDOWPOS_UNDEFINED,
                                             1280, 720,
@@ -102,6 +102,9 @@ namespace rob
 
     void Window::SwapBuffers()
     { ::SDL_GL_SwapWindow(m_data->m_window); }
+
+    void Window::SetTitle(const char * const title)
+    { ::SDL_SetWindowTitle(m_data->m_window, title); }
 
     void Window::GetSize(int *w, int *h) const
     { ::SDL_GetWindowSize(m_data->m_window, w, h); }

@@ -1,6 +1,7 @@
 
 #include "FontCache.h"
 #include "MasterCache.h"
+#include "../graphics/Graphics.h"
 #include "../Types.h"
 #include "../Log.h"
 
@@ -32,7 +33,8 @@ namespace rob
 
     void FontCache::Unload(Font font)
     {
-//        m_graphics->DestroyTexture(texture);
+//        for (size_t i = 0; i < font.GetTextureCount(); i++)
+//            m_cache->UnloadTexture(font.GetTexture(i));
     }
 
     static constexpr uint8_t BmfVersion = 3;
@@ -244,22 +246,22 @@ namespace rob
                         glyph.m_textureIdx = block.page;
 
                         font.AddGlyph(block.id, glyph);
-                        font.AddGlyphMapping(block.id, block.id);
                     }
                 }
                 break;
 
             case BmfKerningPairBlock::TYPE:
                 {
-                    in.seekg(block_size, std::ios::cur);
-//                    const size_t int number_of_kerning_pairs = block_size / 10;
-//                    for (size_t i=0; i<number_of_kerning_pairs; i++)
-//                    {
-//                        BmfKerningPairBlock block;
-//                        block.first = read_uint32(in);
-//                        block.second = read_uint32(in);
-//                        block.amount = read_int16(in);
-//                    }
+//                    in.seekg(block_size, std::ios::cur);
+                    const size_t kerningPairs = block_size / 10;
+                    for (size_t i = 0; i < kerningPairs; i++)
+                    {
+                        BmfKerningPairBlock block;
+                        block.first = ReadValue<uint32_t>(in);
+                        block.second = ReadValue<uint32_t>(in);
+                        block.amount = ReadValue<int16_t>(in);
+                        font.AddKerning(block.first, block.second, block.amount);
+                    }
                 }
                 break;
 

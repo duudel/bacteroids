@@ -24,6 +24,7 @@ namespace rob
 
         bool Load(const char * const filename, Font &font);
         void Unload(Font font);
+
     private:
         Graphics *m_graphics;
         MasterCache *m_cache;
