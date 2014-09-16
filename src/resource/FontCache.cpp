@@ -18,21 +18,16 @@ namespace rob
 
     static bool LoadFont(std::istream &in, Font &font, MasterCache *cache);
 
-    Font FontCache::Load(const char * const filename)
+    bool FontCache::Load(const char * const filename, Font &font)
     {
-        Font font;
-
         std::ifstream in(filename, std::ios_base::binary);
         if (!in.is_open())
         {
             log::Error("Could not open font file ", filename);
-            return font;
+            return false;
         }
 
-        if (!LoadFont(in, font, m_cache))
-            return Font();
-
-        return font;
+        return LoadFont(in, font, m_cache);
     }
 
     void FontCache::Unload(Font font)
@@ -120,6 +115,17 @@ namespace rob
         return file.gcount();
     }
 
+    void ChangePageTextureExtension(char (&buffer)[64])
+    {
+        size_t pos = 64 - 1;
+        while (pos && buffer[pos] != '.')
+            pos--;
+        buffer[++pos] = 't';
+        buffer[++pos] = 'e';
+        buffer[++pos] = 'x';
+        buffer[++pos] = '\0';
+    }
+
     static bool LoadFont(std::istream &in, Font &font, MasterCache *cache)
     {
         if (! (ReadValue<uint8_t>(in) == 'B'
@@ -141,6 +147,7 @@ namespace rob
         while (in)
         {
             const uint8_t block_type = ReadValue<uint8_t>(in);
+            if (in.eof()) break;
             const uint32_t block_size = ReadValue<uint32_t>(in);
 
             switch (block_type)
@@ -201,7 +208,9 @@ namespace rob
                         size_t len = ReadString(in, pageName);
                         if (!pageNameLen) pageNameLen = len;
 
-                        const ResourceID texture(pageName);
+                        ChangePageTextureExtension(pageName);
+                        // NOTE: To prevent from using the char[64] version decay to char*
+                        const ResourceID texture(+pageName);
                         font.AddTexture(i, cache->GetTexture(texture));
                     }
                 }
@@ -232,6 +241,7 @@ namespace rob
                         glyph.m_offsetX = block.offset_x;
                         glyph.m_offsetY = block.offset_y;
                         glyph.m_advance = block.advance_x;
+                        glyph.m_textureIdx = block.page;
 
                         font.AddGlyph(block.id, glyph);
                         font.AddGlyphMapping(block.id, block.id);

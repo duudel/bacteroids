@@ -27,6 +27,8 @@ namespace rob
     public:
         Font();
 
+        bool IsReady() const;
+
         void SetBase(uint16_t base);
         uint16_t GetBase() const;
 
@@ -57,6 +59,7 @@ namespace rob
         static const size_t MAX_GLYPHS = 512;
         Glyph       m_glyph[MAX_GLYPHS];
         uint32_t    m_characterToGlyph[MAX_GLYPHS];
+        size_t m_glyphCount;
 
         static const size_t MAX_TEXTURE_PAGES = 4;
         TextureHandle m_textures[MAX_TEXTURE_PAGES];

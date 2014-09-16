@@ -7,12 +7,15 @@
 namespace rob
 {
 
+    static constexpr size_t seed1 = 16777619u;
+    static constexpr size_t seed2 = 2166136261u;
+
     template <size_t N, size_t I>
     struct FnvHash
     {
         static uint32_t Hash(const char (&str)[N])
         {
-            return (FnvHash<N, I-1>::Hash(str) ^ str[I-1]) * 16777619u;
+            return (FnvHash<N, I-1>::Hash(str) ^ str[I-1]) * seed1;
         }
     };
 
@@ -21,20 +24,20 @@ namespace rob
     {
         static uint32_t Hash(const char (&str)[N])
         {
-            return (2166136261u ^ str[0]) * 16777619u;
+            return (seed2 ^ str[0]) * seed1;
         }
     };
 
     inline uint32_t CalculateFnv(const char *str)
     {
-        uint32_t hash = 2166136261u;
+        uint32_t hash = seed2;
         while (*str)
         {
             hash ^= *str++;
-            hash *= 16777619u;
+            hash *= seed1;
         }
         hash ^= *str;
-        hash *= 16777619u;
+        hash *= seed1;
         return hash;
     }
 

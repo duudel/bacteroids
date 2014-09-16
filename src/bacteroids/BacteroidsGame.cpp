@@ -153,6 +153,10 @@ namespace bact
                 renderer.BindShader(m_bacterShader);
                 m_bacters[i]->Render(&renderer, m_uniforms.anim);
             }
+
+            renderer.SetColor(Color(1.05f, 1.13f, 1.15f));
+            renderer.BindFontShader();
+            renderer.DrawText(40, 40, "Heei!");
         }
     private:
         Random m_random;

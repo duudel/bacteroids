@@ -9,6 +9,7 @@ namespace rob
     MasterCache::MasterCache(Graphics *graphics, AudioSystem *audio, LinearAllocator &alloc)
         : m_textures(graphics)
         , m_sounds(audio)
+        , m_fonts(graphics, this)
         , m_resources()
     {
         Scan("data/");
@@ -58,6 +59,15 @@ namespace rob
             return m_sounds.Get(id, resource->m_filepath);
         ReportInvalidResource(id);
         return InvalidSound;
+    }
+
+    Font MasterCache::GetFont(ResourceID id)
+    {
+        const Resource *resource = nullptr;
+        if (FindResource(id, &resource))
+            return m_fonts.Get(id, resource->m_filepath);
+        ReportInvalidResource(id);
+        return Font();
     }
 
     bool MasterCache::FindResource(ResourceID id, const Resource **resource) const

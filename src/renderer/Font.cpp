@@ -11,7 +11,11 @@ namespace rob
         , m_descender(0)
         , m_horiSpacing(0)
         , m_lineSpacing(0)
+        , m_glyphCount(0)
     { }
+
+    bool Font::IsReady() const
+    { return m_glyphCount > 0; }
 
     void Font::SetBase(uint16_t base)
     { m_base = base; }
@@ -47,6 +51,7 @@ namespace rob
     {
         ROB_ASSERT(index < MAX_GLYPHS);
         m_glyph[index] = glyph;
+        m_glyphCount++;
     }
 
     void Font::AddGlyphMapping(uint32_t character, uint32_t index)

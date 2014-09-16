@@ -32,7 +32,7 @@ namespace rob
         m_graphics = m_staticAlloc.new_object<Graphics>(m_staticAlloc);
         m_audio = m_staticAlloc.new_object<AudioSystem>(m_staticAlloc);
         m_cache = m_staticAlloc.new_object<MasterCache>(m_graphics, m_audio, m_staticAlloc);
-        m_renderer = m_staticAlloc.new_object<Renderer>(m_graphics, m_staticAlloc);
+        m_renderer = m_staticAlloc.new_object<Renderer>(m_graphics, m_cache, m_staticAlloc);
 
         const size_t freeMemory = STATIC_MEMORY_SIZE - m_staticAlloc.GetAllocatedSize();
         log::Info("Static memory used: ", m_staticAlloc.GetAllocatedSize(), " B from ",

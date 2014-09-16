@@ -22,7 +22,7 @@ namespace rob
         using ResourceCache::Get;
         using ResourceCache::UnloadAll;
 
-        Font Load(const char * const filename);
+        bool Load(const char * const filename, Font &font);
         void Unload(Font font);
     private:
         Graphics *m_graphics;

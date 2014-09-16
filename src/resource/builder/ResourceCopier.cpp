@@ -9,6 +9,7 @@ namespace rob
     {
         m_extensions.push_back(".ion");
         m_extensions.push_back(".wav");
+        m_extensions.push_back(".fnt");
     }
 
     bool ResourceCopier::Build(const std::string &filename, const std::string &destFilename)

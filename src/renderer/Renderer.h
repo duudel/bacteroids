@@ -5,6 +5,7 @@
 #include "../graphics/GraphicsTypes.h"
 #include "../resource/ResourceID.h"
 #include "Color.h"
+#include "Font.h"
 
 #include "../math/Types.h"
 #include "../memory/LinearAllocator.h"
@@ -21,12 +22,15 @@ namespace rob
         UniformHandle projection;
         UniformHandle position;
         UniformHandle time;
+        UniformHandle texture0;
     };
+
+    struct FontVertex;
 
     class Renderer
     {
     public:
-        Renderer(Graphics *graphics, LinearAllocator &alloc);
+        Renderer(Graphics *graphics, MasterCache *cache, LinearAllocator &alloc);
         Renderer(const Renderer&) = delete;
         Renderer& operator = (const Renderer&) = delete;
         ~Renderer();
@@ -42,6 +46,7 @@ namespace rob
 
         void BindShader(ShaderProgramHandle shader);
         void BindColorShader();
+        void BindFontShader();
 
         void SetColor(const Color &color);
         void DrawRectangle(float x0, float y0, float x1, float y1);
@@ -51,6 +56,11 @@ namespace rob
         void DrawFilledCirlce(float x, float y, float radius, const Color &center);
 
         void DrawText(float x, float y, const char *text);
+    private:
+        void AddFontVertex(FontVertex *&vertex, const Glyph &glyph,
+                           float &cursorX, float &cursorY,
+                           const size_t textureW, const size_t textureH);
+
 
     private:
         LinearAllocator m_alloc;
@@ -60,11 +70,11 @@ namespace rob
         GlobalUniforms m_globals;
 
         VertexBufferHandle      m_vertexBuffer;
-        ShaderProgramHandle     m_shaderProgram;
         ShaderProgramHandle     m_colorProgram;
+        ShaderProgramHandle     m_fontProgram;
 
         Color m_color;
-        Font *m_font;
+        Font m_font;
     };
 
 } // rob

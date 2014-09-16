@@ -6,6 +6,7 @@
 #include "../graphics/VertexBuffer.h"
 #include "../graphics/Texture.h"
 #include "Font.h"
+#include "../resource/MasterCache.h"
 
 #include "../math/Math.h"
 
@@ -16,6 +17,11 @@
 
 namespace rob
 {
+
+    extern const char * const g_colorVertexShader;
+    extern const char * const g_colorFragmentShader;
+    extern const char * const g_fontVertexShader;
+    extern const char * const g_fontFragmentShader;
 
     struct ColorVertex
     {
@@ -29,56 +35,10 @@ namespace rob
         float r, g, b, a;
     };
 
-    #define GLSL(x) "#version 120\n" #x
-
-    static const char * const g_vertexShader = GLSL(
-        uniform mat4 u_projection;
-        attribute vec4 a_tile;
-        varying vec2 v_uv;
-        void main()
-        {
-            gl_Position = vec4(a_tile.xy, 0.0, 1.0);
-            v_uv = a_tile.zw;
-        }
-    );
-
-    static const char * const g_fragmentShader = GLSL(
-        uniform sampler2D u_texture;
-        varying vec2 v_uv;
-        void main()
-        {
-            vec4 color = texture2D(u_texture, v_uv);
-            gl_FragColor = color;
-        }
-    );
-
-    static const char * const g_colorVertexShader = GLSL(
-        uniform mat4 u_projection;
-        attribute vec2 a_position;
-        attribute vec4 a_color;
-        varying vec4 v_color;
-        void main()
-        {
-            gl_Position = u_projection * vec4(a_position, 0.0, 1.0);
-            v_color = a_color;
-        }
-    );
-
-    static const char * const g_colorFragmentShader = GLSL(
-        varying vec4 v_color;
-        void main()
-        {
-            gl_FragColor = v_color;
-        }
-    );
-
 
     ShaderProgramHandle Renderer::CompileShaderProgram(const char * const vert, const char * const frag)
     {
         VertexShaderHandle vs = m_graphics->CreateVertexShader();
-        FragmentShaderHandle fs = m_graphics->CreateFragmentShader();
-        ShaderProgramHandle p = m_graphics->CreateShaderProgram();
-
         VertexShader *vertShader = m_graphics->GetVertexShader(vs);
         vertShader->SetSource(vert);
         if (!vertShader->Compile())
@@ -86,9 +46,11 @@ namespace rob
             char buffer[512];
             vertShader->GetCompileInfo(buffer, 512);
             log::Error(&buffer[0]);
+            m_graphics->DestroyVertexShader(vs);
             return InvalidHandle;
         }
 
+        FragmentShaderHandle fs = m_graphics->CreateFragmentShader();
         FragmentShader *fragShader = m_graphics->GetFragmentShader(fs);
         fragShader->SetSource(frag);
         if (!fragShader->Compile())
@@ -96,9 +58,12 @@ namespace rob
             char buffer[512];
             fragShader->GetCompileInfo(buffer, 512);
             log::Error(&buffer[0]);
+            m_graphics->DestroyVertexShader(vs);
+            m_graphics->DestroyFragmentShader(fs);
             return InvalidHandle;
         }
 
+        ShaderProgramHandle p = m_graphics->CreateShaderProgram();
         ShaderProgram *program = m_graphics->GetShaderProgram(p);
         program->SetShaders(vertShader, fragShader);
         if (!program->Link())
@@ -106,6 +71,9 @@ namespace rob
             char buffer[512];
             program->GetLinkInfo(buffer, 512);
             log::Error(&buffer[0]);
+            m_graphics->DestroyVertexShader(vs);
+            m_graphics->DestroyFragmentShader(fs);
+            m_graphics->DestroyFragmentShader(p);
             return InvalidHandle;
         }
 
@@ -115,32 +83,34 @@ namespace rob
         m_graphics->AddProgramUniform(p, m_globals.projection);
         m_graphics->AddProgramUniform(p, m_globals.position);
         m_graphics->AddProgramUniform(p, m_globals.time);
+        m_graphics->AddProgramUniform(p, m_globals.texture0);
         return p;
     }
 
     static const size_t RENDERER_MEMORY = 4 * 1024;
-    static const size_t MAX_VERTEX_BUFFER_SIZE = 4 * 1024 * 1024;
+    static const size_t MAX_VERTEX_BUFFER_SIZE = 1 * 1024 * 1024;
 
-    Renderer::Renderer(Graphics *graphics, LinearAllocator &alloc)
+    Renderer::Renderer(Graphics *graphics, MasterCache *cache, LinearAllocator &alloc)
         : m_alloc(alloc.Allocate(RENDERER_MEMORY), RENDERER_MEMORY)
         , m_vb_alloc(alloc.Allocate(MAX_VERTEX_BUFFER_SIZE), MAX_VERTEX_BUFFER_SIZE)
         , m_graphics(graphics)
         , m_vertexBuffer(InvalidHandle)
-        , m_shaderProgram(InvalidHandle)
         , m_colorProgram(InvalidHandle)
         , m_color()
-        , m_font(nullptr)
+        , m_font()
     {
-        m_globals.projection = m_graphics->CreateUniform("u_projection", UniformType::Mat4);
-        m_globals.position = m_graphics->CreateUniform("u_position", UniformType::Vec4);
-        m_globals.time = m_graphics->CreateUniform("u_time", UniformType::Float);
+        m_globals.projection    = m_graphics->CreateUniform("u_projection", UniformType::Mat4);
+        m_globals.position      = m_graphics->CreateUniform("u_position", UniformType::Vec4);
+        m_globals.time          = m_graphics->CreateUniform("u_time", UniformType::Float);
+        m_globals.texture0      = m_graphics->CreateUniform("u_texture0", UniformType::Int);
         m_graphics->SetUniform(m_globals.projection, mat4f::Identity);
         m_graphics->SetUniform(m_globals.time, 0.0f);
+        m_graphics->SetUniform(m_globals.texture0, 0);
 
-        m_shaderProgram = CompileShaderProgram(g_vertexShader, g_fragmentShader);
         m_colorProgram = CompileShaderProgram(g_colorVertexShader, g_colorFragmentShader);
+        m_fontProgram = CompileShaderProgram(g_fontVertexShader, g_fontFragmentShader);
 
-        m_font = m_alloc.new_object<Font>();
+        m_font = cache->GetFont("lucida_24.fnt");
 
         m_vertexBuffer = m_graphics->CreateVertexBuffer();
         m_graphics->BindVertexBuffer(m_vertexBuffer);
@@ -150,10 +120,11 @@ namespace rob
 
     Renderer::~Renderer()
     {
-        m_alloc.del_object(m_font);
         m_graphics->DestroyVertexBuffer(m_vertexBuffer);
-        m_graphics->DestroyShaderProgram(m_shaderProgram);
-        m_graphics->DestroyShaderProgram(m_colorProgram);
+        if (m_colorProgram != InvalidHandle)
+            m_graphics->DestroyShaderProgram(m_colorProgram);
+        if (m_fontProgram != InvalidHandle)
+            m_graphics->DestroyShaderProgram(m_fontProgram);
     }
 
     Graphics* Renderer::GetGraphics()
@@ -182,6 +153,9 @@ namespace rob
 
     void Renderer::BindColorShader()
     { BindShader(m_colorProgram); }
+
+    void Renderer::BindFontShader()
+    { BindShader(m_fontProgram); }
 
     void Renderer::SetColor(const Color &color)
     { m_color = color; }
@@ -336,8 +310,42 @@ namespace rob
         m_graphics->DrawTriangleFanArrays(0, vertexCount);
     }
 
+    void Renderer::AddFontVertex(FontVertex *&vertex, const Glyph &glyph,
+                                 float &cursorX, float &cursorY,
+                                 const size_t textureW, const size_t textureH)
+    {
+        const float gW = float(glyph.m_width);
+        const float gH = -float(glyph.m_height);
+
+        const float uvW = gW / textureW;
+        const float uvH = gH / textureH;
+
+        const float uvX = float(glyph.m_x) / textureW;
+        const float uvY = -float(glyph.m_y) / textureH;
+
+        const float cX = cursorX + glyph.m_offsetX;
+        const float cY = cursorY - glyph.m_offsetY;
+
+        *vertex++ = { cX, cY, uvX, uvY,
+                        m_color.r, m_color.g, m_color.b, m_color.a };
+        *vertex++ = { cX + gW, cY, uvX + uvW, uvY,
+                        m_color.r, m_color.g, m_color.b, m_color.a };
+        *vertex++ = { cX, cY + gH, uvX, uvY + uvH,
+                        m_color.r, m_color.g, m_color.b, m_color.a };
+        *vertex++ = { cX, cY + gH, uvX, uvY + uvH,
+                        m_color.r, m_color.g, m_color.b, m_color.a };
+        *vertex++ = { cX + gW, cY, uvX + uvW, uvY,
+                        m_color.r, m_color.g, m_color.b, m_color.a };
+        *vertex++ = { cX + gW, cY + gH, uvX + uvW, uvY + uvH,
+                        m_color.r, m_color.g, m_color.b, m_color.a };
+
+        cursorX += glyph.m_advance;
+    }
+
     void Renderer::DrawText(float x, float y, const char *text)
     {
+        if (!m_font.IsReady()) return;
+
         m_graphics->SetUniform(m_globals.position, vec4f(x, y, 0.0f, 1.0f));
         m_graphics->BindVertexBuffer(m_vertexBuffer);
         VertexBuffer *buffer = m_graphics->GetVertexBuffer(m_vertexBuffer);
@@ -350,65 +358,24 @@ namespace rob
         {
             FontVertex *vertex = verticesStart;
 
-            char c = *text;
-            const Glyph &glyph = m_font->GetGlyph(c);
+            char c = *text++;
+            const Glyph &glyph = m_font.GetGlyph(c);
 
             uint16_t texturePage = glyph.m_textureIdx;
-            const TextureHandle textureHandle = m_font->GetTexture(texturePage);
+            const TextureHandle textureHandle = m_font.GetTexture(texturePage);
             const Texture *texture = m_graphics->GetTexture(textureHandle);
 
             const size_t textureW = texture->GetWidth();
             const size_t textureH = texture->GetHeight();
-            const float uvW = float(glyph.m_width) / textureW;
-            const float uvH = float(glyph.m_height) / textureH;
 
-            const float uvX = glyph.m_x;
-            const float uvY = glyph.m_y;
-
-            const float cX = cursorX + glyph.m_offsetX;
-            const float cY = cursorY + glyph.m_offsetY;
-
-            *vertex++ = { cX, cY, uvX, uvY,
-                            m_color.r, m_color.g, m_color.b, m_color.a };
-            *vertex++ = { cX + glyph.m_width, cY, uvX + uvW, uvY,
-                            m_color.r, m_color.g, m_color.b, m_color.a };
-            *vertex++ = { cX, cY + glyph.m_height, uvX, uvY + uvH,
-                            m_color.r, m_color.g, m_color.b, m_color.a };
-            *vertex++ = { cX, cY + glyph.m_height, uvX, uvY + uvH,
-                            m_color.r, m_color.g, m_color.b, m_color.a };
-            *vertex++ = { cX + glyph.m_width, cY, uvX + uvW, uvY,
-                            m_color.r, m_color.g, m_color.b, m_color.a };
-            *vertex++ = { cX + glyph.m_width, cY + glyph.m_height, uvX + uvW, uvY + uvH,
-                            m_color.r, m_color.g, m_color.b, m_color.a };
-
-            cursorX += glyph.m_advance;
-
-            for (char c = *text; *text; c = *text++)
+            AddFontVertex(vertex, glyph, cursorX, cursorY, textureW, textureH);
+            while (char c = *text++)
             {
-                const Glyph &glyph = m_font->GetGlyph(c);
+                const Glyph &glyph = m_font.GetGlyph(c);
                 if (glyph.m_textureIdx != texturePage)
                     break;
 
-                const float uvX = glyph.m_x;
-                const float uvY = glyph.m_y;
-
-                const float cX = cursorX + glyph.m_offsetX;
-                const float cY = cursorY + glyph.m_offsetY;
-
-                *vertex++ = { cX, cY, uvX, uvY,
-                                m_color.r, m_color.g, m_color.b, m_color.a };
-                *vertex++ = { cX + glyph.m_width, cY, uvX + uvW, uvY,
-                                m_color.r, m_color.g, m_color.b, m_color.a };
-                *vertex++ = { cX, cY + glyph.m_height, uvX, uvY + uvH,
-                                m_color.r, m_color.g, m_color.b, m_color.a };
-                *vertex++ = { cX, cY + glyph.m_height, uvX, uvY + uvH,
-                                m_color.r, m_color.g, m_color.b, m_color.a };
-                *vertex++ = { cX + glyph.m_width, cY, uvX + uvW, uvY,
-                                m_color.r, m_color.g, m_color.b, m_color.a };
-                *vertex++ = { cX + glyph.m_width, cY + glyph.m_height, uvX + uvW, uvY + uvH,
-                                m_color.r, m_color.g, m_color.b, m_color.a };
-
-                cursorX += glyph.m_advance;
+                AddFontVertex(vertex, glyph, cursorX, cursorY, textureW, textureH);
             }
 
             const size_t vertexCount = vertex - verticesStart;

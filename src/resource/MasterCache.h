@@ -5,6 +5,7 @@
 #include "ResourceID.h"
 #include "TextureCache.h"
 #include "SoundCache.h"
+#include "FontCache.h"
 
 #include <unordered_map>
 
@@ -21,10 +22,12 @@ namespace rob
 
         TextureHandle GetTexture(ResourceID id);
         SoundHandle GetSound(ResourceID id);
+        Font GetFont(ResourceID id);
 
     private:
         TextureCache m_textures;
         SoundCache m_sounds;
+        FontCache m_fonts;
 
         struct Resource
         {
