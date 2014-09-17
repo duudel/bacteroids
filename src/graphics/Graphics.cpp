@@ -11,6 +11,7 @@
 #include "../memory/LinearAllocator.h"
 
 #include "../Log.h"
+#include "../String.h"
 
 #include "GLCheck.h"
 #include <GL/glew.h>
@@ -372,18 +373,6 @@ namespace rob
         m_shaderPrograms.Return(p);
     }
 
-
-
-
-    template <size_t N>
-    static void CopyToFixedString(char (&dest)[N], const char *src)
-    {
-        size_t i = 0;
-        for (; i < N && *src; i++, src++)
-            dest[i] = *src;
-        dest[i] = 0;
-    }
-
     // Uniforms
 
     UniformHandle Graphics::CreateUniform(const char *name, UniformType type)
@@ -393,7 +382,7 @@ namespace rob
         uniform->m_generation   = 0;
         uniform->m_references   = 0;
         uniform->m_upload       = Uniform::GetUploadFuncFromType(type);
-        CopyToFixedString(uniform->m_name, name);
+        CopyString(uniform->m_name, name);
         return m_uniforms.IndexOf(uniform);
     }
 
