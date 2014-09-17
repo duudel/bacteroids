@@ -130,7 +130,7 @@ namespace bact
             b->m_position = m_position + random.GetDirection()*0.1f;
 //            b->m_velocity = m_velocity;
             b->m_radius = m_radius;
-            b->m_anim = m_anim + 0.637f;
+            b->m_anim = random.GetReal(0.0, 2.0 * PI_d); //m_anim + 0.637f;
             b->m_r0 = m_r0/2.0f;
             b->m_target = m_target;
 

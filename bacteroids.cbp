@@ -53,10 +53,6 @@
 		<Unit filename="src/application/GameState.h" />
 		<Unit filename="src/application/GameTime.cpp" />
 		<Unit filename="src/application/GameTime.h" />
-		<Unit filename="src/application/MicroTicker.cpp" />
-		<Unit filename="src/application/MicroTicker.h" />
-		<Unit filename="src/application/VirtualTime.cpp" />
-		<Unit filename="src/application/VirtualTime.h" />
 		<Unit filename="src/application/Window.cpp" />
 		<Unit filename="src/application/Window.h" />
 		<Unit filename="src/audio/AudioSystem.cpp" />
@@ -142,6 +138,12 @@
 		<Unit filename="src/resource/builder/ResourceCopier.h" />
 		<Unit filename="src/resource/builder/TextureBuilder.cpp" />
 		<Unit filename="src/resource/builder/TextureBuilder.h" />
+		<Unit filename="src/time/MicroTicker.cpp" />
+		<Unit filename="src/time/MicroTicker.h" />
+		<Unit filename="src/time/Time.cpp" />
+		<Unit filename="src/time/Time.h" />
+		<Unit filename="src/time/VirtualTime.cpp" />
+		<Unit filename="src/time/VirtualTime.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />

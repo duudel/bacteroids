@@ -6,8 +6,9 @@
 
 #include "../application/Window.h"
 #include "../application/GameState.h"
-#include "../application/MicroTicker.h"
-#include "../application/VirtualTime.h"
+#include "../time/MicroTicker.h"
+#include "../time/VirtualTime.h"
+#include "../time/Time.h"
 
 #include "../renderer/Renderer.h"
 #include "../graphics/Graphics.h"
@@ -19,8 +20,6 @@
 #include "../Log.h"
 
 #include "Shaders.h"
-
-#include <SDL2/SDL.h>
 
 namespace bact
 {
@@ -44,7 +43,7 @@ namespace bact
     public:
         BacteroidsState()
         {
-            m_random.Seed(SDL_GetTicks());
+            m_random.Seed(GetTicks());
         }
 
         bool Initialize() override

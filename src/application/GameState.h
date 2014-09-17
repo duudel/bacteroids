@@ -2,9 +2,10 @@
 #ifndef H_ROB_GAME_STATE_H
 #define H_ROB_GAME_STATE_H
 
-#include "MicroTicker.h"
-#include "VirtualTime.h"
 #include "GameTime.h"
+#include "../time/MicroTicker.h"
+#include "../time/VirtualTime.h"
+
 #include "../input/Keyboard.h"
 #include "../input/Mouse.h"
 #include "../Log.h"
