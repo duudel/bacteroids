@@ -167,37 +167,41 @@ namespace rob
 
     void Renderer::DrawRectangle(float x0, float y0, float x1, float y1)
     {
-        const ColorVertex vertices[] =
-        {
-            { x0, y0, m_color.r, m_color.g, m_color.b, m_color.a },
-            { x1, y0, m_color.r, m_color.g, m_color.b, m_color.a },
-            { x1, y1, m_color.r, m_color.g, m_color.b, m_color.a },
-            { x0, y1, m_color.r, m_color.g, m_color.b, m_color.a }
-        };
+        const size_t vertexCount = 4;
+        ColorVertex* vertices = m_vb_alloc.AllocateArray<ColorVertex>(vertexCount);
+        vertices[0] = { x0, y0, m_color.r, m_color.g, m_color.b, m_color.a };
+        vertices[1] = { x1, y0, m_color.r, m_color.g, m_color.b, m_color.a };
+        vertices[2] = { x0, y1, m_color.r, m_color.g, m_color.b, m_color.a };
+        vertices[3] = { x1, y1, m_color.r, m_color.g, m_color.b, m_color.a };
+
         m_graphics->BindVertexBuffer(m_vertexBuffer);
         VertexBuffer *buffer = m_graphics->GetVertexBuffer(m_vertexBuffer);
-        buffer->Write(0, sizeof(vertices), vertices);
+        buffer->Write(0, vertexCount * sizeof(ColorVertex), vertices);
         m_graphics->SetAttrib(0, 2, sizeof(ColorVertex), 0);
         m_graphics->SetAttrib(1, 4, sizeof(ColorVertex), sizeof(float) * 2);
         m_graphics->BindShaderProgram(m_colorProgram);
         m_graphics->DrawLineLoopArrays(0, 4);
+
+        m_vb_alloc.Reset();
     }
 
     void Renderer::DrawFilledRectangle(float x0, float y0, float x1, float y1)
     {
-        const ColorVertex vertices[] =
-        {
-            { x0, y0, m_color.r, m_color.g, m_color.b, m_color.a },
-            { x1, y0, m_color.r, m_color.g, m_color.b, m_color.a },
-            { x0, y1, m_color.r, m_color.g, m_color.b, m_color.a },
-            { x1, y1, m_color.r, m_color.g, m_color.b, m_color.a }
-        };
+        const size_t vertexCount = 4;
+        ColorVertex* vertices = m_vb_alloc.AllocateArray<ColorVertex>(vertexCount);
+        vertices[0] = { x0, y0, m_color.r, m_color.g, m_color.b, m_color.a };
+        vertices[1] = { x1, y0, m_color.r, m_color.g, m_color.b, m_color.a };
+        vertices[2] = { x0, y1, m_color.r, m_color.g, m_color.b, m_color.a };
+        vertices[3] = { x1, y1, m_color.r, m_color.g, m_color.b, m_color.a };
+
         m_graphics->BindVertexBuffer(m_vertexBuffer);
         VertexBuffer *buffer = m_graphics->GetVertexBuffer(m_vertexBuffer);
-        buffer->Write(0, sizeof(vertices), vertices);
+        buffer->Write(0, vertexCount * sizeof(ColorVertex), vertices);
         m_graphics->SetAttrib(0, 2, sizeof(ColorVertex), 0);
         m_graphics->SetAttrib(1, 4, sizeof(ColorVertex), sizeof(float) * 2);
         m_graphics->DrawTriangleStripArrays(0, 4);
+
+        m_vb_alloc.Reset();
     }
 
     static const size_t CIRCLE_SEGMENTS = 48;
@@ -208,7 +212,7 @@ namespace rob
         const size_t segments = CIRCLE_SEGMENTS;
         const size_t quarter = segments / 4;
         const size_t vertexCount = segments;
-        ColorVertex vertices[vertexCount];
+        ColorVertex* vertices = m_vb_alloc.AllocateArray<ColorVertex>(vertexCount);
 
         float angle = 0.0f;
         const float deltaAngle = 2.0f * PI_f / segments;
@@ -233,10 +237,12 @@ namespace rob
 
         m_graphics->BindVertexBuffer(m_vertexBuffer);
         VertexBuffer *buffer = m_graphics->GetVertexBuffer(m_vertexBuffer);
-        buffer->Write(0, sizeof(vertices), vertices);
+        buffer->Write(0, vertexCount * sizeof(ColorVertex), vertices);
         m_graphics->SetAttrib(0, 2, sizeof(ColorVertex), 0);
         m_graphics->SetAttrib(1, 4, sizeof(ColorVertex), sizeof(float) * 2);
         m_graphics->DrawLineLoopArrays(0, vertexCount);
+
+        m_vb_alloc.Reset();
     }
 
     void Renderer::DrawFilledCirlce(float x, float y, float radius)
@@ -244,7 +250,7 @@ namespace rob
         const size_t segments = CIRCLE_SEGMENTS;
         const size_t quarter = segments / 4;
         const size_t vertexCount = segments + 2;
-        ColorVertex vertices[vertexCount];
+        ColorVertex* vertices = m_vb_alloc.AllocateArray<ColorVertex>(vertexCount);
 
         float angle = 0.0f;
         const float deltaAngle = 2.0f * PI_f / segments;
@@ -271,10 +277,12 @@ namespace rob
 
         m_graphics->BindVertexBuffer(m_vertexBuffer);
         VertexBuffer *buffer = m_graphics->GetVertexBuffer(m_vertexBuffer);
-        buffer->Write(0, sizeof(vertices), vertices);
+        buffer->Write(0, vertexCount * sizeof(ColorVertex), vertices);
         m_graphics->SetAttrib(0, 2, sizeof(ColorVertex), 0);
         m_graphics->SetAttrib(1, 4, sizeof(ColorVertex), sizeof(float) * 2);
         m_graphics->DrawTriangleFanArrays(0, vertexCount);
+
+        m_vb_alloc.Reset();
     }
 
     void Renderer::DrawFilledCirlce(float x, float y, float radius, const Color &center)
@@ -282,7 +290,7 @@ namespace rob
         const size_t segments = CIRCLE_SEGMENTS;
         const size_t quarter = segments / 4;
         const size_t vertexCount = segments + 2;
-        ColorVertex vertices[vertexCount];
+        ColorVertex* vertices = m_vb_alloc.AllocateArray<ColorVertex>(vertexCount);
 
         float angle = 0.0f;
         const float deltaAngle = 2.0f * PI_f / segments;
@@ -309,11 +317,14 @@ namespace rob
 
         m_graphics->BindVertexBuffer(m_vertexBuffer);
         VertexBuffer *buffer = m_graphics->GetVertexBuffer(m_vertexBuffer);
-        buffer->Write(0, sizeof(vertices), vertices);
+        buffer->Write(0, vertexCount * sizeof(ColorVertex), vertices);
         m_graphics->SetAttrib(0, 2, sizeof(ColorVertex), 0);
         m_graphics->SetAttrib(1, 4, sizeof(ColorVertex), sizeof(float) * 2);
         m_graphics->DrawTriangleFanArrays(0, vertexCount);
+
+        m_vb_alloc.Reset();
     }
+
 
     void Renderer::AddFontVertex(FontVertex *&vertex, const float x, const float y, const float u, const float v)
     {
@@ -401,6 +412,23 @@ namespace rob
             m_graphics->DrawTriangleArrays(0, vertexCount);
         }
         m_vb_alloc.Reset();
+    }
+
+    float Renderer::GetTextWidth(const char *text) const
+    {
+        float width = 0.0f;
+        char c;
+        for (; (c = *text); text++)
+        {
+            const Glyph &glyph = m_font.GetGlyph(c);
+            width += float(glyph.m_advance);
+        }
+        return width;
+    }
+
+    float Renderer::GetTextHeight() const
+    {
+        return m_font.GetLineSpacing();
     }
 
 } // rob

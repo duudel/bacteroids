@@ -15,6 +15,9 @@ namespace rob
 
         float r, g, b, a;
 
+        static const Color Black;
+        static const Color White;
+
         static const Color Red;
         static const Color Green;
         static const Color Blue;

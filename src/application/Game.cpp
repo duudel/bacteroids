@@ -96,7 +96,7 @@ namespace rob
             m_graphics->Clear();
 
             m_state->DoUpdate();
-            m_state->Render();
+            m_state->DoRender();
 
             m_window->SwapBuffers();
 

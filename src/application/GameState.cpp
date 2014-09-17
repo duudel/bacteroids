@@ -1,5 +1,9 @@
 
 #include "GameState.h"
+#include "../renderer/Renderer.h"
+#include "../math/Functions.h"
+
+#include <cstdio>
 
 namespace rob
 {
@@ -13,9 +17,14 @@ namespace rob
         , m_renderer(nullptr)
         , m_quit(false)
         , m_nextState(0)
+        , m_fps(0)
+        , m_frames(0)
+        , m_lastTime(0)
+        , m_accumulator(0)
     {
         m_ticker.Init();
         m_time.Restart();
+        m_lastTime = m_time.GetTimeMicros();
     }
 
     void GameState::DoUpdate()
@@ -32,6 +41,36 @@ namespace rob
             m_time.Update();
             Update(m_gameTime);
         }
+    }
+
+    void GameState::DoRender()
+    {
+        Render();
+        const Time_t time = m_time.GetTimeMicros();
+        const Time_t frameTime = time - m_lastTime;
+        m_lastTime = time;
+
+        m_frames++;
+
+        m_accumulator += frameTime;
+
+        if (m_accumulator >= 1000000)
+        {
+            m_accumulator -= 1000000;
+            m_fps = m_frames;
+            m_frames = 0;
+        }
+
+        char buf[30];
+        std::sprintf(buf, "FPS: %i", m_fps);
+
+        int w, h;
+        m_renderer->GetScreenSize(&w, &h);
+        const float tw = m_renderer->GetTextWidth(buf);
+        const float x = float(w) - Max(tw, 120.0f);
+
+        m_renderer->SetColor(Color::White);
+        m_renderer->DrawText(x, 0.0f, buf);
     }
 
 } // rob

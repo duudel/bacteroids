@@ -34,8 +34,10 @@ namespace rob
         void SetRenderer(Renderer *renderer) { m_renderer = renderer; }
         Renderer& GetRenderer() { return *m_renderer; }
 
-        /// Gets called from Game. Handles fixed step update and calls Update.
+        /// Gets called from Game. Handles fixed step update and calls virtual method Update.
         void DoUpdate();
+        /// Gets called from Game. Calls virtual method Render.
+        void DoRender();
 
 
         virtual bool Initialize() { return true; }
@@ -70,6 +72,11 @@ namespace rob
         Renderer *          m_renderer;
         bool m_quit;
         int m_nextState;
+
+        int m_fps;
+        int m_frames;
+        Time_t m_lastTime;
+        Time_t m_accumulator;
     };
 
 } // rob
