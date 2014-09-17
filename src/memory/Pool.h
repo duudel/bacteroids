@@ -25,7 +25,10 @@ namespace rob
         Pool& operator = (const Pool&) = delete;
 
         ~Pool()
-        { /*ROB_ASSERT(m_allocations == 0);*/ } // TODO: Uniform variables not returned to pool. Reference counting needed
+        { ROB_ASSERT(m_allocations == 0); }
+
+        size_t GetAllocationCount() const
+        { return m_allocations; }
 
         T* Obtain()
         {

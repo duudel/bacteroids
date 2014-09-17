@@ -99,10 +99,10 @@ namespace rob
         , m_color()
         , m_font()
     {
-        m_globals.projection    = m_graphics->CreateUniform("u_projection", UniformType::Mat4);
-        m_globals.position      = m_graphics->CreateUniform("u_position", UniformType::Vec4);
-        m_globals.time          = m_graphics->CreateUniform("u_time", UniformType::Float);
-        m_globals.texture0      = m_graphics->CreateUniform("u_texture0", UniformType::Int);
+        m_globals.projection    = m_graphics->CreateGlobalUniform("u_projection", UniformType::Mat4);
+        m_globals.position      = m_graphics->CreateGlobalUniform("u_position", UniformType::Vec4);
+        m_globals.time          = m_graphics->CreateGlobalUniform("u_time", UniformType::Float);
+        m_globals.texture0      = m_graphics->CreateGlobalUniform("u_texture0", UniformType::Int);
         m_graphics->SetUniform(m_globals.projection, mat4f::Identity);
         m_graphics->SetUniform(m_globals.time, 0.0f);
         m_graphics->SetUniform(m_globals.texture0, 0);
@@ -126,6 +126,10 @@ namespace rob
             m_graphics->DestroyShaderProgram(m_colorProgram);
         if (m_fontProgram != InvalidHandle)
             m_graphics->DestroyShaderProgram(m_fontProgram);
+        m_graphics->DecRefUniform(m_globals.projection);
+        m_graphics->DecRefUniform(m_globals.position);
+        m_graphics->DecRefUniform(m_globals.time);
+        m_graphics->DecRefUniform(m_globals.texture0);
     }
 
     Graphics* Renderer::GetGraphics()

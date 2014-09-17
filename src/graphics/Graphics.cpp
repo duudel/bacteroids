@@ -56,7 +56,15 @@ namespace rob
     }
 
     Graphics::~Graphics()
-    { }
+    {
+        ROB_WARN(m_textures.GetAllocationCount() > 0);
+        ROB_WARN(m_vertexBuffers.GetAllocationCount() > 0);
+        ROB_WARN(m_indexBuffers.GetAllocationCount() > 0);
+        ROB_WARN(m_vertexShaders.GetAllocationCount() > 0);
+        ROB_WARN(m_fragmentShaders.GetAllocationCount() > 0);
+        ROB_WARN(m_shaderPrograms.GetAllocationCount() > 0);
+        ROB_WARN(m_uniforms.GetAllocationCount() > 0);
+    }
 
     bool Graphics::IsInitialized() const
     { return m_initialized; }
