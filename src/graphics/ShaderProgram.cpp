@@ -53,20 +53,33 @@ namespace rob
     void ShaderProgram::GetLinkInfo(char *buffer, size_t bufferSize) const
     { ::glGetProgramInfoLog(m_object, bufferSize, nullptr, buffer); }
 
-    void ShaderProgram::AddUniform(UniformHandle handle, const char *name)
+    bool ShaderProgram::AddUniform(UniformHandle handle, const char *name)
     {
         for (size_t i = 0; i < m_uniformCount; i++)
         {
             UniformInfo &info = m_uniforms[i];
-            if (info.handle == handle) break;
+            // NOTE: Uniform has already been added, or the uniform was
+            // deleted and this is a new uniform with the same handle.
+            // Either way we just skip adding it again to the uniforms list.
+            // If it really was a new uniform, then it should fail in the
+            // equality test. This should be implemented as Handle = {index,generation}.
+            // Now the potentially new uniform would be added and it's reference
+            // count updated.
+            if (info.handle == handle)
+                return false;
         }
         ROB_ASSERT(m_uniformCount < MAX_UNIFORMS);
+
+        const GLint loc = GetLocation(name);
+        if (loc == -1)
+            return false;
+
         UniformInfo &info = m_uniforms[m_uniformCount];
+        info.location = loc;
         info.handle = handle;
         info.generation = -1;
-        info.location = GetLocation(name);
-        if (info.location != -1)
-            m_uniformCount++;
+        m_uniformCount++;
+        return true;
     }
 
     void ShaderProgram::UpdateUniforms(Graphics *graphics)
@@ -81,6 +94,16 @@ namespace rob
                 info.generation = u->m_generation;
             }
         }
+    }
+
+    void ShaderProgram::RemoveUniforms(Graphics *graphics)
+    {
+        for (size_t i = 0; i < m_uniformCount; i++)
+        {
+            UniformInfo &info = m_uniforms[i];
+            graphics->DecRefUniform(info.handle);
+        }
+        m_uniformCount = 0;
     }
 
     GLint ShaderProgram::GetLocation(const char *name) const

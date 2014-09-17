@@ -43,6 +43,7 @@
 			<Add option="-lglew32 -lopengl32" />
 			<Add option="-lFreeImage" />
 		</Linker>
+		<Unit filename="TODO.txt" />
 		<Unit filename="src/Assert.cpp" />
 		<Unit filename="src/Assert.h" />
 		<Unit filename="src/Log.cpp" />

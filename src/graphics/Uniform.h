@@ -36,6 +36,7 @@ namespace rob
         } m_value;
 
         uint32_t    m_generation;
+        uint32_t    m_references;
         UploadFunc  m_upload;
         char m_name[MAX_NAME_LENGTH];
     };

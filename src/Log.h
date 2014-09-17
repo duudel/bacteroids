@@ -37,9 +37,37 @@ namespace log
     }
 
     template <class... Args>
+    void Trace(Args&& ...args)
+    {
+    #ifdef TRACE_
+        PrintValue("Trace: ");
+        Print(args...);
+        PrintValue('\n');
+    #endif // TRACE_
+    }
+
+    template <class... Args>
+    void Debug(Args&& ...args)
+    {
+    #ifdef DEBUG_
+        PrintValue("Debug: ");
+        Print(args...);
+        PrintValue('\n');
+    #endif // DEBUG_
+    }
+
+    template <class... Args>
     void Info(Args&& ...args)
     {
         PrintValue("Info: ");
+        Print(args...);
+        PrintValue('\n');
+    }
+
+    template <class... Args>
+    void Warning(Args&& ...args)
+    {
+        PrintValue("Warning: ");
         Print(args...);
         PrintValue('\n');
     }

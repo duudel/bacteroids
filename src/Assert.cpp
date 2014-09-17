@@ -15,4 +15,9 @@ namespace rob
 //        ::SDL_LogError(SDL_LOG_CATEGORY_ASSERT, "%s in %s:%i", x, file, line);
     }
 
+    void Warn(const char * const x, const char * const file, const int line)
+    {
+        log::Warning(x, " in ", file, ":", line, "\n");
+    }
+
 } // rob

@@ -358,7 +358,11 @@ namespace rob
     { return m_shaderPrograms.Get(program); }
 
     void Graphics::DestroyShaderProgram(ShaderProgramHandle program)
-    { m_shaderPrograms.Return(GetShaderProgram(program)); }
+    {
+        ShaderProgram *p = GetShaderProgram(program);
+        p->RemoveUniforms(this);
+        m_shaderPrograms.Return(p);
+    }
 
 
 
@@ -379,22 +383,51 @@ namespace rob
         Uniform *uniform = m_uniforms.Obtain();
         uniform->m_type         = type;
         uniform->m_generation   = 0;
+        uniform->m_references   = 0;
         uniform->m_upload       = Uniform::GetUploadFuncFromType(type);
         CopyToFixedString(uniform->m_name, name);
         return m_uniforms.IndexOf(uniform);
+    }
+
+    UniformHandle Graphics::CreateGlobalUniform(const char *name, UniformType type)
+    {
+        UniformHandle uniform = CreateUniform(name, type);
+        AddRefUniform(uniform);
+        return uniform;
     }
 
     Uniform* Graphics::GetUniform(UniformHandle uniform)
     { return m_uniforms.Get(uniform); }
 
     void Graphics::DestroyUniform(UniformHandle uniform)
-    { m_uniforms.Return(GetUniform(uniform)); }
+    {
+        Uniform *u = GetUniform(uniform);
+        ROB_WARN(u->m_references > 0);
+        m_uniforms.Return(u);
+    }
+
+    void Graphics::AddRefUniform(UniformHandle uniform)
+    {
+        Uniform *u = GetUniform(uniform);
+        u->m_references++;
+    }
+
+    void Graphics::DecRefUniform(UniformHandle uniform)
+    {
+        Uniform *u = GetUniform(uniform);
+        ROB_ASSERT(u->m_references > 0);
+        if (--u->m_references == 0)
+            DestroyUniform(uniform);
+    }
 
     void Graphics::AddProgramUniform(ShaderProgramHandle program, UniformHandle uniform)
     {
         ShaderProgram *p = GetShaderProgram(program);
         Uniform *u = GetUniform(uniform);
-        p->AddUniform(uniform, u->m_name);
+        if (p->AddUniform(uniform, u->m_name))
+        {
+            u->m_references++;
+        }
     }
 
 } // rob

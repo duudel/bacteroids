@@ -111,8 +111,11 @@ namespace rob
         void DestroyShaderProgram(ShaderProgramHandle program);
 
         UniformHandle CreateUniform(const char *name, UniformType type);
+        UniformHandle CreateGlobalUniform(const char *name, UniformType type);
         Uniform* GetUniform(UniformHandle uniform);
         void DestroyUniform(UniformHandle uniform);
+        void AddRefUniform(UniformHandle uniform);
+        void DecRefUniform(UniformHandle uniform);
 
         void AddProgramUniform(ShaderProgramHandle program, UniformHandle uniform);
 

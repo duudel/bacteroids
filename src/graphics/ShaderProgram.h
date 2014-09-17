@@ -29,11 +29,17 @@ namespace rob
         size_t GetLinkInfoSize() const;
         void GetLinkInfo(char *buffer, size_t bufferSize) const;
 
-        void AddUniform(UniformHandle handle, const char *name);
+        /// Adds the uniform \c handle to the shader program's uniforms.
+        /// Returns true, if the uniform was added, false otherwise.
+        bool AddUniform(UniformHandle handle, const char *name);
 
         /// Updates uniforms that this program references.
         /// The program must be bind before calling.
         void UpdateUniforms(Graphics *graphics);
+
+        /// Removes the uniforms this shader has decreasing the reference
+        /// count for those uniforms (and thus possibly destroying them).
+        void RemoveUniforms(Graphics *graphics);
 
     private:
         GLint GetLocation(const char *name) const;
