@@ -14,8 +14,7 @@ namespace rob
 
     Font::Font()
         : m_base(0)
-        , m_ascender(0)
-        , m_descender(0)
+        , m_height(0)
         , m_horiSpacing(0)
         , m_lineSpacing(0)
         , m_glyphCount(0)
@@ -35,17 +34,13 @@ namespace rob
     uint16_t Font::GetBase() const
     { return m_base; }
 
-    void Font::SetHeight(int16_t ascender, int16_t descender)
+    void Font::SetHeight(uint16_t height)
     {
-        m_ascender = ascender;
-        m_descender = descender;
+        m_height = height;
     }
 
-    int16_t Font::GetAscender() const
-    { return m_ascender; }
-
-    int16_t Font::GetDescender() const
-    { return m_descender; }
+    uint16_t Font::GetHeight() const
+    { return m_height; }
 
     void Font::SetHorizontalSpacing(uint16_t spacing)
     { m_horiSpacing = spacing; }

@@ -33,6 +33,7 @@
 			<Add option="-Wcast-align" />
 			<Add option="-Wfloat-equal" />
 			<Add option="-Winline" />
+			<Add option="-Weffc++" />
 			<Add option="-std=c++11" />
 			<Add option="-Wall" />
 			<Add option="-msse2" />
@@ -95,8 +96,10 @@
 		<Unit filename="src/graphics/Uniform.h" />
 		<Unit filename="src/graphics/VertexBuffer.cpp" />
 		<Unit filename="src/graphics/VertexBuffer.h" />
+		<Unit filename="src/input/Keyboard.cpp" />
 		<Unit filename="src/input/Keyboard.h" />
 		<Unit filename="src/input/Mouse.h" />
+		<Unit filename="src/input/TextInput.h" />
 		<Unit filename="src/main.cpp" />
 		<Unit filename="src/math/Constants.h" />
 		<Unit filename="src/math/Functions.h" />

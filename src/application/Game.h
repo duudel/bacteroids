@@ -28,6 +28,7 @@ namespace rob
 
         void Run();
 
+        virtual void OnTextInput(const char *str);
         virtual void OnResize(int w, int h);
         virtual void OnKeyPress(Key key, uint32_t mods);
         virtual void OnKeyDown(Key key, uint32_t mods);

@@ -107,6 +107,9 @@ namespace rob
         }
     }
 
+    void Game::OnTextInput(const char *str)
+    { m_state->OnTextInput(str); }
+
     void Game::OnResize(int w, int h)
     {
         m_graphics->SetViewport(0, 0, w, h);

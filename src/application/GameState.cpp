@@ -12,6 +12,7 @@ namespace rob
         : m_ticker()
         , m_time(m_ticker)
         , m_gameTime()
+        , m_textInput()
         , m_alloc(nullptr)
         , m_cache(nullptr)
         , m_renderer(nullptr)
@@ -69,6 +70,7 @@ namespace rob
         const float tw = m_renderer->GetTextWidth(buf);
         const float x = float(w) - Max(tw, 120.0f);
 
+        m_renderer->BindFontShader();
         m_renderer->SetColor(Color::White);
         m_renderer->DrawText(x, 0.0f, buf);
     }

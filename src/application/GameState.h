@@ -8,7 +8,9 @@
 
 #include "../input/Keyboard.h"
 #include "../input/Mouse.h"
+#include "../input/TextInput.h"
 #include "../Log.h"
+#include "../String.h"
 
 namespace rob
 {
@@ -22,7 +24,8 @@ namespace rob
     {
     public:
         GameState();
-
+        GameState(const GameState&) = delete;
+        GameState& operator = (const GameState&) = delete;
         virtual ~GameState() { }
 
         void SetAllocator(LinearAllocator &alloc) { m_alloc = &alloc; }
@@ -47,8 +50,25 @@ namespace rob
 
         virtual void OnResize(int w, int h) { }
 
+
+        virtual void OnTextInput(const char *str)
+        { m_textInput.Insert(str); }
         virtual void OnKeyPress(Key key, uint32_t mods) { }
-        virtual void OnKeyDown(Key key, uint32_t mods) { }
+        virtual void OnKeyDown(Key key, uint32_t mods)
+        {
+            if (key == Key::Delete) m_textInput.Delete();
+            if (key == Key::Backspace) m_textInput.DeleteLeft();
+            if (mods & KeyMod::Ctrl)
+            {
+                if (key == Key::Left) m_textInput.MoveWordLeft();
+                if (key == Key::Right) m_textInput.MoveWordRight();
+            }
+            else
+            {
+                if (key == Key::Left) m_textInput.MoveLeft();
+                if (key == Key::Right) m_textInput.MoveRight();
+            }
+        }
         virtual void OnKeyUp(Key key, uint32_t mods) { }
 
         virtual void OnMouseDown(MouseButton button, int x, int y) { }
@@ -65,6 +85,8 @@ namespace rob
         MicroTicker m_ticker;
         VirtualTime m_time;
         GameTime m_gameTime;
+
+        TextInput m_textInput;
 
     private:
         LinearAllocator *   m_alloc;

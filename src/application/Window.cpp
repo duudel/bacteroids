@@ -79,9 +79,10 @@ namespace rob
             {
             case SDL_QUIT:
                 return false;
+            case SDL_TEXTINPUT:
+                game->OnTextInput(event.text.text);
+                break;
             case SDL_KEYDOWN:
-//                if (event.key.keysym.sym == SDLK_ESCAPE)
-//                    return false;
                 if (event.key.repeat == 0)
                     game->OnKeyPress(static_cast<Key>(event.key.keysym.scancode), ::SDL_GetModState());
                 game->OnKeyDown(static_cast<Key>(event.key.keysym.scancode), ::SDL_GetModState());

@@ -55,10 +55,12 @@ namespace rob
         void DrawFilledCirlce(float x, float y, float radius);
         void DrawFilledCirlce(float x, float y, float radius, const Color &center);
 
-        void DrawText(float x, float y, const char *text); //, bool kerning);
+        void DrawText(float x, float y, const char *text);
 
         float GetTextWidth(const char *text) const;
-        float GetTextHeight() const;
+        float GetTextWidth(const char *text, size_t charCount) const;
+        float GetFontHeight() const;
+        float GetFontLineSpacing() const;
 
     private:
         void AddFontVertex(FontVertex *&vertex, const float x, const float y, const float u, const float v);

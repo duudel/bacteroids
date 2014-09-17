@@ -115,6 +115,7 @@ namespace bact
 
         void OnKeyDown(Key key, uint32_t mods) override
         {
+            GameState::OnKeyDown(key, mods);
             m_input.SetKey(key, true);
         }
 
@@ -123,8 +124,9 @@ namespace bact
             m_input.SetKey(key, false);
         }
 
-        void OnMouseMove(int x, int y) override
+        void OnTextInput(const char *str) override
         {
+            GameState::OnTextInput(str);
         }
 
 
@@ -211,7 +213,15 @@ namespace bact
             renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
             renderer.BindFontShader();
             renderer.DrawText(0, 0, "Hello! This is bacteroids");
+
+            const float cy = 40.0f;
+            renderer.DrawText(0.0f, cy, m_textInput.m_text);
+            const float cx = renderer.GetTextWidth(m_textInput.m_text, m_textInput.m_cursor);
+            const float cw = 1.0f;
+            const float ch = renderer.GetFontHeight();
+            renderer.DrawRectangle(cx, cy, cx + cw, cy + ch);
         }
+
     private:
         Random m_random;
 

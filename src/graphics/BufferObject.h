@@ -12,7 +12,7 @@ namespace rob
     {
     public:
         explicit BufferObject(GLenum target);
-        ~BufferObject();
+        virtual ~BufferObject();
 
         GLuint GetObject() const;
         GLenum GetTarget() const;

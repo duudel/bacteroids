@@ -13,16 +13,23 @@ namespace rob
         None = KMOD_NONE,
         LShift = KMOD_LSHIFT,
         RShift = KMOD_RSHIFT,
+        Shift = LShift | RShift,
         LCtrl = KMOD_LCTRL,
         RCtrl = KMOD_RCTRL,
+        Ctrl = LCtrl | RCtrl,
         LAlt = KMOD_LALT,
         RAlt = KMOD_RALT,
+        Alt = LAlt | RAlt,
         LGui = KMOD_LGUI,
         RGui = KMOD_RGUI,
+        Gui = LGui | RGui,
         Num = KMOD_NUM,
         Caps = KMOD_CAPS,
         Mode = KMOD_MODE
     };
+
+    inline uint32_t operator & (uint32_t keymods, KeyMod mod)
+    { return keymods & static_cast<uint32_t>(mod); }
 
     enum class Key : uint32_t
     {
@@ -269,6 +276,8 @@ namespace rob
 
         NUM_KEYS
     };
+
+    const char* GetKeyName(Key key);
 
 } // rob
 

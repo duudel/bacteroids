@@ -20,7 +20,9 @@ namespace rob
 {
 
     Graphics::Graphics(LinearAllocator &alloc)
-        : m_initialized(false)
+        : m_bind()
+        , m_state()
+        , m_initialized(false)
     {
         if (::glewInit() != GLEW_OK)
         {

@@ -196,6 +196,7 @@ namespace rob
                     pageCount = block.pages;
 
                     font.SetBase(block.base);
+                    font.SetHeight(block.line_height);
                 }
                 break;
 

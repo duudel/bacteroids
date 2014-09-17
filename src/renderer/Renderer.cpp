@@ -96,7 +96,8 @@ namespace rob
         , m_graphics(graphics)
         , m_vertexBuffer(InvalidHandle)
         , m_colorProgram(InvalidHandle)
-        , m_color()
+        , m_fontProgram(InvalidHandle)
+        , m_color(Color::White)
         , m_font()
     {
         m_globals.projection    = m_graphics->CreateGlobalUniform("u_projection", UniformType::Mat4);
@@ -359,7 +360,49 @@ namespace rob
         cursorX += glyph.m_advance;
     }
 
-    void Renderer::DrawText(float x, float y, const char *text) //, bool kerning)
+    uint32_t DecodeUtf8(const char *&str, const char * const end)
+    {
+        const uint32_t c = uint8_t(*str++);
+        if (c > 0x80 && c < 0xC0) // In the middle of a character
+        {
+            while (str != end)
+            {
+                const uint32_t c = uint8_t(*str++);
+                if (c <= 0x80 || c >= 0xC0)
+                    break;
+            }
+            return '?';
+        }
+
+        if (c < 0x80)
+            return c;
+
+        if (str == end) return '?';
+        const uint32_t c2 = uint8_t(*str++);
+        if (c < 0xE0)
+            return (c2 & 0x3F) | ((c & 0x1F) << 6);
+
+        if (str == end) return '?';
+        const uint32_t c3 = uint8_t(*str++);
+        if (c < 0xF0)
+            return (c3 & 0x3F) | ((c2 & 0x3F) << 6) | ((c & 0x1F) << 12);
+
+        if (str == end) return '?';
+        const uint32_t c4 = uint8_t(*str++);
+        if (c < 0xF8)
+            return (c4 & 0x3F) | ((c3 & 0x3F) << 6) | ((c2 & 0x3F) << 12) | ((c & 0x7) << 18);
+
+        if (str == end) return '?';
+        const uint32_t c5 = uint8_t(*str++);
+        if (c < 0xFC)
+            return (c5 & 0x3F) | ((c4 & 0x3F) << 6) | ((c3 & 0x3F) << 12) | ((c2 & 0x3F) << 18) | ((c & 0x3) << 24);
+
+        if (str == end) return '?';
+        const uint32_t c6 = uint8_t(*str++);
+        return (c6 & 0x3F) | ((c5 & 0x3F) << 6) | ((c4 & 0x3F) << 12) | ((c3 & 0x3F) << 18) | ((c2 & 0x3F) << 24) | ((c & 0x1) << 30);
+    }
+
+    void Renderer::DrawText(float x, float y, const char *text)
     {
         if (!m_font.IsReady()) return;
 
@@ -367,15 +410,18 @@ namespace rob
         m_graphics->BindVertexBuffer(m_vertexBuffer);
         VertexBuffer *buffer = m_graphics->GetVertexBuffer(m_vertexBuffer);
 
-        const size_t maxVertexCount = StringLength(text) * 6;
+        const size_t textLen = StringLength(text);
+        const size_t maxVertexCount = textLen * 6;
         FontVertex * const verticesStart = m_vb_alloc.AllocateArray<FontVertex>(maxVertexCount);
         float cursorX = x;
         float cursorY = y;
+
+        const char * const end = text + textLen;
         while (*text)
         {
             FontVertex *vertex = verticesStart;
 
-            char c = *text++;
+            const uint32_t c = DecodeUtf8(text, end);
             const Glyph &glyph = m_font.GetGlyph(c);
 
             uint16_t texturePage = glyph.m_textureIdx;
@@ -386,21 +432,13 @@ namespace rob
             const size_t textureH = texture->GetHeight();
 
             AddFontQuad(vertex, glyph, cursorX, cursorY, textureW, textureH);
-//            char prevC = c;
-            for (; (c = *text); text++)
+            while (text != end)
             {
+                const uint32_t c = DecodeUtf8(text, end);
                 const Glyph &glyph = m_font.GetGlyph(c);
                 if (glyph.m_textureIdx != texturePage)
                     break;
-
-//                if (kerning)
-//                {
-//                    int16_t kerningAmount = m_font.GetKerning(prevC, c);
-//                    cursorX += kerningAmount;
-//                }
-
                 AddFontQuad(vertex, glyph, cursorX, cursorY, textureW, textureH);
-//                prevC = c;
             }
 
             const size_t vertexCount = vertex - verticesStart;
@@ -417,18 +455,31 @@ namespace rob
     float Renderer::GetTextWidth(const char *text) const
     {
         float width = 0.0f;
-        char c;
-        for (; (c = *text); text++)
+        while (*text)
         {
+            const uint32_t c = DecodeUtf8(text, 0);
             const Glyph &glyph = m_font.GetGlyph(c);
             width += float(glyph.m_advance);
         }
         return width;
     }
 
-    float Renderer::GetTextHeight() const
+    float Renderer::GetTextWidth(const char *text, size_t charCount) const
     {
-        return m_font.GetLineSpacing();
+        float width = 0.0f;
+        for (; *text && charCount; charCount--)
+        {
+            const uint32_t c = DecodeUtf8(text, 0);
+            const Glyph &glyph = m_font.GetGlyph(c);
+            width += float(glyph.m_advance);
+        }
+        return width;
     }
+
+    float Renderer::GetFontHeight() const
+    { return m_font.GetHeight(); }
+
+    float Renderer::GetFontLineSpacing() const
+    { return m_font.GetLineSpacing(); }
 
 } // rob

@@ -7,6 +7,8 @@ namespace rob
 {
 
     Shader::Shader(GLenum shaderType)
+        : m_object()
+        , m_compiled(false)
     { m_object = ::glCreateShader(shaderType); }
 
     Shader::~Shader()
