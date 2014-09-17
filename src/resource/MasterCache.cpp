@@ -39,7 +39,7 @@ namespace rob
                 continue;
             }
             m_resources[id] = resource;
-            log::Info("MasterCache: Reosource: ", filepath.c_str(), ": ", uint32_t(id));
+            log::Debug("MasterCache: Found: ", filepath.c_str(), ": ", uint32_t(id));
         }
     }
 

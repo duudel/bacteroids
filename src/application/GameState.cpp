@@ -3,7 +3,7 @@
 #include "../renderer/Renderer.h"
 #include "../math/Functions.h"
 
-#include <cstdio>
+#include "../String.h"
 
 namespace rob
 {
@@ -62,7 +62,7 @@ namespace rob
         }
 
         char buf[30];
-        std::sprintf(buf, "FPS: %i", m_fps);
+        StringPrintF(buf, "FPS: %i", m_fps);
 
         int w, h;
         m_renderer->GetScreenSize(&w, &h);

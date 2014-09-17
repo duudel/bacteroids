@@ -11,9 +11,9 @@
 #include "../math/Math.h"
 
 #include "../Log.h"
+#include "../String.h"
 
 #include <GL/glew.h>
-#include <cstring>
 
 namespace rob
 {
@@ -367,7 +367,7 @@ namespace rob
         m_graphics->BindVertexBuffer(m_vertexBuffer);
         VertexBuffer *buffer = m_graphics->GetVertexBuffer(m_vertexBuffer);
 
-        const size_t maxVertexCount = std::strlen(text) * 6;
+        const size_t maxVertexCount = StringLength(text) * 6;
         FontVertex * const verticesStart = m_vb_alloc.AllocateArray<FontVertex>(maxVertexCount);
         float cursorX = x;
         float cursorY = y;
