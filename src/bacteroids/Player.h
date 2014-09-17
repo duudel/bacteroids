@@ -18,13 +18,13 @@ namespace bact
     public:
         bool KeyDown(Key key) const
         {
-            uint32_t k = static_cast<int>(key) & 0x3FFFFFFF;
+            uint32_t k = static_cast<uint32_t>(key);
             return m_keys[k];
         }
 
         void SetKey(Key key, bool down)
         {
-            uint32_t k = static_cast<int>(key) & 0x3FFFFFFF;
+            uint32_t k = static_cast<uint32_t>(key);
             m_keys[k] = down;
         }
     private:

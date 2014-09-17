@@ -83,11 +83,11 @@ namespace rob
 //                if (event.key.keysym.sym == SDLK_ESCAPE)
 //                    return false;
                 if (event.key.repeat == 0)
-                    game->OnKeyPress(static_cast<Key>(event.key.keysym.sym), ::SDL_GetModState());
-                game->OnKeyDown(static_cast<Key>(event.key.keysym.sym), ::SDL_GetModState());
+                    game->OnKeyPress(static_cast<Key>(event.key.keysym.scancode), ::SDL_GetModState());
+                game->OnKeyDown(static_cast<Key>(event.key.keysym.scancode), ::SDL_GetModState());
                 break;
             case SDL_KEYUP:
-                game->OnKeyUp(static_cast<Key>(event.key.keysym.sym), ::SDL_GetModState());
+                game->OnKeyUp(static_cast<Key>(event.key.keysym.scancode), ::SDL_GetModState());
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 game->OnMouseDown(static_cast<MouseButton>(event.button.button), event.button.x, event.button.y);
