@@ -21,19 +21,7 @@ namespace rob
     class GameState
     {
     public:
-        GameState()
-            : m_ticker()
-            , m_time(m_ticker)
-            , m_gameTime()
-            , m_alloc(nullptr)
-            , m_cache(nullptr)
-            , m_renderer(nullptr)
-            , m_quit(false)
-            , m_nextState(0)
-        {
-            m_ticker.Init();
-            m_time.Restart();
-        }
+        GameState();
 
         virtual ~GameState() { }
 
@@ -46,21 +34,8 @@ namespace rob
         void SetRenderer(Renderer *renderer) { m_renderer = renderer; }
         Renderer& GetRenderer() { return *m_renderer; }
 
-
-        void DoUpdate()
-        {
-            const Time_t lastTime = m_time.GetTimeMicros();
-            m_time.Update();
-            Time_t frameTime = m_time.GetTimeMicros() - lastTime;
-            if (frameTime > 25000)
-                frameTime = 25000;
-
-            m_gameTime.Update(frameTime);
-            while (m_gameTime.Step())
-            {
-                Update(m_gameTime);
-            }
-        }
+        /// Gets called from Game. Handles fixed step update and calls Update.
+        void DoUpdate();
 
 
         virtual bool Initialize() { return true; }

@@ -92,13 +92,20 @@ namespace bact
             m_screenVp.h = h;
         }
 
-        void OnKeyPress(Key key, uint32_t mods) override
+        void TogglePause()
         {
             if (m_time.IsPaused())
                 m_time.Resume();
             else
                 m_time.Pause();
         }
+
+        void OnKeyPress(Key key, uint32_t mods) override
+        {
+            if (key == Key::P)
+                TogglePause();
+        }
+
 
         void SpawnBacter()
         {
@@ -110,8 +117,6 @@ namespace bact
 
         void Update(const GameTime &gameTime) override
         {
-            m_time.Update();
-
 //            int n = 0;
 //            Bacter *b[10];
 
