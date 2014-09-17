@@ -119,4 +119,27 @@ namespace rob
     void Window::GetSize(int *w, int *h) const
     { ::SDL_GetWindowSize(m_data->m_window, w, h); }
 
+    void Window::GrabMouse()
+    {
+        ::SDL_SetWindowGrab(m_data->m_window, SDL_TRUE);
+        ::SDL_SetRelativeMouseMode(SDL_TRUE);
+    }
+
+    void Window::UnGrabMouse()
+    {
+        ::SDL_SetWindowGrab(m_data->m_window, SDL_FALSE);
+        ::SDL_SetRelativeMouseMode(SDL_FALSE);
+    }
+
+    void Window::ToggleGrabMouse()
+    {
+        if (IsMouseGrabbed())
+            UnGrabMouse();
+        else
+            GrabMouse();
+    }
+
+    bool Window::IsMouseGrabbed() const
+    { return ::SDL_GetWindowGrab(m_data->m_window) == SDL_TRUE; }
+
 } // rob

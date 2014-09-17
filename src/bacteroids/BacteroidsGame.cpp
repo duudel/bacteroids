@@ -107,6 +107,8 @@ namespace bact
 
         void OnKeyPress(Key key, uint32_t mods) override
         {
+            if (key == Key::Escape)
+                QuitState();
             if (key == Key::P)
                 TogglePause();
         }
@@ -121,6 +123,10 @@ namespace bact
             m_input.SetKey(key, false);
         }
 
+        void OnMouseMove(int x, int y) override
+        {
+        }
+
 
         void SpawnBacter()
         {
@@ -132,6 +138,14 @@ namespace bact
 
         void Update(const GameTime &gameTime) override
         {
+            int mx, my, dx, dy;
+            const uint32_t buttons = ::SDL_GetMouseState(&mx, &my);
+            ::SDL_GetRelativeMouseState(&dx, &dy);
+            m_input.SetMouse(mx, my, dx, dy);
+            m_input.SetButtons(buttons & SDL_BUTTON_LMASK,
+                               buttons & SDL_BUTTON_RMASK,
+                               buttons & SDL_BUTTON_MMASK);
+
 //            int n = 0;
 //            Bacter *b[10];
             m_player.Update(gameTime, m_input);
@@ -221,6 +235,7 @@ namespace bact
     bool Bacteroids::Initialize()
     {
         m_window->SetTitle("Bacteroids");
+        m_window->GrabMouse();
         ChangeState<BacteroidsState>();
         return true;
     }

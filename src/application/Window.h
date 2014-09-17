@@ -25,6 +25,11 @@ namespace rob
         void SetTitle(const char * const title);
         void GetSize(int *w, int *h) const;
 
+        void GrabMouse();
+        void UnGrabMouse();
+        void ToggleGrabMouse();
+        bool IsMouseGrabbed() const;
+
     private:
         // Reserve enough space for SDL window data
         static const unsigned SIZE_OF_WIN_DATA_BUFFER = 6 * sizeof(void*);
