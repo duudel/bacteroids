@@ -32,10 +32,10 @@ namespace rob
     double GameTime::GetDeltaSeconds() const
     { return double(m_deltaTime) / 1000000.0; }
 
-    Time_t GameTime::GetMicroseconds() const
+    Time_t GameTime::GetTotalMicroseconds() const
     { return m_time; }
 
-    double GameTime::GetSeconds() const
+    double GameTime::GetTotalSeconds() const
     { return double(m_time) / 1000000.0; }
 
 } // rob

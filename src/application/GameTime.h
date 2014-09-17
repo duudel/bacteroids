@@ -15,8 +15,8 @@ namespace rob
         bool Step();
         Time_t GetDeltaMicroseconds() const;
         double GetDeltaSeconds() const;
-        Time_t GetMicroseconds() const;
-        double GetSeconds() const;
+        Time_t GetTotalMicroseconds() const;
+        double GetTotalSeconds() const;
     private:
         Time_t m_deltaTime;
         Time_t m_time;

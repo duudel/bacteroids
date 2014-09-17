@@ -12,6 +12,7 @@ namespace bact
     };
 
     extern const ShaderDef g_bacterShader;
+    extern const ShaderDef g_fontShader;
 
 } // bact
 

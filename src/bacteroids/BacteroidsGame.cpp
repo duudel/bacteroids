@@ -1,6 +1,7 @@
 
 #include "BacteroidsGame.h"
 
+#include "Player.h"
 #include "Bacter.h"
 #include "BacterArray.h"
 
@@ -57,11 +58,14 @@ namespace bact
 
             m_bacterShader = renderer.CompileShaderProgram(g_bacterShader.m_vertexShader,
                                                            g_bacterShader.m_fragmentShader);
+            m_fontShader = renderer.CompileShaderProgram(g_fontShader.m_vertexShader,
+                                                           g_fontShader.m_fragmentShader);
 
             m_uniforms.anim = renderer.GetGraphics()->CreateUniform("u_anim", UniformType::Float);
             renderer.GetGraphics()->AddProgramUniform(m_bacterShader, m_uniforms.anim);
 
             m_player.SetPosition(0.0f, 0.0f);
+            m_playerTarget.SetPosition(0.0f, 0.0f);
             m_bacters.Init(GetAllocator());
             for (int i = 0; i < 6; i++)
             {
@@ -73,6 +77,7 @@ namespace bact
         ~BacteroidsState()
         {
             GetRenderer().GetGraphics()->DestroyShaderProgram(m_bacterShader);
+            GetRenderer().GetGraphics()->DestroyShaderProgram(m_fontShader);
         }
 
         void OnResize(int w, int h) override
@@ -106,12 +111,22 @@ namespace bact
                 TogglePause();
         }
 
+        void OnKeyDown(Key key, uint32_t mods) override
+        {
+            m_input.SetKey(key, true);
+        }
+
+        void OnKeyUp(Key key, uint32_t mods) override
+        {
+            m_input.SetKey(key, false);
+        }
+
 
         void SpawnBacter()
         {
             Bacter *bacter = m_bacters.Obtain();
             bacter->SetPosition(m_random.GetDirection() * 8.0f);
-            bacter->SetTarget(&m_player);
+            bacter->SetTarget(&m_playerTarget);
             bacter->SetAnim(m_random.GetReal(0.0f, 2.0f*PI_f));
         }
 
@@ -119,6 +134,7 @@ namespace bact
         {
 //            int n = 0;
 //            Bacter *b[10];
+            m_player.Update(gameTime, m_input);
 
             for (size_t i = 0; i < m_bacters.size; i++)
             {
@@ -170,6 +186,9 @@ namespace bact
                 m_bacters[i]->Render(&renderer, m_uniforms.anim);
             }
 
+            renderer.BindColorShader();
+            m_player.Render(&renderer, m_fontShader);
+
             SetViewport(m_screenVp);
             const float w = m_screenVp.w;
             const float h = m_screenVp.h;
@@ -183,12 +202,16 @@ namespace bact
         Random m_random;
 
         ShaderProgramHandle m_bacterShader;
+        ShaderProgramHandle m_fontShader;
         struct
         {
             UniformHandle anim;
         } m_uniforms;
 
-        Target m_player;
+        Input m_input;
+
+        Player m_player;
+        Target m_playerTarget;
         BacterArray m_bacters;
 
         Viewport m_playAreaVp;
