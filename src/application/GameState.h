@@ -51,13 +51,10 @@ namespace rob
         virtual void OnResize(int w, int h) { }
 
 
-        virtual void OnTextInput(const char *str)
-        { TextInputHandler(m_textInput).OnTextInput(str); }
+        virtual void OnTextInput(const char *str) { }
 
         virtual void OnKeyPress(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods) { }
-
-        virtual void OnKeyDown(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods)
-        { TextInputHandler(m_textInput).OnKeyDown(key, mods); }
+        virtual void OnKeyDown(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods) { }
         virtual void OnKeyUp(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods) { }
 
         virtual void OnMouseDown(MouseButton button, int x, int y) { }
@@ -70,12 +67,11 @@ namespace rob
         void ChangeState(int state) { m_nextState = state; }
         int NextState() const { return m_nextState; }
 
-    protected:
+    private:
         MicroTicker m_ticker;
+    protected:
         VirtualTime m_time;
         GameTime m_gameTime;
-
-        TextInput m_textInput;
 
     private:
         LinearAllocator *   m_alloc;

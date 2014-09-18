@@ -12,7 +12,6 @@ namespace rob
         : m_ticker()
         , m_time(m_ticker)
         , m_gameTime()
-        , m_textInput()
         , m_alloc(nullptr)
         , m_cache(nullptr)
         , m_renderer(nullptr)

@@ -43,6 +43,10 @@ namespace bact
     {
     public:
         BacteroidsState()
+            : m_random()
+            , m_bacterShader(InvalidHandle)
+            , m_fontShader(InvalidHandle)
+            , m_textInput()
         {
             m_random.Seed(GetTicks());
         }
@@ -115,18 +119,16 @@ namespace bact
 
         void OnKeyDown(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods) override
         {
-            GameState::OnKeyDown(key, scancode, mods);
+            TextInputHandler(m_textInput).OnKeyDown(key, mods);
             m_input.SetKey(scancode, true);
         }
 
         void OnKeyUp(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods) override
-        {
-            m_input.SetKey(scancode, false);
-        }
+        { m_input.SetKey(scancode, false); }
 
         void OnTextInput(const char *str) override
         {
-            GameState::OnTextInput(str);
+            TextInputHandler(m_textInput).OnTextInput(str);
         }
 
 
@@ -248,6 +250,8 @@ namespace bact
 
         Viewport m_playAreaVp;
         Viewport m_screenVp;
+
+        TextInput m_textInput;
     };
 
     bool Bacteroids::Initialize()

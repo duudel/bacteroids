@@ -14,7 +14,7 @@ namespace rob
 
     class TextInput
     {
-        static const size_t MAX_LENGTH = 64;
+        static const size_t MAX_LENGTH = 8;
         char m_text[MAX_LENGTH + 1];
         size_t m_length;
         size_t m_cursor;
