@@ -1,6 +1,8 @@
 
 #include "TextInput.h"
 #include "../String.h"
+#include "../Assert.h"
+
 #include <cctype>
 
 #include <SDL2/SDL_clipboard.h>
@@ -41,6 +43,7 @@ namespace rob
             const char *s = m_text + m_cursor;
             SkipUtf8Left(s, m_text);
             m_cursor = s - m_text;
+            ROB_ASSERT(m_cursor <= m_length);
             return true;
         }
         return false;
@@ -53,6 +56,7 @@ namespace rob
             const char *s = m_text + m_cursor;
             SkipUtf8Right(s, m_text + MAX_LENGTH);
             m_cursor = s - m_text;
+            ROB_ASSERT(m_cursor <= m_length);
             return true;
         }
         return false;
@@ -68,6 +72,7 @@ namespace rob
             if (::isspace(prev) || ::ispunct(prev))
                 break;
             m_cursor = s - m_text;
+            ROB_ASSERT(m_cursor <= m_length);
         }
     }
 
@@ -79,6 +84,7 @@ namespace rob
             const char *s = m_text + m_cursor;
             const uint32_t next = SkipUtf8Right(s, m_text + MAX_LENGTH);
             m_cursor = s - m_text;
+            ROB_ASSERT(m_cursor <= m_length);
             if (::isspace(next) || ::ispunct(next))
                 break;
         }
@@ -93,16 +99,15 @@ namespace rob
     void TextInput::Insert(const char *str)
     {
         const size_t slen = StringLength(str);
-        size_t lenAdd = slen;
+        const size_t lenAdd = (m_length + slen > MAX_LENGTH)
+            ? (MAX_LENGTH - m_length) : slen;
         if (m_cursor < m_length)
         {
-            lenAdd = 0;
             for (size_t i = m_length; i >= m_cursor; i--)
             {
                 if (i + slen < MAX_LENGTH - 1)
                 {
                     m_text[i + slen] = m_text[i];
-                    lenAdd++;
                 }
                 if (i == 0) break;
             }
@@ -110,6 +115,8 @@ namespace rob
         while (m_cursor < MAX_LENGTH && *str)
             m_text[m_cursor++] = *str++;
         m_length += lenAdd;
+        ROB_ASSERT(m_cursor <= m_length);
+        ROB_ASSERT(m_length <= MAX_LENGTH);
     }
 
     void TextInput::Delete()

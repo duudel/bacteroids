@@ -3,6 +3,7 @@
 #define H_ROB_TEXT_INPUT_H
 
 #include "../Types.h"
+#include "Keyboard.h"
 
 namespace rob
 {
@@ -11,7 +12,6 @@ namespace rob
     void FreeClipboardText(const char *text);
     void SetClipboardText(const char *text);
 
-    // Works currently only on ASCII characters
     class TextInput
     {
         static const size_t MAX_LENGTH = 64;
@@ -41,6 +41,72 @@ namespace rob
 
         void DeleteWord();
         void DeleteWordLeft();
+    };
+
+    class TextInputHandler
+    {
+        TextInput &m_input;
+    public:
+        TextInputHandler(TextInput &input)
+            : m_input(input)
+        { }
+
+        void OnTextInput(const char *str)
+        { m_input.Insert(str); }
+
+        void OnKeyDown(Keyboard::Key key, uint32_t mods)
+        {
+            bool numlock = (mods & KeyMod::Num);
+            if (mods & KeyMod::Ctrl)
+            {
+                switch (key)
+                {
+                case Keyboard::Key::C:
+                    SetClipboardText(m_input.GetText()); break;
+                case Keyboard::Key::V:
+                {
+                    const char *t = GetClipboardText();
+                    m_input.Insert(t);
+                    FreeClipboardText(t);
+                    break;
+                }
+                case Keyboard::Key::Delete:     m_input.DeleteWord(); break;
+                case Keyboard::Key::Backspace:  m_input.DeleteWordLeft(); break;
+                case Keyboard::Key::Left:       m_input.MoveWordLeft(); break;
+                case Keyboard::Key::Right:      m_input.MoveWordRight(); break;
+
+                case Keyboard::Key::Kp_7: if (numlock) break;
+                case Keyboard::Key::Home:
+                    m_input.MoveHome(); break;
+
+                case Keyboard::Key::Kp_1: if (numlock) break;
+                case Keyboard::Key::End:
+                    m_input.MoveEnd(); break;
+
+                default: break;
+                }
+            }
+            else
+            {
+                switch (key)
+                {
+                case Keyboard::Key::Delete:      m_input.Delete(); break;
+                case Keyboard::Key::Backspace:   m_input.DeleteLeft(); break;
+                case Keyboard::Key::Left:        m_input.MoveLeft(); break;
+                case Keyboard::Key::Right:       m_input.MoveRight(); break;
+
+                case Keyboard::Key::Kp_7: if (numlock) break;
+                case Keyboard::Key::Home:
+                    m_input.MoveHome(); break;
+
+                case Keyboard::Key::Kp_1: if (numlock) break;
+                case Keyboard::Key::End:
+                    m_input.MoveEnd(); break;
+
+                default: break;
+                }
+            }
+        }
     };
 
 } // rob
