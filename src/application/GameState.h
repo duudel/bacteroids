@@ -73,10 +73,10 @@ namespace rob
                     FreeClipboardText(t);
                     break;
                 }
-//                case Key::Delete:       m_textInput.DeleteWord(); break;
-//                case Key::Backspace:    m_textInput.DeleteWordLeft(); break;
-                case Keyboard::Key::Left:        m_textInput.MoveWordLeft(); break;
-                case Keyboard::Key::Right:       m_textInput.MoveWordRight(); break;
+                case Keyboard::Key::Delete:     m_textInput.DeleteWord(); break;
+                case Keyboard::Key::Backspace:  m_textInput.DeleteWordLeft(); break;
+                case Keyboard::Key::Left:       m_textInput.MoveWordLeft(); break;
+                case Keyboard::Key::Right:      m_textInput.MoveWordRight(); break;
 
                 case Keyboard::Key::Kp_7: if (numlock) break;
                 case Keyboard::Key::Home:

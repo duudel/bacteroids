@@ -94,7 +94,7 @@ namespace rob
         {
             for (size_t i = m_length; i >= m_cursor; i--)
             {
-                if (i + slen < MAX_LENGTH)
+                if (i + slen < MAX_LENGTH - 1)
                     m_text[i + slen] = m_text[i];
                 if (i == 0) break;
             }
@@ -108,12 +108,11 @@ namespace rob
     {
         if (m_cursor < m_length)
         {
-            const char *s = m_text + m_cursor;
-            SkipUtf8Right(s, m_text + MAX_LENGTH);
-            CopyString(&m_text[m_cursor], s, MAX_LENGTH - m_cursor);
-            m_length -= (s - (m_text + m_cursor));
-//            CopyString(&m_text[m_cursor], &m_text[m_cursor + 1], MAX_LENGTH - m_cursor);
-//            m_length--;
+            size_t oldCursor = m_cursor;
+            MoveRight();
+            CopyString(m_text + oldCursor, m_text + m_cursor, MAX_LENGTH + 1 - oldCursor);
+            m_length -= (m_cursor - oldCursor);
+            m_cursor = oldCursor;
         }
     }
 
@@ -121,9 +120,33 @@ namespace rob
     {
         if (m_cursor > 0)
         {
-//            m_cursor--;
-            if (MoveLeft())
-                Delete();
+            size_t oldCursor = m_cursor;
+            MoveLeft();
+            CopyString(m_text + m_cursor, m_text + oldCursor, MAX_LENGTH + 1 - oldCursor);
+            m_length -= (oldCursor - m_cursor);
+        }
+    }
+
+    void TextInput::DeleteWord()
+    {
+        if (m_cursor < m_length)
+        {
+            size_t oldCursor = m_cursor;
+            MoveWordRight();
+            CopyString(m_text + oldCursor, m_text + m_cursor, MAX_LENGTH + 1 - oldCursor);
+            m_length -= (m_cursor - oldCursor);
+            m_cursor = oldCursor;
+        }
+    }
+
+    void TextInput::DeleteWordLeft()
+    {
+        if (m_cursor > 0)
+        {
+            size_t oldCursor = m_cursor;
+            MoveWordLeft();
+            CopyString(m_text + m_cursor, m_text + oldCursor, MAX_LENGTH + 1 - oldCursor);
+            m_length -= (oldCursor - m_cursor);
         }
     }
 
