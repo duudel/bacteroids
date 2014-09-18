@@ -63,10 +63,11 @@ namespace rob
         MoveLeft();
         while (m_cursor > 0)
         {
-            const char prev = m_text[m_cursor - 1];
+            const char *s = m_text + m_cursor;
+            const uint32_t prev = SkipUtf8Left(s, m_text);
             if (::isspace(prev) || ::ispunct(prev))
                 break;
-            m_cursor--;
+            m_cursor = s - m_text;
         }
     }
 
@@ -75,7 +76,9 @@ namespace rob
         MoveRight();
         while (m_cursor < m_length)
         {
-            const char next = m_text[m_cursor++];
+            const char *s = m_text + m_cursor;
+            const uint32_t next = SkipUtf8Right(s, m_text + MAX_LENGTH);
+            m_cursor = s - m_text;
             if (::isspace(next) || ::ispunct(next))
                 break;
         }
@@ -90,18 +93,23 @@ namespace rob
     void TextInput::Insert(const char *str)
     {
         const size_t slen = StringLength(str);
+        size_t lenAdd = slen;
         if (m_cursor < m_length)
         {
+            lenAdd = 0;
             for (size_t i = m_length; i >= m_cursor; i--)
             {
                 if (i + slen < MAX_LENGTH - 1)
+                {
                     m_text[i + slen] = m_text[i];
+                    lenAdd++;
+                }
                 if (i == 0) break;
             }
         }
         while (m_cursor < MAX_LENGTH && *str)
             m_text[m_cursor++] = *str++;
-        m_length += slen;
+        m_length += lenAdd;
     }
 
     void TextInput::Delete()
