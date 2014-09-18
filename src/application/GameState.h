@@ -64,6 +64,15 @@ namespace rob
             {
                 switch (key)
                 {
+                case Keyboard::Key::C:
+                    SetClipboardText(m_textInput.GetText()); break;
+                case Keyboard::Key::V:
+                {
+                    const char *t = GetClipboardText();
+                    m_textInput.Insert(t);
+                    FreeClipboardText(t);
+                    break;
+                }
 //                case Key::Delete:       m_textInput.DeleteWord(); break;
 //                case Key::Backspace:    m_textInput.DeleteWordLeft(); break;
                 case Keyboard::Key::Left:        m_textInput.MoveWordLeft(); break;

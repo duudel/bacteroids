@@ -7,6 +7,10 @@
 namespace rob
 {
 
+    const char* GetClipboardText();
+    void FreeClipboardText(const char *text);
+    void SetClipboardText(const char *text);
+
     // Works currently only on ASCII characters
     class TextInput
     {

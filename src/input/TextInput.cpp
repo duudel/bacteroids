@@ -3,8 +3,20 @@
 #include "../String.h"
 #include <cctype>
 
+#include <SDL2/SDL_clipboard.h>
+
 namespace rob
 {
+
+    const char* GetClipboardText()
+    { return ::SDL_GetClipboardText(); }
+
+    void FreeClipboardText(const char *text)
+    { ::SDL_free(const_cast<char*>(text)); }
+
+    void SetClipboardText(const char *text)
+    { ::SDL_SetClipboardText(text); }
+
 
     TextInput::TextInput()
         : m_length(0)
