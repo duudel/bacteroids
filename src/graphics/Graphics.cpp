@@ -384,7 +384,7 @@ namespace rob
         uniform->m_generation   = 0;
         uniform->m_references   = 0;
         uniform->m_upload       = Uniform::GetUploadFuncFromType(type);
-        CopyString(uniform->m_name, name);
+        CopyStringN(uniform->m_name, name);
         return m_uniforms.IndexOf(uniform);
     }
 

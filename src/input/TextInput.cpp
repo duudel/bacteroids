@@ -98,29 +98,6 @@ namespace rob
     void TextInput::MoveEnd()
     { m_cursor = m_length; }
 
-    size_t CopyUtf8_N(char *dst, const char *src, size_t dstSize)
-    {
-        const size_t slen = StringLength(src);
-        const char * const end = src + slen;
-        const char * const dend = dst + dstSize;
-        size_t sz = 0;
-        while (src != end)
-            sz += CopyUtf8Codepoint(src, end, dst, dstSize);
-        while (dst != dend)
-            *dst++ = 0;
-        return sz;
-    }
-
-    size_t CopyUtf8(char *dst, const char *src, size_t dstSize)
-    {
-        const size_t slen = StringLength(src);
-        const char * const end = src + slen;
-        size_t sz = 0;
-        while (src != end)
-            sz += CopyUtf8Codepoint(src, end, dst, dstSize);
-        return sz;
-    }
-
     void TextInput::Insert(const char *str)
     {
         const size_t slen = StringLength(str);
