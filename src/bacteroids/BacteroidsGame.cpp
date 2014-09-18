@@ -215,8 +215,8 @@ namespace bact
             renderer.DrawText(0, 0, "Hello! This is bacteroids");
 
             const float cy = 40.0f;
-            renderer.DrawText(0.0f, cy, m_textInput.m_text);
-            const float cx = renderer.GetTextWidth(m_textInput.m_text, m_textInput.m_cursor);
+            renderer.DrawText(0.0f, cy, m_textInput.GetText());
+            const float cx = renderer.GetTextWidth(m_textInput.GetText(), m_textInput.GetCursor());
             const float cw = 1.0f;
             const float ch = renderer.GetFontHeight();
             renderer.DrawRectangle(cx, cy, cx + cw, cy + ch);

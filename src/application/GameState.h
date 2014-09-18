@@ -56,17 +56,34 @@ namespace rob
         virtual void OnKeyPress(Key key, uint32_t mods) { }
         virtual void OnKeyDown(Key key, uint32_t mods)
         {
-            if (key == Key::Delete) m_textInput.Delete();
-            if (key == Key::Backspace) m_textInput.DeleteLeft();
+            log::Info(GetKeyName(key));
             if (mods & KeyMod::Ctrl)
             {
-                if (key == Key::Left) m_textInput.MoveWordLeft();
-                if (key == Key::Right) m_textInput.MoveWordRight();
+                switch (key)
+                {
+//                case Key::Delete:       m_textInput.DeleteWord(); break;
+//                case Key::Backspace:    m_textInput.DeleteWordLeft(); break;
+                case Key::Left:         m_textInput.MoveWordLeft(); break;
+                case Key::Right:        m_textInput.MoveWordRight(); break;
+                case Key::Home: //case Key::Kp_Home:
+                    m_textInput.MoveHome(); break;
+                case Key::End: //case Key::Kp_End:
+                    m_textInput.MoveEnd(); break;
+                default: break;
+                }
             }
             else
             {
-                if (key == Key::Left) m_textInput.MoveLeft();
-                if (key == Key::Right) m_textInput.MoveRight();
+                switch (key)
+                {
+                case Key::Delete:       m_textInput.Delete(); break;
+                case Key::Backspace:    m_textInput.DeleteLeft(); break;
+                case Key::Left:         m_textInput.MoveLeft(); break;
+                case Key::Right:        m_textInput.MoveRight(); break;
+                case Key::Home:         m_textInput.MoveHome(); break;
+                case Key::End:          m_textInput.MoveEnd(); break;
+                default: break;
+                }
             }
         }
         virtual void OnKeyUp(Key key, uint32_t mods) { }
