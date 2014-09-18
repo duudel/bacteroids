@@ -21,8 +21,8 @@ namespace rob
         size_t GetLength() const;
         size_t GetCursor() const;
 
-        void MoveLeft();
-        void MoveRight();
+        bool MoveLeft();
+        bool MoveRight();
 
         void MoveWordLeft();
         void MoveWordRight();

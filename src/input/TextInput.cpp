@@ -22,16 +22,28 @@ namespace rob
     size_t TextInput::GetCursor() const
     { return m_cursor; }
 
-    void TextInput::MoveLeft()
+    bool TextInput::MoveLeft()
     {
         if (m_cursor > 0)
-            m_cursor--;
+        {
+            const char *s = m_text + m_cursor;
+            SkipUtf8Left(s, m_text);
+            m_cursor = s - m_text;
+            return true;
+        }
+        return false;
     }
 
-    void TextInput::MoveRight()
+    bool TextInput::MoveRight()
     {
         if (m_cursor < m_length)
-            m_cursor++;
+        {
+            const char *s = m_text + m_cursor;
+            SkipUtf8Right(s, m_text + MAX_LENGTH);
+            m_cursor = s - m_text;
+            return true;
+        }
+        return false;
     }
 
     void TextInput::MoveWordLeft()
@@ -84,8 +96,12 @@ namespace rob
     {
         if (m_cursor < m_length)
         {
-            CopyString(&m_text[m_cursor], &m_text[m_cursor + 1], MAX_LENGTH - m_cursor);
-            m_length--;
+            const char *s = m_text + m_cursor;
+            SkipUtf8Right(s, m_text + MAX_LENGTH);
+            CopyString(&m_text[m_cursor], s, MAX_LENGTH - m_cursor);
+            m_length -= (s - (m_text + m_cursor));
+//            CopyString(&m_text[m_cursor], &m_text[m_cursor + 1], MAX_LENGTH - m_cursor);
+//            m_length--;
         }
     }
 
@@ -93,8 +109,9 @@ namespace rob
     {
         if (m_cursor > 0)
         {
-            m_cursor--;
-            Delete();
+//            m_cursor--;
+            if (MoveLeft())
+                Delete();
         }
     }
 

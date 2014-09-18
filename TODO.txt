@@ -4,14 +4,15 @@ The TODO list for Rob engine.
 rob TODO
 --------
 
-Make TextInput support UTF8.
-    - Needs utility functions like SkipUtf8Left, SkipUtf8Right, etc.
 
 
 
 These items have already been done
 rob DONE
 --------
+
+Make TextInput support UTF8.
+    - Needs utility functions like SkipUtf8Left, SkipUtf8Right, etc.
 
 Reference counting for uniforms:
     - shader destroyed -> decrement references of linked uniforms

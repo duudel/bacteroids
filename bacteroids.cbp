@@ -33,7 +33,6 @@
 			<Add option="-Wcast-align" />
 			<Add option="-Wfloat-equal" />
 			<Add option="-Winline" />
-			<Add option="-Weffc++" />
 			<Add option="-std=c++11" />
 			<Add option="-Wall" />
 			<Add option="-msse2" />

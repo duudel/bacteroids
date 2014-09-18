@@ -360,48 +360,6 @@ namespace rob
         cursorX += glyph.m_advance;
     }
 
-    uint32_t DecodeUtf8(const char *&str, const char * const end)
-    {
-        const uint32_t c = uint8_t(*str++);
-        if (c > 0x80 && c < 0xC0) // In the middle of a character
-        {
-            while (str != end)
-            {
-                const uint32_t c = uint8_t(*str++);
-                if (c <= 0x80 || c >= 0xC0)
-                    break;
-            }
-            return '?';
-        }
-
-        if (c < 0x80)
-            return c;
-
-        if (str == end) return '?';
-        const uint32_t c2 = uint8_t(*str++);
-        if (c < 0xE0)
-            return (c2 & 0x3F) | ((c & 0x1F) << 6);
-
-        if (str == end) return '?';
-        const uint32_t c3 = uint8_t(*str++);
-        if (c < 0xF0)
-            return (c3 & 0x3F) | ((c2 & 0x3F) << 6) | ((c & 0x1F) << 12);
-
-        if (str == end) return '?';
-        const uint32_t c4 = uint8_t(*str++);
-        if (c < 0xF8)
-            return (c4 & 0x3F) | ((c3 & 0x3F) << 6) | ((c2 & 0x3F) << 12) | ((c & 0x7) << 18);
-
-        if (str == end) return '?';
-        const uint32_t c5 = uint8_t(*str++);
-        if (c < 0xFC)
-            return (c5 & 0x3F) | ((c4 & 0x3F) << 6) | ((c3 & 0x3F) << 12) | ((c2 & 0x3F) << 18) | ((c & 0x3) << 24);
-
-        if (str == end) return '?';
-        const uint32_t c6 = uint8_t(*str++);
-        return (c6 & 0x3F) | ((c5 & 0x3F) << 6) | ((c4 & 0x3F) << 12) | ((c3 & 0x3F) << 18) | ((c2 & 0x3F) << 24) | ((c & 0x1) << 30);
-    }
-
     void Renderer::DrawText(float x, float y, const char *text)
     {
         if (!m_font.IsReady()) return;
@@ -467,9 +425,85 @@ namespace rob
     float Renderer::GetTextWidth(const char *text, size_t charCount) const
     {
         float width = 0.0f;
+        for (; *text && charCount; )
+        {
+            const char * const s = text;
+            const uint32_t c = DecodeUtf8(text, 0);
+            charCount -= (text - s);
+            const Glyph &glyph = m_font.GetGlyph(c);
+            width += float(glyph.m_advance);
+        }
+        return width;
+    }
+
+    void Renderer::DrawTextAscii(float x, float y, const char *text)
+    {
+        if (!m_font.IsReady()) return;
+
+        m_graphics->SetUniform(m_globals.position, vec4f(x, y, 0.0f, 1.0f));
+        m_graphics->BindVertexBuffer(m_vertexBuffer);
+        VertexBuffer *buffer = m_graphics->GetVertexBuffer(m_vertexBuffer);
+
+        const size_t textLen = StringLength(text);
+        const size_t maxVertexCount = textLen * 6;
+        FontVertex * const verticesStart = m_vb_alloc.AllocateArray<FontVertex>(maxVertexCount);
+        float cursorX = x;
+        float cursorY = y;
+
+        const char * const end = text + textLen;
+        while (*text)
+        {
+            FontVertex *vertex = verticesStart;
+
+            const uint32_t c = uint8_t(*text++);
+            const Glyph &glyph = m_font.GetGlyph(c);
+
+            uint16_t texturePage = glyph.m_textureIdx;
+            const TextureHandle textureHandle = m_font.GetTexture(texturePage);
+            const Texture *texture = m_graphics->GetTexture(textureHandle);
+
+            const size_t textureW = texture->GetWidth();
+            const size_t textureH = texture->GetHeight();
+
+            AddFontQuad(vertex, glyph, cursorX, cursorY, textureW, textureH);
+            while (text != end)
+            {
+                const uint32_t c = uint8_t(*text++);
+                const Glyph &glyph = m_font.GetGlyph(c);
+                if (glyph.m_textureIdx != texturePage)
+                    break;
+                AddFontQuad(vertex, glyph, cursorX, cursorY, textureW, textureH);
+            }
+
+            const size_t vertexCount = vertex - verticesStart;
+            buffer->Write(0, vertexCount * sizeof(FontVertex), verticesStart);
+
+            m_graphics->BindTexture(0, textureHandle);
+            m_graphics->SetAttrib(0, 4, sizeof(FontVertex), 0);
+            m_graphics->SetAttrib(1, 4, sizeof(FontVertex), sizeof(float) * 4);
+            m_graphics->DrawTriangleArrays(0, vertexCount);
+        }
+        m_vb_alloc.Reset();
+    }
+
+    float Renderer::GetTextWidthAscii(const char *text) const
+    {
+        float width = 0.0f;
+        while (*text)
+        {
+            const uint32_t c = uint8_t(*text++);
+            const Glyph &glyph = m_font.GetGlyph(c);
+            width += float(glyph.m_advance);
+        }
+        return width;
+    }
+
+    float Renderer::GetTextWidthAscii(const char *text, size_t charCount) const
+    {
+        float width = 0.0f;
         for (; *text && charCount; charCount--)
         {
-            const uint32_t c = DecodeUtf8(text, 0);
+            const uint32_t c = uint8_t(*text++);
             const Glyph &glyph = m_font.GetGlyph(c);
             width += float(glyph.m_advance);
         }

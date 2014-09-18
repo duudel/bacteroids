@@ -220,6 +220,14 @@ namespace bact
             const float cw = 1.0f;
             const float ch = renderer.GetFontHeight();
             renderer.DrawRectangle(cx, cy, cx + cw, cy + ch);
+
+            const float cy2 = 70.0f;
+            renderer.BindFontShader();
+            renderer.DrawTextAscii(0.0f, cy2, m_textInput.GetText());
+            const float cx2 = renderer.GetTextWidthAscii(m_textInput.GetText(), m_textInput.GetCursor());
+            const float cw2 = 1.0f;
+            const float ch2 = renderer.GetFontHeight();
+            renderer.DrawRectangle(cx2, cy2, cx2 + cw2, cy2 + ch2);
         }
 
     private:
