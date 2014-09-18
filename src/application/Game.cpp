@@ -138,18 +138,18 @@ namespace rob
         log::Info("  total: ", MB, " MB ", kB, " kB ", B, " B");
     }
 
-    void Game::OnKeyPress(Key key, uint32_t mods)
+    void Game::OnKeyPress(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods)
     {
-        if (key == Key::F12)
+        if (key == Keyboard::Key::F12)
             ReportMemoryUsage(m_stateAlloc.GetAllocatedSize(), m_stateAlloc.GetTotalSize());
-        m_state->OnKeyPress(key, mods);
+        m_state->OnKeyPress(key, scancode, mods);
     }
 
-    void Game::OnKeyDown(Key key, uint32_t mods)
-    { m_state->OnKeyDown(key, mods); }
+    void Game::OnKeyDown(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods)
+    { m_state->OnKeyDown(key, scancode, mods); }
 
-    void Game::OnKeyUp(Key key, uint32_t mods)
-    { m_state->OnKeyUp(key, mods); }
+    void Game::OnKeyUp(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods)
+    { m_state->OnKeyUp(key, scancode, mods); }
 
     void Game::OnMouseDown(MouseButton button, int x, int y)
     { m_state->OnMouseDown(button, x, y); }

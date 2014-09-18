@@ -99,6 +99,7 @@
 		<Unit filename="src/input/Keyboard.cpp" />
 		<Unit filename="src/input/Keyboard.h" />
 		<Unit filename="src/input/Mouse.h" />
+		<Unit filename="src/input/TextInput.cpp" />
 		<Unit filename="src/input/TextInput.h" />
 		<Unit filename="src/main.cpp" />
 		<Unit filename="src/math/Constants.h" />

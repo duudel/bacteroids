@@ -53,22 +53,30 @@ namespace rob
 
         virtual void OnTextInput(const char *str)
         { m_textInput.Insert(str); }
-        virtual void OnKeyPress(Key key, uint32_t mods) { }
-        virtual void OnKeyDown(Key key, uint32_t mods)
+
+        virtual void OnKeyPress(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods) { }
+
+        virtual void OnKeyDown(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods)
         {
-            log::Info(GetKeyName(key));
+//            log::Info(GetKeyName(key), " : sc: ", GetScancodeName(scancode), " mods: ", mods);
+            bool numlock = (mods & KeyMod::Num);
             if (mods & KeyMod::Ctrl)
             {
                 switch (key)
                 {
 //                case Key::Delete:       m_textInput.DeleteWord(); break;
 //                case Key::Backspace:    m_textInput.DeleteWordLeft(); break;
-                case Key::Left:         m_textInput.MoveWordLeft(); break;
-                case Key::Right:        m_textInput.MoveWordRight(); break;
-                case Key::Home: //case Key::Kp_Home:
+                case Keyboard::Key::Left:        m_textInput.MoveWordLeft(); break;
+                case Keyboard::Key::Right:       m_textInput.MoveWordRight(); break;
+
+                case Keyboard::Key::Kp_7: if (numlock) break;
+                case Keyboard::Key::Home:
                     m_textInput.MoveHome(); break;
-                case Key::End: //case Key::Kp_End:
+
+                case Keyboard::Key::Kp_1: if (numlock) break;
+                case Keyboard::Key::End:
                     m_textInput.MoveEnd(); break;
+
                 default: break;
                 }
             }
@@ -76,17 +84,24 @@ namespace rob
             {
                 switch (key)
                 {
-                case Key::Delete:       m_textInput.Delete(); break;
-                case Key::Backspace:    m_textInput.DeleteLeft(); break;
-                case Key::Left:         m_textInput.MoveLeft(); break;
-                case Key::Right:        m_textInput.MoveRight(); break;
-                case Key::Home:         m_textInput.MoveHome(); break;
-                case Key::End:          m_textInput.MoveEnd(); break;
+                case Keyboard::Key::Delete:      m_textInput.Delete(); break;
+                case Keyboard::Key::Backspace:   m_textInput.DeleteLeft(); break;
+                case Keyboard::Key::Left:        m_textInput.MoveLeft(); break;
+                case Keyboard::Key::Right:       m_textInput.MoveRight(); break;
+
+                case Keyboard::Key::Kp_7: if (numlock) break;
+                case Keyboard::Key::Home:
+                    m_textInput.MoveHome(); break;
+
+                case Keyboard::Key::Kp_1: if (numlock) break;
+                case Keyboard::Key::End:
+                    m_textInput.MoveEnd(); break;
+
                 default: break;
                 }
             }
         }
-        virtual void OnKeyUp(Key key, uint32_t mods) { }
+        virtual void OnKeyUp(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods) { }
 
         virtual void OnMouseDown(MouseButton button, int x, int y) { }
         virtual void OnMouseUp(MouseButton button, int x, int y) { }

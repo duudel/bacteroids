@@ -16,12 +16,12 @@ namespace bact
     class Input
     {
     public:
-        void SetKey(Key key, bool down)
+        void SetKey(Keyboard::Scancode key, bool down)
         {
             m_keys[static_cast<size_t>(key)] = down;
         }
 
-        bool KeyDown(Key key) const
+        bool KeyDown(Keyboard::Scancode key) const
         {
             return m_keys[static_cast<size_t>(key)];
         }
@@ -52,7 +52,7 @@ namespace bact
         float GetMouseDeltaY() const { return m_mouseDeltaY; }
 
     private:
-        bool m_keys[static_cast<size_t>(Key::NUM_KEYS)];
+        bool m_keys[static_cast<size_t>(Keyboard::Scancode::NUM_KEYS)];
         bool m_buttons[static_cast<size_t>(MouseButton::NUM_BUTTONS)];
         float m_mousePositionX;
         float m_mousePositionY;
@@ -107,13 +107,13 @@ namespace bact
         void Update(const GameTime &gameTime, const Input &input)
         {
             vec4f vel= vec4f::Zero;
-            if (input.KeyDown(Key::W))
+            if (input.KeyDown(Keyboard::Scancode::W))
                 vel += vec4f::UnitY;
-            if (input.KeyDown(Key::S))
+            if (input.KeyDown(Keyboard::Scancode::S))
                 vel -= vec4f::UnitY;
-            if (input.KeyDown(Key::D))
+            if (input.KeyDown(Keyboard::Scancode::D))
                 vel += vec4f::UnitX;
-            if (input.KeyDown(Key::A))
+            if (input.KeyDown(Keyboard::Scancode::A))
                 vel -= vec4f::UnitX;
 
             const float dt = gameTime.GetDeltaSeconds();

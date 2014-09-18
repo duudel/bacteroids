@@ -30,9 +30,9 @@ namespace rob
 
         virtual void OnTextInput(const char *str);
         virtual void OnResize(int w, int h);
-        virtual void OnKeyPress(Key key, uint32_t mods);
-        virtual void OnKeyDown(Key key, uint32_t mods);
-        virtual void OnKeyUp(Key key, uint32_t mods);
+        virtual void OnKeyPress(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods);
+        virtual void OnKeyDown(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods);
+        virtual void OnKeyUp(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods);
         virtual void OnMouseDown(MouseButton button, int x, int y);
         virtual void OnMouseUp(MouseButton button, int x, int y);
         virtual void OnMouseMove(int x, int y);

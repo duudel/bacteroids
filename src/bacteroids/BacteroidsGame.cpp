@@ -105,23 +105,23 @@ namespace bact
                 m_time.Pause();
         }
 
-        void OnKeyPress(Key key, uint32_t mods) override
+        void OnKeyPress(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods) override
         {
-            if (key == Key::Escape)
+            if (key == Keyboard::Key::Escape)
                 QuitState();
-            if (key == Key::P)
-                TogglePause();
+//            if (key == Key::P)
+//                TogglePause();
         }
 
-        void OnKeyDown(Key key, uint32_t mods) override
+        void OnKeyDown(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods) override
         {
-            GameState::OnKeyDown(key, mods);
-            m_input.SetKey(key, true);
+            GameState::OnKeyDown(key, scancode, mods);
+            m_input.SetKey(scancode, true);
         }
 
-        void OnKeyUp(Key key, uint32_t mods) override
+        void OnKeyUp(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods) override
         {
-            m_input.SetKey(key, false);
+            m_input.SetKey(scancode, false);
         }
 
         void OnTextInput(const char *str) override

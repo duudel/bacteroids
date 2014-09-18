@@ -83,12 +83,20 @@ namespace rob
                 game->OnTextInput(event.text.text);
                 break;
             case SDL_KEYDOWN:
-                if (event.key.repeat == 0)
-                    game->OnKeyPress(static_cast<Key>(event.key.keysym.scancode), ::SDL_GetModState());
-                game->OnKeyDown(static_cast<Key>(event.key.keysym.scancode), ::SDL_GetModState());
+                {
+                    const Keyboard::Key key = static_cast<Keyboard::Key>(event.key.keysym.sym);
+                    const Keyboard::Scancode scancode = static_cast<Keyboard::Scancode>(event.key.keysym.scancode);
+                    if (event.key.repeat == 0)
+                        game->OnKeyPress(key, scancode, ::SDL_GetModState());
+                    game->OnKeyDown(key, scancode, ::SDL_GetModState());
+                }
                 break;
             case SDL_KEYUP:
-                game->OnKeyUp(static_cast<Key>(event.key.keysym.scancode), ::SDL_GetModState());
+                {
+                    const Keyboard::Key key = static_cast<Keyboard::Key>(event.key.keysym.sym);
+                    const Keyboard::Scancode scancode = static_cast<Keyboard::Scancode>(event.key.keysym.scancode);
+                    game->OnKeyUp(key, scancode, ::SDL_GetModState());
+                }
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 game->OnMouseDown(static_cast<MouseButton>(event.button.button), event.button.x, event.button.y);
