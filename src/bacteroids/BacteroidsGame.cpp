@@ -119,7 +119,7 @@ namespace bact
 
         void OnKeyDown(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods) override
         {
-            TextInputHandler(m_textInput).OnKeyDown(key, mods);
+//            TextInputHandler(m_textInput).OnKeyDown(key, mods);
             m_input.SetKey(scancode, true);
         }
 
@@ -128,7 +128,7 @@ namespace bact
 
         void OnTextInput(const char *str) override
         {
-            TextInputHandler(m_textInput).OnTextInput(str);
+//            TextInputHandler(m_textInput).OnTextInput(str);
         }
 
 
@@ -216,19 +216,20 @@ namespace bact
             renderer.BindFontShader();
             renderer.DrawText(0, 0, "Hello! This is bacteroids");
 
-            const float cy = 40.0f;
-            renderer.DrawText(0.0f, cy, m_textInput.GetText());
-            const float cx = renderer.GetTextWidth(m_textInput.GetText(), m_textInput.GetCursor());
-            const float cw = 1.0f;
-            const float ch = renderer.GetFontHeight();
-            renderer.DrawRectangle(cx, cy, cx + cw, cy + ch);
-
+//            const float cy = 40.0f;
+//            renderer.DrawText(0.0f, cy, m_textInput.GetText());
+//            const float cx = renderer.GetTextWidth(m_textInput.GetText(), m_textInput.GetCursor());
+//            const float cw = 1.0f;
+//            const float ch = renderer.GetFontHeight();
+//
 //            const float cy2 = 70.0f;
-//            renderer.BindFontShader();
 //            renderer.DrawTextAscii(0.0f, cy2, m_textInput.GetText());
 //            const float cx2 = renderer.GetTextWidthAscii(m_textInput.GetText(), m_textInput.GetCursor());
 //            const float cw2 = 1.0f;
 //            const float ch2 = renderer.GetFontHeight();
+//
+//            renderer.BindColorShader();
+//            renderer.DrawRectangle(cx, cy, cx + cw, cy + ch);
 //            renderer.DrawRectangle(cx2, cy2, cx2 + cw2, cy2 + ch2);
         }
 

@@ -5,7 +5,7 @@
 #include "../graphics/ShaderProgram.h"
 #include "../graphics/VertexBuffer.h"
 #include "../graphics/Texture.h"
-#include "Font.h"
+
 #include "../resource/MasterCache.h"
 
 #include "../math/Math.h"
@@ -180,7 +180,6 @@ namespace rob
         buffer->Write(0, vertexCount * sizeof(ColorVertex), vertices);
         m_graphics->SetAttrib(0, 2, sizeof(ColorVertex), 0);
         m_graphics->SetAttrib(1, 4, sizeof(ColorVertex), sizeof(float) * 2);
-        m_graphics->BindShaderProgram(m_colorProgram);
         m_graphics->DrawLineLoopArrays(0, 4);
 
         m_vb_alloc.Reset();
@@ -206,11 +205,12 @@ namespace rob
     }
 
     static const size_t CIRCLE_SEGMENTS = 48;
-//    static const size_t CIRCLE_SEGMENTS = 320;
+    static const float SEG_RADIUS_SCALE = 1.0f;
 
     void Renderer::DrawCirlce(float x, float y, float radius)
     {
-        const size_t segments = CIRCLE_SEGMENTS;
+        const size_t segs = CIRCLE_SEGMENTS * (radius / SEG_RADIUS_SCALE);
+        const size_t segments = Min((segs + 3) & ~0x3, CIRCLE_SEGMENTS);
         const size_t quarter = segments / 4;
         const size_t vertexCount = segments;
         ColorVertex* vertices = m_vb_alloc.AllocateArray<ColorVertex>(vertexCount);
@@ -248,7 +248,8 @@ namespace rob
 
     void Renderer::DrawFilledCirlce(float x, float y, float radius)
     {
-        const size_t segments = CIRCLE_SEGMENTS;
+        const size_t segs = CIRCLE_SEGMENTS * (radius / SEG_RADIUS_SCALE);
+        const size_t segments = Min((segs + 3) & ~0x3, CIRCLE_SEGMENTS);
         const size_t quarter = segments / 4;
         const size_t vertexCount = segments + 2;
         ColorVertex* vertices = m_vb_alloc.AllocateArray<ColorVertex>(vertexCount);
@@ -288,7 +289,8 @@ namespace rob
 
     void Renderer::DrawFilledCirlce(float x, float y, float radius, const Color &center)
     {
-        const size_t segments = CIRCLE_SEGMENTS;
+        const size_t segs = CIRCLE_SEGMENTS * (radius / SEG_RADIUS_SCALE);
+        const size_t segments = Min((segs + 3) & ~0x3, CIRCLE_SEGMENTS);
         const size_t quarter = segments / 4;
         const size_t vertexCount = segments + 2;
         ColorVertex* vertices = m_vb_alloc.AllocateArray<ColorVertex>(vertexCount);

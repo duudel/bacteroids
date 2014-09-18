@@ -4,7 +4,13 @@ The TODO list for Rob engine.
 rob TODO
 --------
 
+Renderer::DrawLine
 
+Add FontManager or similar functionality
+    - Fonts are used through FontHandle abstraction
+    - FontCache uses font manager to obtain new fonts, similar to
+      graphics resources
+    - Also, Renderer::SetFont() should be implemented
 
 
 These items have already been done
