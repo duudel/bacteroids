@@ -44,6 +44,7 @@ namespace bact
     public:
         BacteroidsState()
             : m_random()
+            , m_playerShader(InvalidHandle)
             , m_bacterShader(InvalidHandle)
             , m_fontShader(InvalidHandle)
             , m_textInput()
@@ -60,12 +61,16 @@ namespace bact
                                                                  PLAY_AREA_BOTTOM,
                                                                  PLAY_AREA_TOP, -1, 1));
 
+            m_playerShader = renderer.CompileShaderProgram(g_playerShader.m_vertexShader,
+                                                           g_playerShader.m_fragmentShader);
             m_bacterShader = renderer.CompileShaderProgram(g_bacterShader.m_vertexShader,
                                                            g_bacterShader.m_fragmentShader);
             m_fontShader = renderer.CompileShaderProgram(g_fontShader.m_vertexShader,
                                                            g_fontShader.m_fragmentShader);
 
+            m_uniforms.velocity = renderer.GetGraphics()->CreateUniform("u_velocity", UniformType::Vec4);
             m_uniforms.anim = renderer.GetGraphics()->CreateUniform("u_anim", UniformType::Float);
+            renderer.GetGraphics()->AddProgramUniform(m_playerShader, m_uniforms.velocity);
             renderer.GetGraphics()->AddProgramUniform(m_bacterShader, m_uniforms.anim);
 
             m_player.SetPosition(0.0f, 0.0f);
@@ -80,6 +85,7 @@ namespace bact
 
         ~BacteroidsState()
         {
+            GetRenderer().GetGraphics()->DestroyShaderProgram(m_playerShader);
             GetRenderer().GetGraphics()->DestroyShaderProgram(m_bacterShader);
             GetRenderer().GetGraphics()->DestroyShaderProgram(m_fontShader);
         }
@@ -204,7 +210,9 @@ namespace bact
                 m_bacters[i]->Render(&renderer, m_uniforms.anim);
             }
 
-            renderer.BindColorShader();
+//            renderer.BindColorShader();
+            renderer.GetGraphics()->SetUniform(m_uniforms.velocity, m_player.GetVelocity());
+            renderer.BindShader(m_playerShader);
             m_player.Render(&renderer, m_fontShader);
 
             SetViewport(m_screenVp);
@@ -236,10 +244,12 @@ namespace bact
     private:
         Random m_random;
 
+        ShaderProgramHandle m_playerShader;
         ShaderProgramHandle m_bacterShader;
         ShaderProgramHandle m_fontShader;
         struct
         {
+            UniformHandle velocity;
             UniformHandle anim;
         } m_uniforms;
 

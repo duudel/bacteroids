@@ -11,6 +11,7 @@ namespace bact
         const char * const m_fragmentShader;
     };
 
+    extern const ShaderDef g_playerShader;
     extern const ShaderDef g_bacterShader;
     extern const ShaderDef g_fontShader;
 

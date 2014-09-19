@@ -74,15 +74,18 @@ namespace bact
         { m_position = vec4f(x, y, 0.0f, 1.0f); }
         void SetPosition(const vec4f &p)
         { m_position = vec4f(p.x, p.y, 0.0f, 1.0f); }
-        void SetRadius(float r)
-        { m_radius = r; }
-        void SetVelocity(float x, float y)
-        { m_velocity = vec4f(x, y, 0.0f, 0.0f); }
-
         vec4f GetPosition() const
         { return m_position; }
+
+        void SetRadius(float r)
+        { m_radius = r; }
         float GetRadius() const
         { return m_radius; }
+
+        void SetVelocity(float x, float y)
+        { m_velocity = vec4f(x, y, 0.0f, 0.0f); }
+        vec4f GetVelocity() const
+        { return m_velocity; }
 
         void AddVelocity(const vec4f &v)
         { m_velocity += v; }
@@ -139,6 +142,7 @@ namespace bact
 
             renderer->SetColor(Color(2.0f, 1.0f, 0.6f));
             const vec4f dpos = m_position + ClampedVectorLength(m_direction, 0.5f);
+            renderer->BindColorShader();
             renderer->DrawFilledCirlce(dpos.x, dpos.y, m_radius * 0.5f, Color(0.2f, 0.5f, 0.5f, 0.5f));
 
 //            const vec4f dpos2 = m_position + m_direction;
