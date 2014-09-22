@@ -22,6 +22,13 @@ namespace rob
     Graphics::Graphics(LinearAllocator &alloc)
         : m_bind()
         , m_state()
+        , m_textures()
+        , m_vertexBuffers()
+        , m_indexBuffers()
+        , m_vertexShaders()
+        , m_fragmentShaders()
+        , m_shaderPrograms()
+        , m_uniforms()
         , m_initialized(false)
     {
         SetViewport(0, 0, 0, 0);

@@ -12,6 +12,10 @@ namespace rob
     class Random
     {
     public:
+        Random()
+            : m_generator()
+        { }
+
         void Seed(uint32_t seed)
         {
             m_generator.seed(seed);

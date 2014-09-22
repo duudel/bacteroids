@@ -94,6 +94,7 @@ namespace rob
         : m_alloc(alloc.Allocate(RENDERER_MEMORY), RENDERER_MEMORY)
         , m_vb_alloc(alloc.Allocate(MAX_VERTEX_BUFFER_SIZE), MAX_VERTEX_BUFFER_SIZE)
         , m_graphics(graphics)
+        , m_globals()
         , m_vertexBuffer(InvalidHandle)
         , m_colorProgram(InvalidHandle)
         , m_fontProgram(InvalidHandle)

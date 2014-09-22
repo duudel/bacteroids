@@ -8,6 +8,7 @@
 #include "Constants.h"
 #include "Functions.h"
 #include "simd/Simd.h"
+#include "Vector2.h"
 #include "Vector4.h"
 #include "Matrix4.h"
 
