@@ -68,6 +68,7 @@ namespace bact
             , m_velocity(0.0f, 0.0f, 0.0f, 0.0f)
             , m_radius(0.8f)
             , m_direction(0.0f, 1.0f, 0.0f, 0.0f)
+            , m_cooldown(0.0f)
         { }
 
         void SetPosition(float x, float y)
@@ -107,7 +108,7 @@ namespace bact
             return cv;
         }
 
-        void Update(const GameTime &gameTime, const Input &input)
+        void Update(const GameTime &gameTime, const Input &input, ProjectileArray &projectiles)
         {
             vec4f vel= vec4f::Zero;
             if (input.KeyDown(Keyboard::Scancode::W))
@@ -133,6 +134,34 @@ namespace bact
             const vec4f delta = vec4f(mdx, mdy, 0.0f, 0.0f);
             m_direction += delta * dt;
             ClampVectorLength(m_direction, 2.5f);
+
+            Cooldown(gameTime);
+            if (input.ButtonDown(MouseButton::Left))
+            {
+                Shoot(gameTime, projectiles);
+            }
+        }
+
+        void Cooldown(const GameTime &gameTime)
+        {
+            if (m_cooldown > 0.0f)
+            {
+                m_cooldown -= gameTime.GetDeltaSeconds();
+                if (m_cooldown < 0.0f)
+                    m_cooldown = 0.0f;
+            }
+        }
+
+        void Shoot(const GameTime &gameTime, ProjectileArray &projectiles)
+        {
+            if (m_cooldown <= 0.0f)
+            {
+                m_cooldown = 0.25f;
+                Projectile *p = projectiles.Obtain();
+                const vec4f dir = ClampedVectorLength(m_direction, 1.0f);
+                p->SetPosition(m_position + dir * m_radius);
+                p->SetVelocity(dir.x * 10.0f, dir.y * 10.0f);
+            }
         }
 
         void Render(Renderer *renderer, ShaderProgramHandle fontShader)
@@ -161,6 +190,8 @@ namespace bact
         vec4f m_velocity;
         float m_radius;
         vec4f m_direction;
+
+        float m_cooldown;
     };
 
 } // bact

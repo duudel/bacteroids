@@ -49,6 +49,8 @@ namespace rob
         void BindFontShader();
 
         void SetColor(const Color &color);
+
+        void DrawLine(float x0, float y0, float x1, float y1);
         void DrawRectangle(float x0, float y0, float x1, float y1);
         void DrawFilledRectangle(float x0, float y0, float x1, float y1);
         void DrawCirlce(float x, float y, float radius);

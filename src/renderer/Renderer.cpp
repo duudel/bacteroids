@@ -166,6 +166,23 @@ namespace rob
     void Renderer::SetColor(const Color &color)
     { m_color = color; }
 
+    void Renderer::DrawLine(float x0, float y0, float x1, float y1)
+    {
+        const size_t vertexCount = 2;
+        ColorVertex* vertices = m_vb_alloc.AllocateArray<ColorVertex>(vertexCount);
+        vertices[0] = { x0, y0, m_color.r, m_color.g, m_color.b, m_color.a };
+        vertices[1] = { x1, y1, m_color.r, m_color.g, m_color.b, m_color.a };
+
+        m_graphics->BindVertexBuffer(m_vertexBuffer);
+        VertexBuffer *buffer = m_graphics->GetVertexBuffer(m_vertexBuffer);
+        buffer->Write(0, vertexCount * sizeof(ColorVertex), vertices);
+        m_graphics->SetAttrib(0, 2, sizeof(ColorVertex), 0);
+        m_graphics->SetAttrib(1, 4, sizeof(ColorVertex), sizeof(float) * 2);
+        m_graphics->DrawLineLoopArrays(0, vertexCount);
+
+        m_vb_alloc.Reset();
+    }
+
     void Renderer::DrawRectangle(float x0, float y0, float x1, float y1)
     {
         const size_t vertexCount = 4;
@@ -180,7 +197,7 @@ namespace rob
         buffer->Write(0, vertexCount * sizeof(ColorVertex), vertices);
         m_graphics->SetAttrib(0, 2, sizeof(ColorVertex), 0);
         m_graphics->SetAttrib(1, 4, sizeof(ColorVertex), sizeof(float) * 2);
-        m_graphics->DrawLineLoopArrays(0, 4);
+        m_graphics->DrawLineLoopArrays(0, vertexCount);
 
         m_vb_alloc.Reset();
     }
@@ -199,7 +216,7 @@ namespace rob
         buffer->Write(0, vertexCount * sizeof(ColorVertex), vertices);
         m_graphics->SetAttrib(0, 2, sizeof(ColorVertex), 0);
         m_graphics->SetAttrib(1, 4, sizeof(ColorVertex), sizeof(float) * 2);
-        m_graphics->DrawTriangleStripArrays(0, 4);
+        m_graphics->DrawTriangleStripArrays(0, vertexCount);
 
         m_vb_alloc.Reset();
     }
