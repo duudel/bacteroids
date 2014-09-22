@@ -160,49 +160,50 @@ namespace bact
 
             m_player.Update(gameTime, m_input, m_projectiles);
 
-            size_t num_bacters[4] = {0};
-            Bacter *bacters[4][MAX_BACTERS];
+//            size_t num_bacters[4] = {0};
+//            Bacter *bacters[4][MAX_BACTERS];
 
-            for (size_t i = 0; i < m_bacters.size; i++)
-            {
-                Bacter *bacter = m_bacters[i];
-                vec4f p = bacter->GetPosition();
-                float r = bacter->GetRadius();
-                if (p.x <= r && p.y <= r)
-                    bacters[0][num_bacters[0]++] = bacter;
-                if (p.x <= r && p.y >= -r)
-                    bacters[1][num_bacters[1]++] = bacter;
-                if (p.x >= -r && p.y <= r)
-                    bacters[2][num_bacters[2]++] = bacter;
-                if (p.x >= -r && p.y >= -r)
-                    bacters[3][num_bacters[3]++] = bacter;
-            }
+//            for (size_t i = 0; i < m_bacters.size; i++)
+//            {
+//                Bacter *bacter = m_bacters[i];
+//                vec4f p = bacter->GetPosition();
+//                float r = bacter->GetRadius();
+//                if (p.x <= r && p.y <= r)
+//                    bacters[0][num_bacters[0]++] = bacter;
+//                if (p.x <= r && p.y >= -r)
+//                    bacters[1][num_bacters[1]++] = bacter;
+//                if (p.x >= -r && p.y <= r)
+//                    bacters[2][num_bacters[2]++] = bacter;
+//                if (p.x >= -r && p.y >= -r)
+//                    bacters[3][num_bacters[3]++] = bacter;
+//            }
+
+//            int n = 0;
+//
+//            for (size_t i = 0; i < 4; i++)
+//            {
+//                size_t num = num_bacters[i];
+//                Bacter **b = bacters[i];
+//                for (size_t j = 0; j < num; j++)
+//                {
+//                    for (size_t k = j + 1; k < num; k++)
+//                    {
+//                        b[j]->DoCollision(b[k]);
+//                        n++;
+//                    }
+//                }
+//            }
 
             int n = 0;
 
-            for (size_t i = 0; i < 4; i++)
-            {
-                size_t num = num_bacters[i];
-                Bacter **b = bacters[i];
-                for (size_t j = 0; j < num; j++)
-                {
-                    for (size_t k = j + 1; k < num; k++)
-                    {
-                        b[j]->DoCollision(b[k]);
-                        n++;
-                    }
-                }
-            }
-
-//            int n = 0;
-
             for (size_t i = 0; i < m_bacters.size; i++)
             {
-//                for (size_t j = i + 1; j < m_bacters.size; j++)
-//                {
-//                    m_bacters[i]->DoCollision(m_bacters[j]);
-//                    n++;
-//                }
+                m_bacters[i]->DoCollision(&m_player);
+                for (size_t j = i + 1; j < m_bacters.size; j++)
+                {
+                    m_bacters[i]->DoCollision(m_bacters[j]);
+                    n++;
+                }
 
                 m_bacters[i]->Update(gameTime);
 
@@ -217,11 +218,34 @@ namespace bact
             }
 //            log::Info("Bacter collision tests: ", n);
 
+            for (size_t i = 0; i < m_bacters.size; )
+            {
+                if (!m_bacters[i]->IsAlive())
+                {
+                    m_bacters.Remove(i);
+                    continue;
+                }
+                i++;
+            }
+
             for (size_t i = 0; i < m_projectiles.size; i++)
             {
+                for (size_t b = 0; b < m_bacters.size; b++)
+                {
+                    m_projectiles[i]->DoCollision(m_bacters[b]);
+                }
+
                 m_projectiles[i]->Update(gameTime);
+            }
+
+            for (size_t i = 0; i < m_projectiles.size; )
+            {
                 if (!m_projectiles[i]->IsAlive())
+                {
                     m_projectiles.Remove(i);
+                    continue;
+                }
+                i++;
             }
         }
 
@@ -311,6 +335,8 @@ namespace bact
         Player m_player;
         BacterArray m_bacters;
         ProjectileArray m_projectiles;
+
+        GameObject **m_objects;
 
         Viewport m_playAreaVp;
         Viewport m_screenVp;

@@ -6,6 +6,12 @@
 #include "../application/GameTime.h"
 #include "../math/Math.h"
 
+namespace rob
+{
+    class GameTime;
+    class Renderer;
+} // rob
+
 namespace bact
 {
 

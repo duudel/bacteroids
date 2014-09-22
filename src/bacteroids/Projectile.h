@@ -3,6 +3,8 @@
 #define H_BACT_PROJECTILE_H
 
 #include "GameObject.h"
+#include "Bacter.h"
+#include "../memory/Pool.h"
 
 namespace bact
 {
@@ -32,6 +34,23 @@ namespace bact
         {
             renderer->SetColor(Color(1.0f, 1.0f, 1.6f));
             renderer->DrawFilledCirlce(m_position.x, m_position.y, m_radius, Color(0.2f, 0.5f, 0.5f, 0.5f));
+        }
+
+        void DoCollision(Bacter *b)
+        {
+            vec4f A  = GetPosition();
+            float Ar = GetRadius();
+            vec4f B  = b->GetPosition();
+            float Br = b->GetRadius();
+
+            vec4f BA = A - B;
+            float r = Ar + Br;
+            float d = r - BA.Length();
+            if (d > 0.0f)
+            {
+                m_alive = false;
+                b->Hit();
+            }
         }
     };
 

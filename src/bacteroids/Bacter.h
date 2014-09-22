@@ -3,6 +3,7 @@
 #define H_BACT_BACTER_H
 
 #include "GameObject.h"
+#include "Player.h"
 
 #include "../renderer/Renderer.h"
 #include "../graphics/Graphics.h"
@@ -12,9 +13,11 @@
 namespace bact
 {
 
+    class Player;
+
     using namespace rob;
 
-    vec4f Normalize(const vec4f &v)
+    inline vec4f Normalize(const vec4f &v)
     {
         float len = v.Length();
         return (len > 0.1f) ? v/len : v;
@@ -30,6 +33,7 @@ namespace bact
             , m_anim(0.0f)
             , m_r0(0.5f), m_r1(0.0f)
             , m_target(nullptr)
+            , m_health(30)
         {
             SetRadius(1.0f);
         }
@@ -39,6 +43,13 @@ namespace bact
 
         void SetTarget(const GameObject *target)
         { m_target = target; }
+
+        void Hit()
+        {
+            m_health -= 10;
+            if (m_health <= 0)
+                m_alive = false;
+        }
 
         void DoCollision(Bacter *b)
         {
@@ -68,6 +79,36 @@ namespace bact
 //                }
                 m_r1 = Max(m_r1, d / r);
                 b->m_r1 = Max(b->m_r1, m_r1);
+            }
+        }
+
+        void DoCollision(Player *pl)
+        {
+            vec4f A  = GetPosition();
+            float Ar = GetRadius();
+            vec4f B  = pl->GetPosition();
+            float Br = pl->GetRadius();
+
+            vec4f BA = A - B;
+            float r = Ar + Br;
+            float d = r - BA.Length();
+            if (d > 0.0f)
+            {
+//                if (d > 0.3f)
+                {
+                    vec4f v = Normalize(BA) * d/8.0f;
+                    AddVelocity(v);
+                    pl->AddVelocity(-v);
+                    SetPosition(A + v/2.0f);
+                    pl->SetPosition(B - v/2.0f);
+                }
+//                else
+//                {
+//                    vec4f v = Normalize(BA) * d/8.0f;
+//                    SetPosition(A + v);
+//                    b->SetPosition(B - v);
+//                }
+                m_r1 = Max(m_r1, d / r);
             }
         }
 
@@ -122,6 +163,7 @@ namespace bact
         float m_anim;
         float m_r0, m_r1;
         const GameObject *m_target;
+        int m_health;
     };
 
 } // bact
