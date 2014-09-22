@@ -166,7 +166,7 @@ namespace bact
             for (size_t i = 0; i < m_bacters.size; i++)
             {
                 Bacter *bacter = m_bacters[i];
-                vec4f p = bacter->GetPosition();
+                vec2f p = bacter->GetPosition();
                 float r = bacter->GetRadius();
                 if (p.x <= r && p.y <= r)
                     bacters[0][num_bacters[0]++] = bacter;
@@ -249,7 +249,7 @@ namespace bact
             for (size_t i = 0; i < m_bacters.size; i++)
             {
                 Bacter *bacter = m_bacters[i];
-                vec4f p = bacter->GetPosition();
+                vec2f p = bacter->GetPosition();
                 float r = bacter->GetRadius() * 1.5f;
 
                 if (p.x > PLAY_AREA_LEFT - r &&

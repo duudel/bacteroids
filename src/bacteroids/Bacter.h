@@ -8,6 +8,7 @@
 #include "../graphics/Graphics.h"
 
 #include "../math/Math.h"
+#include "../math/Vector2.h"
 #include "../math/Random.h"
 
 namespace bact
@@ -25,21 +26,21 @@ namespace bact
     {
     public:
         void SetPosition(float x, float y)
-        { m_position = vec4f(x, y, 0.0f, 1.0f); }
+        { m_position = vec2f(x, y); }
 
-        vec4f GetPosition() const
+        vec2f GetPosition() const
         { return m_position; }
 
     private:
-        vec4f m_position;
+        vec2f m_position;
     };
 
     class Bacter
     {
     public:
         Bacter()
-            : m_position(0.0f, 0.0f, 0.0f, 1.0f)
-            , m_velocity(0.0f, 0.0f, 0.0f, 0.0f)
+            : m_position(0.0f)
+            , m_velocity(0.0f)
             , m_radius(1.0f)
             , m_anim(0.0f)
             , m_r0(0.5f), m_r1(0.0f)
@@ -47,41 +48,41 @@ namespace bact
         { }
 
         void SetPosition(float x, float y)
-        { m_position = vec4f(x, y, 0.0f, 1.0f); }
-        void SetPosition(const vec4f &p)
-        { m_position = vec4f(p.x, p.y, 0.0f, 1.0f); }
+        { m_position = vec2f(x, y); }
+        void SetPosition(const vec2f &p)
+        { m_position = p; }
         void SetRadius(float r)
         { m_radius = r; }
         void SetVelocity(float x, float y)
-        { m_velocity = vec4f(x, y, 0.0f, 0.0f); }
+        { m_velocity = vec2f(x, y); }
         void SetAnim(float anim)
         { m_anim = anim; }
         void SetTarget(Target *target)
         { m_target = target; }
 
-        vec4f GetPosition() const
+        vec2f GetPosition() const
         { return m_position; }
         float GetRadius() const
         { return m_radius; }
 
-        void AddVelocity(const vec4f &v)
+        void AddVelocity(const vec2f &v)
         { m_velocity += v; }
 
         void DoCollision(Bacter *b)
         {
-            vec4f A  = GetPosition();
+            vec2f A  = GetPosition();
             float Ar = GetRadius();
-            vec4f B  = b->GetPosition();
+            vec2f B  = b->GetPosition();
             float Br = b->GetRadius();
 
-            vec4f BA = A - B;
+            vec2f BA = A - B;
             float r = Ar + Br;
             float d = r - BA.Length();
             if (d > 0.0f)
             {
 //                if (d > 0.3f)
                 {
-                    vec4f v = Normalize(BA) * d/8.0f;
+                    vec2f v = BA.SafeNormalized() * d/8.0f;
                     AddVelocity(v);
                     b->AddVelocity(-v);
                     SetPosition(A + v/2.0f);
@@ -104,8 +105,8 @@ namespace bact
 
             if (m_target)
             {
-                vec4f a = 0.4f * Normalize(m_target->GetPosition() - m_position);
-                vec4f v = m_velocity + a*dt;
+                vec2f a = 0.4f * (m_target->GetPosition() - m_position).SafeNormalized();
+                vec2f v = m_velocity + a*dt;
                 if (v.Length() > 1.2f && m_velocity.Length() < v.Length()) ;
                 else m_velocity = v;
             }
@@ -146,8 +147,8 @@ namespace bact
         }
 
     private:
-        vec4f m_position;
-        vec4f m_velocity;
+        vec2f m_position;
+        vec2f m_velocity;
         float m_radius;
         float m_anim;
         float m_r0, m_r1;

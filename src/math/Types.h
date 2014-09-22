@@ -7,6 +7,9 @@
 namespace rob
 {
 
+    template <class T>
+    class Vector2;
+
     template <class T, size_t S = 0>
     class Vector4;
 
@@ -18,6 +21,8 @@ namespace rob
     typedef double  float64;
     typedef float32 real;
 
+    typedef Vector2<float32>    vec2f;
+    typedef Vector2<int32_t>    vec2i;
     typedef Vector4<float32>    vec4f;
     typedef Vector4<int32_t>    vec4i;
     typedef Matrix4<float32>    mat4f;

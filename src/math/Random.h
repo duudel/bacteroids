@@ -41,10 +41,10 @@ namespace rob
             return dis(m_generator);
         }
 
-        vec4f GetDirection()
+        vec2f GetDirection()
         {
             float x = GetReal(0.0f, 2.0f*PI_f);
-            return vec4f(Cos(x), Sin(x), 0.0f, 0.0f);
+            return vec2f(Cos(x), Sin(x));
         }
 
     private:
