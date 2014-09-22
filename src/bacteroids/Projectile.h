@@ -2,43 +2,23 @@
 #ifndef H_BACT_PROJECTILE_H
 #define H_BACT_PROJECTILE_H
 
-#include "../application/GameTime.h"
-#include "../math/Math.h"
+#include "GameObject.h"
 
 namespace bact
 {
 
-    class Projectile
+    class Projectile : public GameObject
     {
     public:
+        static const int TYPE = 3;
+    public:
         Projectile()
-            : m_position(0.0f)
-            , m_velocity(vec4f::Zero)
-            , m_radius(0.2f)
-            , m_alive(true)
-        { }
+            : GameObject(TYPE)
+        {
+            SetRadius(0.2f);
+        }
 
-        void SetPosition(float x, float y)
-        { m_position = vec4f(x, y, 0.0f, 1.0f); }
-        void SetPosition(const vec4f &p)
-        { m_position = vec4f(p.x, p.y, 0.0f, 1.0f); }
-        vec4f GetPosition() const
-        { return m_position; }
-
-        void SetRadius(float r)
-        { m_radius = r; }
-        float GetRadius() const
-        { return m_radius; }
-
-        void SetVelocity(float x, float y)
-        { m_velocity = vec4f(x, y, 0.0f, 0.0f); }
-        vec4f GetVelocity() const
-        { return m_velocity; }
-
-        void AddVelocity(const vec4f &v)
-        { m_velocity += v; }
-
-        void Update(const GameTime &gameTime)
+        void Update(const GameTime &gameTime) override
         {
             const float dt = gameTime.GetDeltaSeconds();
             m_position += m_velocity * dt;
@@ -48,20 +28,11 @@ namespace bact
                 m_alive = false;
         }
 
-        bool IsAlive() const
-        { return m_alive; }
-
-        void Render(Renderer *renderer)
+        void Render(Renderer *renderer) override
         {
             renderer->SetColor(Color(1.0f, 1.0f, 1.6f));
             renderer->DrawFilledCirlce(m_position.x, m_position.y, m_radius, Color(0.2f, 0.5f, 0.5f, 0.5f));
         }
-
-    private:
-        vec4f m_position;
-        vec4f m_velocity;
-        float m_radius;
-        bool m_alive;
     };
 
 

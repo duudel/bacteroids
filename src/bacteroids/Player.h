@@ -2,10 +2,10 @@
 #ifndef H_BACT_PLAYER_H
 #define H_BACT_PLAYER_H
 
+#include "GameObject.h"
+
 #include "../Types.h"
-#include "../math/Math.h"
 #include "../renderer/Renderer.h"
-#include "../application/GameTime.h"
 #include "../String.h"
 
 namespace bact
@@ -60,36 +60,18 @@ namespace bact
         float m_mouseDeltaY;
     };
 
-    class Player
+    class Player : public GameObject
     {
     public:
+        static const int TYPE = 1;
+    public:
         Player()
-            : m_position(0.0f, 0.0f, 0.0f, 1.0f)
-            , m_velocity(0.0f, 0.0f, 0.0f, 0.0f)
-            , m_radius(0.8f)
+            : GameObject(TYPE)
             , m_direction(0.0f, 1.0f, 0.0f, 0.0f)
             , m_cooldown(0.0f)
-        { }
-
-        void SetPosition(float x, float y)
-        { m_position = vec4f(x, y, 0.0f, 1.0f); }
-        void SetPosition(const vec4f &p)
-        { m_position = vec4f(p.x, p.y, 0.0f, 1.0f); }
-        vec4f GetPosition() const
-        { return m_position; }
-
-        void SetRadius(float r)
-        { m_radius = r; }
-        float GetRadius() const
-        { return m_radius; }
-
-        void SetVelocity(float x, float y)
-        { m_velocity = vec4f(x, y, 0.0f, 0.0f); }
-        vec4f GetVelocity() const
-        { return m_velocity; }
-
-        void AddVelocity(const vec4f &v)
-        { m_velocity += v; }
+        {
+            SetRadius(0.8f);
+        }
 
         static void ClampVectorLength(vec4f &v, const float len)
         {
@@ -186,11 +168,7 @@ namespace bact
         }
 
     private:
-        vec4f m_position;
-        vec4f m_velocity;
-        float m_radius;
         vec4f m_direction;
-
         float m_cooldown;
     };
 

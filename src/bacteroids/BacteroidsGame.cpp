@@ -75,7 +75,6 @@ namespace bact
             renderer.GetGraphics()->AddProgramUniform(m_bacterShader, m_uniforms.anim);
 
             m_player.SetPosition(0.0f, 0.0f);
-            m_playerTarget.SetPosition(0.0f, 0.0f);
             m_bacters.Init(GetAllocator());
             m_projectiles.Init(GetAllocator());
             for (int i = 0; i < 6; i++)
@@ -144,7 +143,7 @@ namespace bact
         {
             Bacter *bacter = m_bacters.Obtain();
             bacter->SetPosition(m_random.GetDirection() * 8.0f);
-            bacter->SetTarget(&m_playerTarget);
+            bacter->SetTarget(&m_player);
             bacter->SetAnim(m_random.GetReal(0.0f, 2.0f*PI_f));
         }
 
@@ -315,7 +314,6 @@ namespace bact
         Input m_input;
 
         Player m_player;
-        Target m_playerTarget;
         BacterArray m_bacters;
         ProjectileArray m_projectiles;
 

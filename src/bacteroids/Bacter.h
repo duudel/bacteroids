@@ -2,12 +2,11 @@
 #ifndef H_BACT_BACTER_H
 #define H_BACT_BACTER_H
 
-#include "../application/GameTime.h"
+#include "GameObject.h"
 
 #include "../renderer/Renderer.h"
 #include "../graphics/Graphics.h"
 
-#include "../math/Math.h"
 #include "../math/Random.h"
 
 namespace bact
@@ -21,53 +20,25 @@ namespace bact
         return (len > 0.1f) ? v/len : v;
     }
 
-    class Target
+    class Bacter : public GameObject
     {
     public:
-        Target() : m_position() { }
-
-        void SetPosition(float x, float y)
-        { m_position = vec4f(x, y, 0.0f, 1.0f); }
-
-        vec4f GetPosition() const
-        { return m_position; }
-
-    private:
-        vec4f m_position;
-    };
-
-    class Bacter
-    {
+        static const int TYPE = 2;
     public:
         Bacter()
-            : m_position(0.0f, 0.0f, 0.0f, 1.0f)
-            , m_velocity(0.0f, 0.0f, 0.0f, 0.0f)
-            , m_radius(1.0f)
+            : GameObject(TYPE)
             , m_anim(0.0f)
             , m_r0(0.5f), m_r1(0.0f)
-            , m_target(0)
-        { }
+            , m_target(nullptr)
+        {
+            SetRadius(1.0f);
+        }
 
-        void SetPosition(float x, float y)
-        { m_position = vec4f(x, y, 0.0f, 1.0f); }
-        void SetPosition(const vec4f &p)
-        { m_position = vec4f(p.x, p.y, 0.0f, 1.0f); }
-        void SetRadius(float r)
-        { m_radius = r; }
-        void SetVelocity(float x, float y)
-        { m_velocity = vec4f(x, y, 0.0f, 0.0f); }
         void SetAnim(float anim)
         { m_anim = anim; }
-        void SetTarget(Target *target)
+
+        void SetTarget(const GameObject *target)
         { m_target = target; }
-
-        vec4f GetPosition() const
-        { return m_position; }
-        float GetRadius() const
-        { return m_radius; }
-
-        void AddVelocity(const vec4f &v)
-        { m_velocity += v; }
 
         void DoCollision(Bacter *b)
         {
@@ -100,7 +71,7 @@ namespace bact
             }
         }
 
-        void Update(const GameTime &gameTime)
+        void Update(const GameTime &gameTime) override
         {
             const float dt = gameTime.GetDeltaSeconds();
 
@@ -122,7 +93,7 @@ namespace bact
                 m_r0 += 0.1f * dt;
         }
 
-        bool ShouldClone()
+        bool ShouldClone() const
         {
             return (m_r0 > 1.0f);
         }
@@ -148,12 +119,9 @@ namespace bact
         }
 
     private:
-        vec4f m_position;
-        vec4f m_velocity;
-        float m_radius;
         float m_anim;
         float m_r0, m_r1;
-        Target *m_target;
+        const GameObject *m_target;
     };
 
 } // bact
