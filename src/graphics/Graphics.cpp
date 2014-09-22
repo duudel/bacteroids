@@ -24,12 +24,6 @@ namespace rob
         , m_state()
         , m_initialized(false)
     {
-        if (::glewInit() != GLEW_OK)
-        {
-            log::Error("Could not initialize GLEW");
-            return;
-        }
-
         SetViewport(0, 0, 0, 0);
 
         InitState();

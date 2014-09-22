@@ -3,8 +3,10 @@
 #include "Game.h"
 
 #include "../Log.h"
+#include "../Assert.h"
 
 #include <SDL2/SDL.h>
+#include <GL/glew.h>
 
 namespace rob
 {
@@ -26,7 +28,7 @@ namespace rob
         SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
         SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, 8);
         SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, 8);
-//        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
+        SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLEBUFFERS, 1);
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
@@ -55,6 +57,16 @@ namespace rob
             log::Error("Could not create GL context");
             return;
         }
+
+        if (::glewInit() != GLEW_OK)
+        {
+            log::Error("Could not initialize GLEW");
+            return;
+        }
+
+        ROB_ASSERT(GLEW_VERSION_2_1);
+
+        SDL_GL_SetSwapInterval(0);
     }
 
     Window::~Window()
