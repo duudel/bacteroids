@@ -24,6 +24,8 @@ namespace bact
     class Target
     {
     public:
+        Target() : m_position() { }
+
         void SetPosition(float x, float y)
         { m_position = vec4f(x, y, 0.0f, 1.0f); }
 

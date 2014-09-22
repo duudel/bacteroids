@@ -7,7 +7,7 @@ namespace rob
 
     struct Color
     {
-        Color() { }
+        Color() : r(), g(), b(), a() { }
         explicit Color(float x)
             : r(x), g(x), b(x), a(1.0f) { }
         Color(float ar, float ag, float ab, float aa = 1.0f)
