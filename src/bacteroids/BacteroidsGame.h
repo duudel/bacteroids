@@ -11,6 +11,7 @@ namespace bact
     {
     public:
         bool Initialize() override;
+        void OnKeyPress(rob::Keyboard::Key key, rob::Keyboard::Scancode scancode, uint32_t mods) override;
     };
 
 } // bact

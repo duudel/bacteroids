@@ -158,27 +158,64 @@ namespace bact
                                buttons & SDL_BUTTON_RMASK,
                                buttons & SDL_BUTTON_MMASK);
 
-//            int n = 0;
-//            Bacter *b[10];
             m_player.Update(gameTime, m_input, m_projectiles);
+
+            size_t num_bacters[4] = {0};
+            Bacter *bacters[4][MAX_BACTERS];
 
             for (size_t i = 0; i < m_bacters.size; i++)
             {
-                for (size_t j = i + 1; j < m_bacters.size; j++)
-                    m_bacters[i]->DoCollision(m_bacters[j]);
+                Bacter *bacter = m_bacters[i];
+                vec4f p = bacter->GetPosition();
+                float r = bacter->GetRadius();
+                if (p.x <= r && p.y <= r)
+                    bacters[0][num_bacters[0]++] = bacter;
+                if (p.x <= r && p.y >= -r)
+                    bacters[1][num_bacters[1]++] = bacter;
+                if (p.x >= -r && p.y <= r)
+                    bacters[2][num_bacters[2]++] = bacter;
+                if (p.x >= -r && p.y >= -r)
+                    bacters[3][num_bacters[3]++] = bacter;
+            }
+
+            int n = 0;
+
+            for (size_t i = 0; i < 4; i++)
+            {
+                size_t num = num_bacters[i];
+                Bacter **b = bacters[i];
+                for (size_t j = 0; j < num; j++)
+                {
+                    for (size_t k = j + 1; k < num; k++)
+                    {
+                        b[j]->DoCollision(b[k]);
+                        n++;
+                    }
+                }
+            }
+
+//            int n = 0;
+
+            for (size_t i = 0; i < m_bacters.size; i++)
+            {
+//                for (size_t j = i + 1; j < m_bacters.size; j++)
+//                {
+//                    m_bacters[i]->DoCollision(m_bacters[j]);
+//                    n++;
+//                }
 
                 m_bacters[i]->Update(gameTime);
 
                 if (m_bacters[i]->ShouldClone())
                 {
-                    if (m_bacters.size < MAX_BACTERS)// && n < 10)
+                    if (m_bacters.size < MAX_BACTERS)
                     {
-//                        b[n++] = m_bacters[i];
                         Bacter *b = m_bacters.Obtain();
                         m_bacters[i]->Clone(b, m_random);
                     }
                 }
             }
+//            log::Info("Bacter collision tests: ", n);
 
             for (size_t i = 0; i < m_projectiles.size; i++)
             {
@@ -186,11 +223,6 @@ namespace bact
                 if (!m_projectiles[i]->IsAlive())
                     m_projectiles.Remove(i);
             }
-
-//            for (int i = 0; i < n; i++)
-//            {
-//                b[i]->Clone(m_bacters.Obtain(), m_random);
-//            }
         }
 
         void SetViewport(Viewport &vp)
@@ -216,7 +248,18 @@ namespace bact
             renderer.BindShader(m_bacterShader);
             for (size_t i = 0; i < m_bacters.size; i++)
             {
-                m_bacters[i]->Render(&renderer, m_uniforms.anim);
+                Bacter *bacter = m_bacters[i];
+                vec4f p = bacter->GetPosition();
+                float r = bacter->GetRadius() * 1.5f;
+
+                if (p.x > PLAY_AREA_LEFT - r &&
+                    p.x < PLAY_AREA_RIGHT + r &&
+                    p.y > PLAY_AREA_BOTTOM - r &&
+                    p.y < PLAY_AREA_TOP + r)
+                {
+                    renderer.BindShader(m_bacterShader);
+                    bacter->Render(&renderer, m_uniforms.anim);
+                }
             }
 
 //            renderer.BindColorShader();
@@ -284,10 +327,24 @@ namespace bact
 
     bool Bacteroids::Initialize()
     {
-        m_window->SetTitle("Bacteroids");
+        m_window->SetTitle(
+        #if defined(DEBUG_)
+            "Bacteroids - Debug"
+        #else
+            "Bacteroids"
+        #endif // DEBUG_
+        );
         m_window->GrabMouse();
         ChangeState<BacteroidsState>();
         return true;
+    }
+
+    void Bacteroids::OnKeyPress(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods)
+    {
+        if (key == Keyboard::Key::LAlt)
+            m_window->ToggleGrabMouse();
+
+        Game::OnKeyPress(key, scancode, mods);
     }
 
 } // bact

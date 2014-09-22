@@ -7,6 +7,7 @@
 #define ROB_WARN(x) if (x) rob::Warn(#x, __FILE__, __LINE__)
 #else
 #define ROB_ASSERT(x)
+#define ROB_WARN(x)
 #endif // _DEBUG
 
 namespace rob
