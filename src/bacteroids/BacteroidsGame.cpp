@@ -1,9 +1,10 @@
 
 #include "BacteroidsGame.h"
 
-#include "Player.h"
 #include "Bacter.h"
 #include "BacterArray.h"
+#include "Projectile.h"
+#include "Player.h"
 
 #include "../application/Window.h"
 #include "../application/GameState.h"
@@ -76,6 +77,7 @@ namespace bact
             m_player.SetPosition(0.0f, 0.0f);
             m_playerTarget.SetPosition(0.0f, 0.0f);
             m_bacters.Init(GetAllocator());
+            m_projectiles.Init(GetAllocator());
             for (int i = 0; i < 6; i++)
             {
                 SpawnBacter();
@@ -158,7 +160,7 @@ namespace bact
 
 //            int n = 0;
 //            Bacter *b[10];
-            m_player.Update(gameTime, m_input);
+            m_player.Update(gameTime, m_input, m_projectiles);
 
             for (size_t i = 0; i < m_bacters.size; i++)
             {
@@ -176,6 +178,13 @@ namespace bact
                         m_bacters[i]->Clone(b, m_random);
                     }
                 }
+            }
+
+            for (size_t i = 0; i < m_projectiles.size; i++)
+            {
+                m_projectiles[i]->Update(gameTime);
+                if (!m_projectiles[i]->IsAlive())
+                    m_projectiles.Remove(i);
             }
 
 //            for (int i = 0; i < n; i++)
@@ -204,9 +213,9 @@ namespace bact
             renderer.DrawFilledRectangle(PLAY_AREA_LEFT, PLAY_AREA_BOTTOM, PLAY_AREA_RIGHT, PLAY_AREA_TOP);
             renderer.SetTime(m_time.GetTime());
 
+            renderer.BindShader(m_bacterShader);
             for (size_t i = 0; i < m_bacters.size; i++)
             {
-                renderer.BindShader(m_bacterShader);
                 m_bacters[i]->Render(&renderer, m_uniforms.anim);
             }
 
@@ -214,6 +223,13 @@ namespace bact
             renderer.GetGraphics()->SetUniform(m_uniforms.velocity, m_player.GetVelocity());
             renderer.BindShader(m_playerShader);
             m_player.Render(&renderer, m_fontShader);
+
+            renderer.BindColorShader();
+            for (size_t i = 0; i < m_projectiles.size; i++)
+            {
+                m_projectiles[i]->Render(&renderer);
+            }
+
 
             SetViewport(m_screenVp);
             const float w = m_screenVp.w;
@@ -258,6 +274,7 @@ namespace bact
         Player m_player;
         Target m_playerTarget;
         BacterArray m_bacters;
+        ProjectileArray m_projectiles;
 
         Viewport m_playAreaVp;
         Viewport m_screenVp;

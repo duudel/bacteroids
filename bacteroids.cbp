@@ -65,6 +65,7 @@
 		<Unit filename="src/bacteroids/BacteroidsGame.cpp" />
 		<Unit filename="src/bacteroids/BacteroidsGame.h" />
 		<Unit filename="src/bacteroids/Player.h" />
+		<Unit filename="src/bacteroids/Projectile.h" />
 		<Unit filename="src/bacteroids/Shaders.cpp" />
 		<Unit filename="src/bacteroids/Shaders.h" />
 		<Unit filename="src/filesystem/FileCopy.cpp" />
