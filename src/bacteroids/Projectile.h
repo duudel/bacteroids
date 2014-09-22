@@ -28,7 +28,7 @@ namespace bact
                 m_alive = false;
         }
 
-        void Render(Renderer *renderer) override
+        void Render(Renderer *renderer, const BacteroidsUniforms &uniforms) override
         {
             renderer->SetColor(Color(1.0f, 1.0f, 1.6f));
             renderer->DrawFilledCirlce(m_position.x, m_position.y, m_radius, Color(0.2f, 0.5f, 0.5f, 0.5f));

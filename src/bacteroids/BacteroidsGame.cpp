@@ -5,6 +5,7 @@
 #include "BacterArray.h"
 #include "Projectile.h"
 #include "Player.h"
+#include "Uniforms.h"
 
 #include "../application/Window.h"
 #include "../application/GameState.h"
@@ -69,10 +70,10 @@ namespace bact
             m_fontShader = renderer.CompileShaderProgram(g_fontShader.m_vertexShader,
                                                            g_fontShader.m_fragmentShader);
 
-            m_uniforms.velocity = renderer.GetGraphics()->CreateUniform("u_velocity", UniformType::Vec4);
-            m_uniforms.anim = renderer.GetGraphics()->CreateUniform("u_anim", UniformType::Float);
-            renderer.GetGraphics()->AddProgramUniform(m_playerShader, m_uniforms.velocity);
-            renderer.GetGraphics()->AddProgramUniform(m_bacterShader, m_uniforms.anim);
+            m_uniforms.m_velocity = renderer.GetGraphics()->CreateUniform("u_velocity", UniformType::Vec4);
+            m_uniforms.m_anim = renderer.GetGraphics()->CreateUniform("u_anim", UniformType::Float);
+            renderer.GetGraphics()->AddProgramUniform(m_playerShader, m_uniforms.m_velocity);
+            renderer.GetGraphics()->AddProgramUniform(m_bacterShader, m_uniforms.m_anim);
 
             m_player.SetPosition(0.0f, 0.0f);
             m_bacters.Init(GetAllocator());
@@ -257,19 +258,17 @@ namespace bact
                     p.y < PLAY_AREA_TOP + r)
                 {
                     renderer.BindShader(m_bacterShader);
-                    bacter->Render(&renderer, m_uniforms.anim);
+                    bacter->Render(&renderer, m_uniforms);
                 }
             }
 
-//            renderer.BindColorShader();
-            renderer.GetGraphics()->SetUniform(m_uniforms.velocity, m_player.GetVelocity());
             renderer.BindShader(m_playerShader);
-            m_player.Render(&renderer, m_fontShader);
+            m_player.Render(&renderer, m_uniforms);
 
             renderer.BindColorShader();
             for (size_t i = 0; i < m_projectiles.size; i++)
             {
-                m_projectiles[i]->Render(&renderer);
+                m_projectiles[i]->Render(&renderer, m_uniforms);
             }
 
 
@@ -305,11 +304,7 @@ namespace bact
         ShaderProgramHandle m_playerShader;
         ShaderProgramHandle m_bacterShader;
         ShaderProgramHandle m_fontShader;
-        struct
-        {
-            UniformHandle velocity;
-            UniformHandle anim;
-        } m_uniforms;
+        BacteroidsUniforms m_uniforms;
 
         Input m_input;
 
@@ -322,6 +317,7 @@ namespace bact
 
         TextInput m_textInput;
     };
+
 
     bool Bacteroids::Initialize()
     {

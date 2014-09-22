@@ -2,6 +2,7 @@
 #ifndef H_BACT_GAME_OBJECT_H
 #define H_BACT_GAME_OBJECT_H
 
+#include "Uniforms.h"
 #include "../application/GameTime.h"
 #include "../math/Math.h"
 
@@ -52,7 +53,7 @@ namespace bact
         { return m_alive; }
 
         virtual void Update(const GameTime &gameTime) { }
-        virtual void Render(Renderer *renderer) { }
+        virtual void Render(Renderer *renderer, const BacteroidsUniforms &uniforms) { }
 
     protected:
         int m_type;

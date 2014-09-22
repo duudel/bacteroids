@@ -146,8 +146,9 @@ namespace bact
             }
         }
 
-        void Render(Renderer *renderer, ShaderProgramHandle fontShader)
+        void Render(Renderer *renderer, const BacteroidsUniforms &uniforms) //, ShaderProgramHandle fontShader)
         {
+            renderer->GetGraphics()->SetUniform(uniforms.m_velocity, m_velocity);
             renderer->SetColor(Color(1.0f, 1.0f, 1.6f));
             renderer->DrawFilledCirlce(m_position.x, m_position.y, m_radius, Color(0.2f, 0.5f, 0.5f, 0.5f));
 

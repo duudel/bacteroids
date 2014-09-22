@@ -110,9 +110,9 @@ namespace bact
             m_r0 = m_r0/2.0f;
         }
 
-        void Render(Renderer *renderer, UniformHandle anim)
+        void Render(Renderer *renderer, const BacteroidsUniforms &uniforms)
         {
-            renderer->GetGraphics()->SetUniform(anim, m_anim);
+            renderer->GetGraphics()->SetUniform(uniforms.m_anim, m_anim);
             renderer->SetColor(Color(1.0f, 1.2f, 0.6f));
 //            renderer->DrawFilledCirlce(m_position.x, m_position.y, m_radius);
             renderer->DrawFilledCirlce(m_position.x, m_position.y, m_radius, Color(0.0f, 0.5f, 0.5f, 1.0f));
