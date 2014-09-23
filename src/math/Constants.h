@@ -2,6 +2,8 @@
 #ifndef H_DE_MATH_CONSTANTS_H
 #define H_DE_MATH_CONSTANTS_H
 
+#include "Types.h"
+
 namespace rob
 {
 
