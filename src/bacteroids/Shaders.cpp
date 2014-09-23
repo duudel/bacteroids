@@ -19,11 +19,11 @@ const ShaderDef g_playerShader = {
         void main()
         {
             float scale = sin(u_time * 16.0) * 0.5;
-            vec2 pos = a_position - u_position.xy;
+            vec2 pos = a_position; // - u_position.xy;
 //            float radius = length(pos);
             vec2 vel = u_velocity.xy;
             vec2 offset = vel * dot(pos, vel * scale) * 0.05;
-            pos = a_position + offset;
+            pos += u_position.xy + offset;
             gl_Position = u_projection * vec4(pos, 0.0, 1.0);
             v_color = a_color;
         }
@@ -54,7 +54,7 @@ const ShaderDef g_bacterShader = {
         varying float v_dist;
         void main()
         {
-            vec2 pos = a_position - u_position.xy;
+            vec2 pos = a_position; // - u_position.xy;
             float radius = length(pos);
             float dist = 0.0;
             if (radius > 0.01)
