@@ -28,7 +28,7 @@ namespace bact
         Bacter()
             : GameObject(TYPE)
             , m_anim(0.0f)
-            , m_r0(0.5f), m_r1(0.0f)
+            , m_size(0.5f), m_sizeMod(0.0f)
             , m_target(nullptr)
             , m_health(30)
         {
@@ -77,8 +77,8 @@ namespace bact
 //                    SetPosition(A + v);
 //                    b->SetPosition(B - v);
 //                }
-                m_r1 = Max(m_r1, d / r);
-                b->m_r1 = Max(b->m_r1, m_r1);
+                m_sizeMod = Max(m_sizeMod, 1.0f + d / r);
+                b->m_sizeMod = Max(b->m_sizeMod, m_sizeMod);
             }
         }
 
@@ -99,7 +99,7 @@ namespace bact
                 pl->AddVelocity(-v);
                 SetPosition(A + v/2.0f);
                 pl->SetPosition(B - v/2.0f);
-                m_r1 = Max(m_r1, d / r);
+                m_sizeMod = Max(m_sizeMod, 1.0f + d / r);
             }
         }
 
@@ -118,16 +118,16 @@ namespace bact
             m_position += m_velocity * dt;
             m_velocity -= m_velocity * 0.2f * dt;
 
-            m_radius = Sqrt(m_r0+m_r0*m_r1);
-            m_r1 = 0.0f;
+            m_radius = Sqrt(m_size * m_sizeMod);
+            m_sizeMod = 1.0f;
 
-            if (m_r0 < 1.0f)
-                m_r0 += 0.1f * dt;
+            if (m_size < 1.0f)
+                m_size += 0.1f * dt;
         }
 
         static void TrySplit(Bacter *bacter, BacterArray &bacterArray, Random &random)
         {
-            if (bacter->m_r0 >= 1.0f)
+            if (bacter->m_size >= 1.0f)
                 Split(bacter, bacterArray, random);
         }
 
@@ -139,7 +139,7 @@ namespace bact
             bacter2->Setup(bacter->m_target, random);
             bacter2->SetPosition(bacter->GetPosition() + random.GetDirection()*0.1f);
             bacter2->SetRadius(bacter->GetRadius());
-            bacter2->m_r0 = (bacter->m_r0 /= 2.0f);
+            bacter2->m_size = (bacter->m_size /= 2.0f);
         }
 
         void Render(Renderer *renderer, const BacteroidsUniforms &uniforms)
@@ -152,7 +152,7 @@ namespace bact
 
     private:
         float m_anim;
-        float m_r0, m_r1;
+        float m_size, m_sizeMod;
         const GameObject *m_target;
         int m_health;
     };
