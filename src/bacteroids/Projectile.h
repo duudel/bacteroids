@@ -36,7 +36,7 @@ namespace bact
             renderer->DrawFilledCirlce(m_position.x, m_position.y, m_radius, Color(0.2f, 0.5f, 0.5f, 0.5f));
         }
 
-        void DoCollision(Bacter *b)
+        bool DoCollision(Bacter *b)
         {
             vec2f A  = GetPosition();
             float Ar = GetRadius();
@@ -49,9 +49,12 @@ namespace bact
             if (d > 0.0f)
             {
                 m_alive = false;
-                b->TakeHit();
+//                b->TakeHit();
                 b->AddVelocity(GetVelocity()*0.2f);
+                return true;
             }
+
+            return false;
         }
     };
 
