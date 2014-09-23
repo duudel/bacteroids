@@ -50,6 +50,7 @@ namespace bact
             {
                 m_alive = false;
                 b->TakeHit();
+                b->AddVelocity(GetVelocity()*0.2f);
             }
         }
     };
