@@ -53,6 +53,7 @@ namespace rob
         ~Graphics();
 
         bool IsInitialized() const;
+        bool HasDebugOutput() const;
 
         void SetViewport(int x, int y, int w, int h);
         void GetViewport(int *x, int *y, int *w, int *h) const;
@@ -140,6 +141,7 @@ namespace rob
         Pool<Uniform>       m_uniforms;
 
         bool m_initialized;
+        bool m_hasDebugOutput;
 
         struct Viewport
         {

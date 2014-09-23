@@ -19,6 +19,42 @@
 namespace rob
 {
 
+    void __stdcall gl_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity,
+                                  GLsizei length, const GLchar *message, GLvoid *userParam)
+    {
+        const char *src = "undefined";
+        switch (source)
+        {
+        case GL_DEBUG_SOURCE_API:             src = "API"; break;
+        case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   src = "Window system"; break;
+        case GL_DEBUG_SOURCE_SHADER_COMPILER: src = "Shader compiler"; break;
+        case GL_DEBUG_SOURCE_THIRD_PARTY:     src = "Third party"; break;
+        case GL_DEBUG_SOURCE_APPLICATION:     src = "Application"; break;
+        case GL_DEBUG_SOURCE_OTHER:           src = "Other"; break;
+        }
+
+        const char *tp = "";
+        switch (type)
+        {
+        case GL_DEBUG_TYPE_ERROR_ARB:               tp = "error"; break;
+        case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR_ARB: tp = "deprecated"; break;
+        case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR_ARB:  tp = "undefined"; break;
+        case GL_DEBUG_TYPE_PORTABILITY_ARB:         tp = "portability"; break;
+        case GL_DEBUG_TYPE_PERFORMANCE_ARB:         tp = "performance"; break;
+        case GL_DEBUG_TYPE_OTHER_ARB:               tp = "other"; break;
+        }
+
+        const char *sev = "undefined";
+        switch (severity)
+        {
+        case GL_DEBUG_SEVERITY_HIGH_ARB:   sev = "high";   break;
+        case GL_DEBUG_SEVERITY_MEDIUM_ARB: sev = "medium"; break;
+        case GL_DEBUG_SEVERITY_LOW_ARB:    sev = "low"; break;
+        }
+
+        log::Debug(src, " ", tp, "(", sev, "): ", message, ", ", id);
+    }
+
     Graphics::Graphics(LinearAllocator &alloc)
         : m_bind()
         , m_state()
@@ -30,10 +66,21 @@ namespace rob
         , m_shaderPrograms()
         , m_uniforms()
         , m_initialized(false)
+        , m_hasDebugOutput(false)
     {
         SetViewport(0, 0, 0, 0);
 
         InitState();
+
+    #ifdef DEBUG_
+        if (::glewIsSupported("GL_ARB_debug_output"))
+        {
+            ::glDebugMessageCallback(&gl_debug_callback, nullptr);
+            ::glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+            m_hasDebugOutput = true;
+        }
+    #endif // DEBUG_
+
         ::glEnable(GL_BLEND);
         ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
@@ -72,6 +119,9 @@ namespace rob
 
     bool Graphics::IsInitialized() const
     { return m_initialized; }
+
+    bool Graphics::HasDebugOutput() const
+    { return m_hasDebugOutput; }
 
     void Graphics::SetViewport(int x, int y, int w, int h)
     {
