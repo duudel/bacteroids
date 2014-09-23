@@ -44,11 +44,21 @@ namespace bact
         void SetTarget(const GameObject *target)
         { m_target = target; }
 
-        void TakeHit()
+        void TakeHit(BacterArray &bacterArray, Random &random)
         {
-            m_health -= 10;
-            if (m_health <= 0)
-                m_alive = false;
+//            m_health -= 10;
+//            if (m_health <= 0)
+//            {
+                float halfSize = m_size / 2.0f;
+
+                if (halfSize < 0.3f)
+                    m_alive = false;
+                else
+                {
+                    Bacter::Split(this, bacterArray, random);
+                    m_size = halfSize;
+                }
+//            }
         }
 
         void DoCollision(Bacter *b)

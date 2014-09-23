@@ -228,11 +228,14 @@ namespace bact
 
 //            log::Info("Bacter collision tests: ", n);
 
+            size_t m_bacters_size = m_bacters.size;
+
             for (size_t i = 0; i < m_projectiles.size; i++)
             {
-                for (size_t b = 0; b < m_bacters.size; b++)
+                for (size_t b = 0; b < m_bacters_size; b++)
                 {
-                    m_projectiles[i]->DoCollision(m_bacters[b]);
+                    if (m_projectiles[i]->DoCollision(m_bacters[b]))
+                        m_bacters[b]->TakeHit(m_bacters, m_random);
                 }
 
                 m_projectiles[i]->Update(gameTime);
