@@ -34,7 +34,9 @@ namespace rob
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
     #ifdef DEBUG_
-        SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
+//        SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS,
+            SDL_GL_CONTEXT_DEBUG_FLAG | SDL_GL_CONTEXT_PROFILE_CORE);
     #endif // DEBUG_
 
 

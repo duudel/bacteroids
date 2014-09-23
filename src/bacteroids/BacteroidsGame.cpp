@@ -157,7 +157,8 @@ namespace bact
             static float num_spawn = 0.0f;
             static float spawn_rate = 0.1f;
             num_spawn += spawn_rate * gameTime.GetDeltaSeconds();
-            spawn_rate = spawn_rate + 0.05f * gameTime.GetDeltaSeconds();
+//            spawn_rate = spawn_rate + 0.05f * gameTime.GetDeltaSeconds();
+            spawn_rate = std::log(gameTime.GetTotalSeconds() * 0.1f);
             while (num_spawn >= 1.0f)
             {
                 SpawnBacter();
