@@ -149,6 +149,59 @@ namespace bact
             bacter->SetPosition(m_random.GetDirection() * D);
         }
 
+        void ResolveCollisionsBucketed()
+        {
+            size_t num_bacters[4] = {0};
+            Bacter *bacters[4][MAX_BACTERS];
+
+            for (size_t i = 0; i < m_bacters.size; i++)
+            {
+                Bacter *bacter = m_bacters[i];
+                const vec2f p = bacter->GetPosition();
+                float r = bacter->GetRadius();
+                if (p.x <= r && p.y <= r)
+                    bacters[0][num_bacters[0]++] = bacter;
+                if (p.x <= r && p.y >= -r)
+                    bacters[1][num_bacters[1]++] = bacter;
+                if (p.x >= -r && p.y <= r)
+                    bacters[2][num_bacters[2]++] = bacter;
+                if (p.x >= -r && p.y >= -r)
+                    bacters[3][num_bacters[3]++] = bacter;
+            }
+
+            int n = 0;
+            for (size_t i = 0; i < 4; i++)
+            {
+                size_t num = num_bacters[i];
+                Bacter **b = bacters[i];
+                for (size_t j = 0; j < num; j++)
+                {
+                    b[j]->DoCollision(&m_player);
+                    for (size_t k = j + 1; k < num; k++)
+                    {
+                        b[j]->DoCollision(b[k]);
+                        n++;
+                    }
+                }
+            }
+//            log::Info("Bacter collision tests: ", n);
+        }
+
+        void ResolveCollisions()
+        {
+            int n = 0;
+            for (size_t i = 0; i < m_bacters.size; i++)
+            {
+                m_bacters[i]->DoCollision(&m_player);
+                for (size_t j = i + 1; j < m_bacters.size; j++)
+                {
+                    m_bacters[i]->DoCollision(m_bacters[j]);
+                    n++;
+                }
+            }
+//            log::Info("Bacter collision tests: ", n);
+        }
+
         void Update(const GameTime &gameTime) override
         {
             static float spawn_rate = 0.1f;
@@ -171,58 +224,13 @@ namespace bact
 
             m_player.Update(gameTime, m_input, m_projectiles);
 
-            size_t num_bacters[4] = {0};
-            Bacter *bacters[4][MAX_BACTERS];
+            ResolveCollisions();
 
             for (size_t i = 0; i < m_bacters.size; i++)
             {
-                Bacter *bacter = m_bacters[i];
-                const vec2f p = bacter->GetPosition();
-                float r = bacter->GetRadius();
-                if (p.x <= r && p.y <= r)
-                    bacters[0][num_bacters[0]++] = bacter;
-                if (p.x <= r && p.y >= -r)
-                    bacters[1][num_bacters[1]++] = bacter;
-                if (p.x >= -r && p.y <= r)
-                    bacters[2][num_bacters[2]++] = bacter;
-                if (p.x >= -r && p.y >= -r)
-                    bacters[3][num_bacters[3]++] = bacter;
-            }
-
-            int n = 0;
-
-            for (size_t i = 0; i < 4; i++)
-            {
-                size_t num = num_bacters[i];
-                Bacter **b = bacters[i];
-                for (size_t j = 0; j < num; j++)
-                {
-                    b[j]->DoCollision(&m_player);
-                    for (size_t k = j + 1; k < num; k++)
-                    {
-                        b[j]->DoCollision(b[k]);
-                        n++;
-                    }
-                }
-            }
-
-//            int n = 0;
-
-            for (size_t i = 0; i < m_bacters.size; i++)
-            {
-//                m_bacters[i]->DoCollision(&m_player);
-//                for (size_t j = i + 1; j < m_bacters.size; j++)
-//                {
-//                    m_bacters[i]->DoCollision(m_bacters[j]);
-//                    n++;
-//                }
-
                 m_bacters[i]->Update(gameTime);
-
                 Bacter::TrySplit(m_bacters[i], m_bacters, m_random);
             }
-
-//            log::Info("Bacter collision tests: ", n);
 
             size_t m_bacters_size = m_bacters.size;
 
