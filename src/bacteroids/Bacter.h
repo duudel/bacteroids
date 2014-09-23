@@ -4,6 +4,7 @@
 
 #include "GameObject.h"
 #include "Player.h"
+#include "BacterArray.h"
 
 #include "../renderer/Renderer.h"
 #include "../graphics/Graphics.h"
@@ -34,13 +35,16 @@ namespace bact
             SetRadius(1.0f);
         }
 
-        void SetAnim(float anim)
-        { m_anim = anim; }
+        void Setup(const GameObject *target, Random &random)
+        {
+            SetTarget(target);
+            m_anim = random.GetReal(0.0, 2.0 * PI_d);
+        }
 
         void SetTarget(const GameObject *target)
         { m_target = target; }
 
-        void Hit()
+        void TakeHit()
         {
             m_health -= 10;
             if (m_health <= 0)
@@ -117,25 +121,25 @@ namespace bact
             m_radius = Sqrt(m_r0+m_r0*m_r1);
             m_r1 = 0.0f;
 
-            if (!ShouldClone())
+            if (m_r0 < 1.0f)
                 m_r0 += 0.1f * dt;
         }
 
-        bool ShouldClone() const
+        static void TrySplit(Bacter *bacter, BacterArray &bacterArray, Random &random)
         {
-            return (m_r0 > 1.0f);
+            if (bacter->m_r0 >= 1.0f)
+                Split(bacter, bacterArray, random);
         }
 
-        void Clone(Bacter *b, Random &random)
+        static void Split(Bacter *bacter, BacterArray &bacterArray, Random &random)
         {
-            b->m_position = m_position + random.GetDirection()*0.1f;
-//            b->m_velocity = m_velocity;
-            b->m_radius = m_radius;
-            b->m_anim = random.GetReal(0.0, 2.0 * PI_d); //m_anim + 0.637f;
-            b->m_r0 = m_r0/2.0f;
-            b->m_target = m_target;
+            if (bacterArray.size == MAX_BACTERS) return;
 
-            m_r0 = m_r0/2.0f;
+            Bacter *bacter2 = bacterArray.Obtain();
+            bacter2->Setup(bacter->m_target, random);
+            bacter2->SetPosition(bacter->GetPosition() + random.GetDirection()*0.1f);
+            bacter2->SetRadius(bacter->GetRadius());
+            bacter2->m_r0 = (bacter->m_r0 /= 2.0f);
         }
 
         void Render(Renderer *renderer, const BacteroidsUniforms &uniforms)

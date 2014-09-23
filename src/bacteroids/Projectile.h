@@ -49,7 +49,7 @@ namespace bact
             if (d > 0.0f)
             {
                 m_alive = false;
-                b->Hit();
+                b->TakeHit();
             }
         }
     };

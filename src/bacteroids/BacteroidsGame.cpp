@@ -142,10 +142,13 @@ namespace bact
 
         void SpawnBacter()
         {
+            const float D = vec2f(PLAY_AREA_W, PLAY_AREA_H).Length() * 0.52f;
+
+            if (m_bacters.size == MAX_BACTERS) return;
+
             Bacter *bacter = m_bacters.Obtain();
-            bacter->SetPosition(m_random.GetDirection() * 8.0f);
-            bacter->SetTarget(&m_player);
-            bacter->SetAnim(m_random.GetReal(0.0f, 2.0f*PI_f));
+            bacter->Setup(&m_player, m_random);
+            bacter->SetPosition(m_random.GetDirection() * D);
         }
 
         void Update(const GameTime &gameTime) override
@@ -207,14 +210,7 @@ namespace bact
 
                 m_bacters[i]->Update(gameTime);
 
-                if (m_bacters[i]->ShouldClone())
-                {
-                    if (m_bacters.size < MAX_BACTERS)
-                    {
-                        Bacter *b = m_bacters.Obtain();
-                        m_bacters[i]->Clone(b, m_random);
-                    }
-                }
+                Bacter::TrySplit(m_bacters[i], m_bacters, m_random);
             }
 
 //            log::Info("Bacter collision tests: ", n);

@@ -2,8 +2,13 @@
 #ifndef H_BACT_BACTER_ARRAY_H
 #define H_BACT_BACTER_ARRAY_H
 
+#include "../memory/Pool.h"
+
 namespace bact
 {
+
+    class Bacter;
+
     static const size_t MAX_BACTERS = 500;
 
     struct BacterArray
