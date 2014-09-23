@@ -149,10 +149,12 @@ namespace bact
             bacter->SetPosition(m_random.GetDirection() * D);
         }
 
+        static Bacter *bacterBuckets[4][MAX_BACTERS];
+
         void ResolveCollisionsBucketed()
         {
             size_t num_bacters[4] = {0};
-            Bacter *bacters[4][MAX_BACTERS];
+            Bacter *(&bacters)[4][MAX_BACTERS] = bacterBuckets;
 
             for (size_t i = 0; i < m_bacters.size; i++)
             {
@@ -369,6 +371,8 @@ namespace bact
 
         TextInput m_textInput;
     };
+
+    Bacter *BacteroidsState::bacterBuckets[4][MAX_BACTERS];
 
 
     bool Bacteroids::Initialize()
