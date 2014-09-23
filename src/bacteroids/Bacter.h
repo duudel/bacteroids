@@ -30,7 +30,9 @@ namespace bact
             , m_anim(0.0f)
             , m_size(0.5f), m_sizeMod(1.0f)
             , m_target(nullptr)
-            , m_health(10)
+            , m_points(10)
+            , m_splitTimer(0.0f)
+            , m_readyToSplitTimer(0.0f)
         {
             SetRadius(1.0f);
         }
@@ -46,25 +48,20 @@ namespace bact
 
         int TakeHit(BacterArray &bacterArray, Random &random)
         {
-//            m_health -= 10;
-//            if (m_health <= 0)
-//            {
-                int points = m_health;
-                float halfPoints = points / 2.0f;
+            if (m_splitTimer > 0.0f) return 0;
 
-                float halfSize = m_size / 2.0f;
+            int points = m_points;
 
-                if (halfSize < 0.3f)
-                    m_alive = false;
-                else
-                {
-                    Bacter::Split(this, bacterArray, random);
-                    m_size = halfSize;
-                    m_health = halfPoints + 0.6f;
-                }
+            if (m_size / 2.0f < 0.3f)
+            {
+                m_alive = false;
+            }
+            else if (!Bacter::Split(this, bacterArray, random))
+            {
+                SplitSelf();
+            }
 
-                return points;
-//            }
+            return points;
         }
 
         void DoCollision(Bacter *b)
@@ -127,8 +124,23 @@ namespace bact
             {
                 vec2f a = 0.4f * (m_target->GetPosition() - m_position).SafeNormalized();
                 vec2f v = m_velocity + a*dt;
-                if (v.Length() > 1.2f && m_velocity.Length() < v.Length()) ;
+                if (v.Length() > 1.0f && m_velocity.Length() < v.Length()) ;
                 else m_velocity = v;
+            }
+
+            if (m_splitTimer > 0.0f)
+            {
+                m_velocity *= 0.6f;
+                m_splitTimer -= dt;
+            }
+            else
+            {
+                if (m_size < 1.0f)
+                    m_size += 0.05f * dt;
+                else
+                {
+                    m_readyToSplitTimer += dt;
+                }
             }
 
             m_position += m_velocity * dt;
@@ -136,28 +148,36 @@ namespace bact
 
             m_radius = Sqrt(m_size * m_sizeMod);
             m_sizeMod = 1.0f;
+        }
 
-            if (m_size < 1.0f)
-                m_size += 0.1f * dt;
+        void SplitSelf()
+        {
+            m_size = m_size / 2.0f;
+            m_points = m_points / 2.0f + 0.6f; // points is at least 1
+            m_splitTimer = 0.1f;
+            m_readyToSplitTimer = 0.0f;
         }
 
         static void TrySplit(Bacter *bacter, BacterArray &bacterArray, Random &random)
         {
-            if (bacter->m_size >= 1.0f)
+            if (bacter->m_readyToSplitTimer >= 6.0f)
                 Split(bacter, bacterArray, random);
         }
 
-        static void Split(Bacter *bacter, BacterArray &bacterArray, Random &random)
+        static bool Split(Bacter *bacter, BacterArray &bacterArray, Random &random)
         {
-            if (bacterArray.size == MAX_BACTERS) return;
+            if (bacterArray.size == MAX_BACTERS) return false;
 
             Bacter *bacter2 = bacterArray.Obtain();
             bacter2->Setup(bacter->m_target, random);
             bacter2->SetPosition(bacter->GetPosition() + random.GetDirection()*0.1f);
             bacter2->SetRadius(bacter->GetRadius());
-            bacter2->m_size = (bacter->m_size /= 2.0f);
-            float halfPoints = bacter->m_health / 2.0f;
-            bacter2->m_health = (bacter->m_health = halfPoints + 0.6f);
+            bacter2->m_size = bacter->m_size;
+            bacter2->m_points = bacter->m_points;
+            bacter->SplitSelf();
+            bacter2->SplitSelf();
+
+            return true;
         }
 
         void Render(Renderer *renderer, const BacteroidsUniforms &uniforms)
@@ -172,7 +192,9 @@ namespace bact
         float m_anim;
         float m_size, m_sizeMod;
         const GameObject *m_target;
-        int m_health;
+        int m_points;
+        float m_splitTimer;
+        float m_readyToSplitTimer;
     };
 
 } // bact
