@@ -46,6 +46,7 @@ namespace rob
         {
             vec4 color = texture2D(u_texture0, v_uv);
             gl_FragColor = v_color * color;
+            gl_FragColor = vec4(1.0, 1.0, 1.0, color.a);
         }
     );
 

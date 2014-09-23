@@ -536,4 +536,11 @@ namespace rob
     float Renderer::GetFontLineSpacing() const
     { return m_font.GetLineSpacing(); }
 
+    Texture *Renderer::GetFontTexture() const
+    {
+        TextureHandle texHandle = m_font.GetTexture(0);
+        Texture *texture = m_graphics->GetTexture(texHandle);
+        return texture;
+    }
+
 } // rob
