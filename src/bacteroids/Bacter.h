@@ -32,6 +32,7 @@ namespace bact
             , m_target(nullptr)
             , m_points(10)
             , m_splitTimer(0.0f)
+            , m_readyToSplitTimer(0.0f)
         {
             SetRadius(1.0f);
         }
@@ -51,7 +52,7 @@ namespace bact
 
             int points = m_points;
 
-            if (m_size / 2.0f < 0.3f)
+            if (m_size / 2.0f < 0.2f)
             {
                 m_alive = false;
             }
@@ -132,9 +133,14 @@ namespace bact
                 m_velocity *= 0.8f;
                 m_splitTimer -= dt;
             }
-            else if (m_size < 1.0f)
+            else
             {
-                m_size += 0.1f * dt;
+                if (m_size < 1.0f)
+                    m_size += 0.1f * dt;
+                else
+                {
+                    m_readyToSplitTimer += dt;
+                }
             }
 
             m_position += m_velocity * dt;
@@ -149,11 +155,12 @@ namespace bact
             m_size = m_size / 2.0f;
             m_points = m_points / 2.0f + 0.6f; // points is at least 1
             m_splitTimer = 0.1f;
+            m_readyToSplitTimer = 0.0f;
         }
 
         static void TrySplit(Bacter *bacter, BacterArray &bacterArray, Random &random)
         {
-            if (bacter->m_size >= 1.0f)
+            if (bacter->m_readyToSplitTimer >= 3.0f)
                 Split(bacter, bacterArray, random);
         }
 
@@ -165,10 +172,10 @@ namespace bact
             bacter2->Setup(bacter->m_target, random);
             bacter2->SetPosition(bacter->GetPosition() + random.GetDirection()*0.1f);
             bacter2->SetRadius(bacter->GetRadius());
-            bacter->SplitSelf();
             bacter2->m_size = bacter->m_size;
             bacter2->m_points = bacter->m_points;
-            bacter2->m_splitTimer = bacter->m_splitTimer;
+            bacter->SplitSelf();
+            bacter2->SplitSelf();
 
             return true;
         }
@@ -187,6 +194,7 @@ namespace bact
         const GameObject *m_target;
         int m_points;
         float m_splitTimer;
+        float m_readyToSplitTimer;
     };
 
 } // bact
