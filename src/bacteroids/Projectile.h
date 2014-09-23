@@ -49,8 +49,7 @@ namespace bact
             if (d > 0.0f)
             {
                 m_alive = false;
-//                b->TakeHit();
-                b->AddVelocity(GetVelocity()*0.2f);
+                b->AddVelocity(GetVelocity() * 0.5f);
                 return true;
             }
 

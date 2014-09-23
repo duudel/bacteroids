@@ -153,7 +153,7 @@ namespace bact
         {
             static float spawn_rate = 0.1f;
             static float num_spawn = 0.0f;
-            spawn_rate = std::log(1.0f + gameTime.GetTotalSeconds() * 0.1f) * 0.2f;
+            spawn_rate = std::log(1.0f + gameTime.GetTotalSeconds() * 0.1f) * 0.5f;
             num_spawn += spawn_rate * gameTime.GetDeltaSeconds();
             while (num_spawn >= 1.0f)
             {
