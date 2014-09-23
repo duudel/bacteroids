@@ -28,7 +28,7 @@ namespace bact
         Bacter()
             : GameObject(TYPE)
             , m_anim(0.0f)
-            , m_size(0.5f), m_sizeMod(0.0f)
+            , m_size(0.5f), m_sizeMod(1.0f)
             , m_target(nullptr)
             , m_health(30)
         {

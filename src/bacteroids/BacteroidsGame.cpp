@@ -153,6 +153,16 @@ namespace bact
 
         void Update(const GameTime &gameTime) override
         {
+            static float num_spawn = 0.0f;
+            static float spawn_rate = 0.1f;
+            num_spawn += spawn_rate * gameTime.GetDeltaSeconds();
+            spawn_rate = spawn_rate + 0.1f * gameTime.GetDeltaSeconds();
+            while (num_spawn >= 1.0f)
+            {
+                SpawnBacter();
+                num_spawn -= 1.0f;
+            }
+
             int mx, my, dx, dy;
             const uint32_t buttons = ::SDL_GetMouseState(&mx, &my);
             ::SDL_GetRelativeMouseState(&dx, &dy);
@@ -215,16 +225,6 @@ namespace bact
 
 //            log::Info("Bacter collision tests: ", n);
 
-            for (size_t i = 0; i < m_bacters.size; )
-            {
-                if (!m_bacters[i]->IsAlive())
-                {
-                    m_bacters.Remove(i);
-                    continue;
-                }
-                i++;
-            }
-
             for (size_t i = 0; i < m_projectiles.size; i++)
             {
                 for (size_t b = 0; b < m_bacters.size; b++)
@@ -240,6 +240,16 @@ namespace bact
                 if (!m_projectiles[i]->IsAlive())
                 {
                     m_projectiles.Remove(i);
+                    continue;
+                }
+                i++;
+            }
+
+            for (size_t i = 0; i < m_bacters.size; )
+            {
+                if (!m_bacters[i]->IsAlive())
+                {
+                    m_bacters.Remove(i);
                     continue;
                 }
                 i++;
