@@ -127,6 +127,7 @@
 		<Unit filename="src/input/TextInput.h" />
 		<Unit filename="src/main.cpp" />
 		<Unit filename="src/math/Constants.h" />
+		<Unit filename="src/math/Functions.cpp" />
 		<Unit filename="src/math/Functions.h" />
 		<Unit filename="src/math/Math.h" />
 		<Unit filename="src/math/Matrix4.h" />
