@@ -10,6 +10,8 @@
 #include "../input/Mouse.h"
 #include "../String.h"
 
+#include "../audio/AudioSystem.h"
+
 namespace bact
 {
 
@@ -74,13 +76,14 @@ namespace bact
         static void ClampVectorLength(vec2f &v, const float len);
         static vec2f ClampedVectorLength(const vec2f &v, const float len);
 
-        void Update(const GameTime &gameTime, const Input &input, ProjectileArray &projectiles);
+        void Update(const GameTime &gameTime, const Input &input, ProjectileArray &projectiles, AudioSystem &audio);
 
         void Cooldown(const GameTime &gameTime);
-        void Shoot(const GameTime &gameTime, ProjectileArray &projectiles);
+        void Shoot(const GameTime &gameTime, ProjectileArray &projectiles, AudioSystem &audio);
 
         void Render(Renderer *renderer, const BacteroidsUniforms &uniforms) override;
 
+        SoundHandle shootSound;
     private:
         vec2f m_direction;
         float m_cooldown;

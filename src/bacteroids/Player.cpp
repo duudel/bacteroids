@@ -33,7 +33,7 @@ namespace bact
         return cv;
     }
 
-    void Player::Update(const GameTime &gameTime, const Input &input, ProjectileArray &projectiles)
+    void Player::Update(const GameTime &gameTime, const Input &input, ProjectileArray &projectiles, AudioSystem &audio)
     {
         vec2f vel= vec2f::Zero;
         if (input.KeyDown(Keyboard::Scancode::W))
@@ -63,7 +63,7 @@ namespace bact
         Cooldown(gameTime);
         if (input.ButtonDown(MouseButton::Left))
         {
-            Shoot(gameTime, projectiles);
+            Shoot(gameTime, projectiles, audio);
         }
     }
 
@@ -77,7 +77,7 @@ namespace bact
         }
     }
 
-    void Player::Shoot(const GameTime &gameTime, ProjectileArray &projectiles)
+    void Player::Shoot(const GameTime &gameTime, ProjectileArray &projectiles, AudioSystem &audio)
     {
         if (m_cooldown <= 0.0f)
         {
@@ -88,6 +88,8 @@ namespace bact
             const vec2f dir = ClampedVectorLength(m_direction, 1.0f);
             p->SetPosition(m_position + dir * m_radius);
             p->SetVelocity(dir.x * 10.0f, dir.y * 10.0f);
+
+            audio.PlaySound(shootSound, 0.5f);
         }
     }
 

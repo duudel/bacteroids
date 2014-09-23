@@ -17,6 +17,7 @@ namespace rob
 
     class GameTime;
     class LinearAllocator;
+    class AudioSystem;
     class MasterCache;
     class Renderer;
 
@@ -30,6 +31,9 @@ namespace rob
 
         void SetAllocator(LinearAllocator &alloc) { m_alloc = &alloc; }
         LinearAllocator& GetAllocator() { return *m_alloc; }
+
+        void SetAudio(AudioSystem *audio) { m_audio = audio; }
+        AudioSystem& GetAudio() { return *m_audio; }
 
         void SetCache(MasterCache *cache) { m_cache = cache; }
         MasterCache& GetCache() { return *m_cache; }
@@ -75,6 +79,7 @@ namespace rob
 
     private:
         LinearAllocator *   m_alloc;
+        AudioSystem *       m_audio;
         MasterCache *       m_cache;
         Renderer *          m_renderer;
         bool m_quit;

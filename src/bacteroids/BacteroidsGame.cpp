@@ -80,6 +80,10 @@ namespace bact
 
             m_points = 0;
 
+            m_player.shootSound = GetAudio().LoadSound("data/Laser_Shoot6.wav");
+//            m_player.shootSound = GetAudio().LoadSound("data/Hit_Hurt4.wav");
+//            m_player.shootSound = GetAudio().LoadSound("data/Explosion5.wav");
+
             return true;
         }
 
@@ -88,6 +92,8 @@ namespace bact
             GetRenderer().GetGraphics()->DestroyShaderProgram(m_playerShader);
             GetRenderer().GetGraphics()->DestroyShaderProgram(m_bacterShader);
             GetRenderer().GetGraphics()->DestroyShaderProgram(m_fontShader);
+
+            GetAudio().UnloadSound(m_player.shootSound);
         }
 
         void OnResize(int w, int h) override
@@ -169,7 +175,7 @@ namespace bact
                                buttons & SDL_BUTTON_RMASK,
                                buttons & SDL_BUTTON_MMASK);
 
-            m_player.Update(gameTime, m_input, m_projectiles);
+            m_player.Update(gameTime, m_input, m_projectiles, GetAudio());
 
             size_t num_bacters[4] = {0};
             Bacter *bacters[4][MAX_BACTERS];
