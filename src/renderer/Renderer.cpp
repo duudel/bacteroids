@@ -354,28 +354,31 @@ namespace rob
         vert.r = m_color.r; vert.g = m_color.g; vert.b = m_color.b; vert.a = m_color.a;
     }
 
-    void Renderer::AddFontQuad(FontVertex *&vertex, const Glyph &glyph,
+    void Renderer::AddFontQuad(FontVertex *&vertex, const uint32_t c, const Glyph &glyph,
                                float &cursorX, float &cursorY,
                                const size_t textureW, const size_t textureH)
     {
-        const float gW = float(glyph.m_width);
-        const float gH = float(glyph.m_height);
+        if (std::isprint(c) && c != ' ')
+        {
+            const float gW = float(glyph.m_width);
+            const float gH = float(glyph.m_height);
 
-        const float uvW = gW / textureW;
-        const float uvH = -gH / textureH;
+            const float uvW = gW / textureW;
+            const float uvH = -gH / textureH;
 
-        const float uvX = float(glyph.m_x) / textureW;
-        const float uvY = -float(glyph.m_y) / textureH;
+            const float uvX = float(glyph.m_x) / textureW;
+            const float uvY = -float(glyph.m_y) / textureH;
 
-        const float cX = cursorX + glyph.m_offsetX;
-        const float cY = cursorY + glyph.m_offsetY;
+            const float cX = cursorX + glyph.m_offsetX;
+            const float cY = cursorY + glyph.m_offsetY;
 
-        AddFontVertex(vertex, cX,       cY,         uvX,        uvY);
-        AddFontVertex(vertex, cX + gW,  cY,         uvX + uvW,  uvY);
-        AddFontVertex(vertex, cX,       cY + gH,    uvX,        uvY + uvH);
-        AddFontVertex(vertex, cX,       cY + gH,    uvX,        uvY + uvH);
-        AddFontVertex(vertex, cX + gW,  cY,         uvX + uvW,  uvY);
-        AddFontVertex(vertex, cX + gW,  cY + gH,    uvX + uvW,  uvY + uvH);
+            AddFontVertex(vertex, cX,       cY,         uvX,        uvY);
+            AddFontVertex(vertex, cX + gW,  cY,         uvX + uvW,  uvY);
+            AddFontVertex(vertex, cX,       cY + gH,    uvX,        uvY + uvH);
+            AddFontVertex(vertex, cX,       cY + gH,    uvX,        uvY + uvH);
+            AddFontVertex(vertex, cX + gW,  cY,         uvX + uvW,  uvY);
+            AddFontVertex(vertex, cX + gW,  cY + gH,    uvX + uvW,  uvY + uvH);
+        }
 
         cursorX += glyph.m_advance;
     }
@@ -386,6 +389,8 @@ namespace rob
 
         m_graphics->SetUniform(m_globals.position, vec4f(x, y, 0.0f, 1.0f));
         m_graphics->BindVertexBuffer(m_vertexBuffer);
+        m_graphics->SetAttrib(0, 4, sizeof(FontVertex), 0);
+        m_graphics->SetAttrib(1, 4, sizeof(FontVertex), sizeof(float) * 4);
         VertexBuffer *buffer = m_graphics->GetVertexBuffer(m_vertexBuffer);
 
         const size_t textLen = StringLength(text);
@@ -409,22 +414,20 @@ namespace rob
             const size_t textureW = texture->GetWidth();
             const size_t textureH = texture->GetHeight();
 
-            AddFontQuad(vertex, glyph, cursorX, cursorY, textureW, textureH);
+            AddFontQuad(vertex, c, glyph, cursorX, cursorY, textureW, textureH);
             while (text != end)
             {
                 const uint32_t c = DecodeUtf8(text, end);
                 const Glyph &glyph = m_font.GetGlyph(c);
                 if (glyph.m_textureIdx != texturePage)
                     break;
-                AddFontQuad(vertex, glyph, cursorX, cursorY, textureW, textureH);
+                AddFontQuad(vertex, c, glyph, cursorX, cursorY, textureW, textureH);
             }
 
             const size_t vertexCount = vertex - verticesStart;
             buffer->Write(0, vertexCount * sizeof(FontVertex), verticesStart);
 
             m_graphics->BindTexture(0, textureHandle);
-            m_graphics->SetAttrib(0, 4, sizeof(FontVertex), 0);
-            m_graphics->SetAttrib(1, 4, sizeof(FontVertex), sizeof(float) * 4);
             m_graphics->DrawTriangleArrays(0, vertexCount);
         }
         m_vb_alloc.Reset();
@@ -462,6 +465,8 @@ namespace rob
 
         m_graphics->SetUniform(m_globals.position, vec4f(x, y, 0.0f, 1.0f));
         m_graphics->BindVertexBuffer(m_vertexBuffer);
+        m_graphics->SetAttrib(0, 4, sizeof(FontVertex), 0);
+        m_graphics->SetAttrib(1, 4, sizeof(FontVertex), sizeof(float) * 4);
         VertexBuffer *buffer = m_graphics->GetVertexBuffer(m_vertexBuffer);
 
         const size_t textLen = StringLength(text);
@@ -485,22 +490,20 @@ namespace rob
             const size_t textureW = texture->GetWidth();
             const size_t textureH = texture->GetHeight();
 
-            AddFontQuad(vertex, glyph, cursorX, cursorY, textureW, textureH);
+            AddFontQuad(vertex, c, glyph, cursorX, cursorY, textureW, textureH);
             while (text != end)
             {
                 const uint32_t c = uint8_t(*text++);
                 const Glyph &glyph = m_font.GetGlyph(c);
                 if (glyph.m_textureIdx != texturePage)
                     break;
-                AddFontQuad(vertex, glyph, cursorX, cursorY, textureW, textureH);
+                AddFontQuad(vertex, c, glyph, cursorX, cursorY, textureW, textureH);
             }
 
             const size_t vertexCount = vertex - verticesStart;
             buffer->Write(0, vertexCount * sizeof(FontVertex), verticesStart);
 
             m_graphics->BindTexture(0, textureHandle);
-            m_graphics->SetAttrib(0, 4, sizeof(FontVertex), 0);
-            m_graphics->SetAttrib(1, 4, sizeof(FontVertex), sizeof(float) * 4);
             m_graphics->DrawTriangleArrays(0, vertexCount);
         }
         m_vb_alloc.Reset();
