@@ -52,7 +52,7 @@ namespace bact
 
             int points = m_points;
 
-            if (m_size / 2.0f < 0.2f)
+            if (m_size / 2.0f < 0.3f)
             {
                 m_alive = false;
             }
@@ -124,19 +124,19 @@ namespace bact
             {
                 vec2f a = 0.4f * (m_target->GetPosition() - m_position).SafeNormalized();
                 vec2f v = m_velocity + a*dt;
-                if (v.Length() > 1.2f && m_velocity.Length() < v.Length()) ;
+                if (v.Length() > 1.0f && m_velocity.Length() < v.Length()) ;
                 else m_velocity = v;
             }
 
             if (m_splitTimer > 0.0f)
             {
-                m_velocity *= 0.8f;
+                m_velocity *= 0.6f;
                 m_splitTimer -= dt;
             }
             else
             {
                 if (m_size < 1.0f)
-                    m_size += 0.1f * dt;
+                    m_size += 0.05f * dt;
                 else
                 {
                     m_readyToSplitTimer += dt;
@@ -160,7 +160,7 @@ namespace bact
 
         static void TrySplit(Bacter *bacter, BacterArray &bacterArray, Random &random)
         {
-            if (bacter->m_readyToSplitTimer >= 3.0f)
+            if (bacter->m_readyToSplitTimer >= 6.0f)
                 Split(bacter, bacterArray, random);
         }
 

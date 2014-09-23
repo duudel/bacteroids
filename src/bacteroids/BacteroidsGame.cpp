@@ -35,8 +35,8 @@ namespace bact
         int x, y, w, h;
     };
 
-    const float PLAY_AREA_W         = 20.0f;
-    const float PLAY_AREA_H         = 15.0f;
+    const float PLAY_AREA_W         = 24.0f;
+    const float PLAY_AREA_H         = PLAY_AREA_W * 0.75f;
     const float PLAY_AREA_LEFT      = -PLAY_AREA_W / 2.0f;
     const float PLAY_AREA_RIGHT     = -PLAY_AREA_LEFT;
     const float PLAY_AREA_BOTTOM    = -PLAY_AREA_H / 2.0f;
@@ -140,7 +140,7 @@ namespace bact
 
         void SpawnBacter()
         {
-            const float D = vec2f(PLAY_AREA_W, PLAY_AREA_H).Length() * 0.52f;
+            const float D = vec2f(PLAY_AREA_RIGHT, PLAY_AREA_TOP).Length();
 
             if (m_bacters.size == MAX_BACTERS) return;
 
