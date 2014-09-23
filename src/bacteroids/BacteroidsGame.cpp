@@ -156,7 +156,7 @@ namespace bact
             static float num_spawn = 0.0f;
             static float spawn_rate = 0.1f;
             num_spawn += spawn_rate * gameTime.GetDeltaSeconds();
-            spawn_rate = spawn_rate + 0.1f * gameTime.GetDeltaSeconds();
+            spawn_rate = spawn_rate + 0.05f * gameTime.GetDeltaSeconds();
             while (num_spawn >= 1.0f)
             {
                 SpawnBacter();
@@ -173,50 +173,51 @@ namespace bact
 
             m_player.Update(gameTime, m_input, m_projectiles);
 
-//            size_t num_bacters[4] = {0};
-//            Bacter *bacters[4][MAX_BACTERS];
-//
-//            for (size_t i = 0; i < m_bacters.size; i++)
-//            {
-//                Bacter *bacter = m_bacters[i];
-//                vec4f p = bacter->GetPosition();
-//                float r = bacter->GetRadius();
-//                if (p.x <= r && p.y <= r)
-//                    bacters[0][num_bacters[0]++] = bacter;
-//                if (p.x <= r && p.y >= -r)
-//                    bacters[1][num_bacters[1]++] = bacter;
-//                if (p.x >= -r && p.y <= r)
-//                    bacters[2][num_bacters[2]++] = bacter;
-//                if (p.x >= -r && p.y >= -r)
-//                    bacters[3][num_bacters[3]++] = bacter;
-//            }
-//
-//            int n = 0;
-//
-//            for (size_t i = 0; i < 4; i++)
-//            {
-//                size_t num = num_bacters[i];
-//                Bacter **b = bacters[i];
-//                for (size_t j = 0; j < num; j++)
-//                {
-//                    for (size_t k = j + 1; k < num; k++)
-//                    {
-//                        b[j]->DoCollision(b[k]);
-//                        n++;
-//                    }
-//                }
-//            }
-
-            int n = 0;
+            size_t num_bacters[4] = {0};
+            Bacter *bacters[4][MAX_BACTERS];
 
             for (size_t i = 0; i < m_bacters.size; i++)
             {
-                m_bacters[i]->DoCollision(&m_player);
-                for (size_t j = i + 1; j < m_bacters.size; j++)
+                Bacter *bacter = m_bacters[i];
+                const vec2f p = bacter->GetPosition();
+                float r = bacter->GetRadius();
+                if (p.x <= r && p.y <= r)
+                    bacters[0][num_bacters[0]++] = bacter;
+                if (p.x <= r && p.y >= -r)
+                    bacters[1][num_bacters[1]++] = bacter;
+                if (p.x >= -r && p.y <= r)
+                    bacters[2][num_bacters[2]++] = bacter;
+                if (p.x >= -r && p.y >= -r)
+                    bacters[3][num_bacters[3]++] = bacter;
+            }
+
+            int n = 0;
+
+            for (size_t i = 0; i < 4; i++)
+            {
+                size_t num = num_bacters[i];
+                Bacter **b = bacters[i];
+                for (size_t j = 0; j < num; j++)
                 {
-                    m_bacters[i]->DoCollision(m_bacters[j]);
-                    n++;
+                    b[j]->DoCollision(&m_player);
+                    for (size_t k = j + 1; k < num; k++)
+                    {
+                        b[j]->DoCollision(b[k]);
+                        n++;
+                    }
                 }
+            }
+
+//            int n = 0;
+
+            for (size_t i = 0; i < m_bacters.size; i++)
+            {
+//                m_bacters[i]->DoCollision(&m_player);
+//                for (size_t j = i + 1; j < m_bacters.size; j++)
+//                {
+//                    m_bacters[i]->DoCollision(m_bacters[j]);
+//                    n++;
+//                }
 
                 m_bacters[i]->Update(gameTime);
 

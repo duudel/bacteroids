@@ -82,6 +82,8 @@ namespace bact
         if (m_cooldown <= 0.0f)
         {
             m_cooldown = 0.1f;
+            if (projectiles.size == MAX_PROJECTILES) return;
+
             Projectile *p = projectiles.Obtain();
             const vec2f dir = ClampedVectorLength(m_direction, 1.0f);
             p->SetPosition(m_position + dir * m_radius);

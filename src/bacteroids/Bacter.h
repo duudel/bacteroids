@@ -30,7 +30,7 @@ namespace bact
             , m_anim(0.0f)
             , m_size(0.5f), m_sizeMod(1.0f)
             , m_target(nullptr)
-            , m_health(30)
+            , m_health(10)
         {
             SetRadius(1.0f);
         }
