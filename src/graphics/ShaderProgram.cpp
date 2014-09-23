@@ -15,7 +15,18 @@ namespace rob
         : m_object()
         , m_linked(false)
         , m_uniformCount(0)
-    { m_object = ::glCreateProgram(); }
+    {
+        m_object = ::glCreateProgram();
+
+        // TODO: uncomment this after debugging "black texture" bug.
+//        for (size_t i = 0; i < MAX_UNIFORMS; i++)
+//        {
+//            UniformInfo &info = m_uniforms[i];
+//            info.handle = InvalidHandle;
+//            info.location = -1;
+//            info.generation = -1;
+//        }
+    }
 
     ShaderProgram::~ShaderProgram()
     { ::glDeleteProgram(m_object); }
@@ -65,8 +76,11 @@ namespace rob
             // equality test. This should be implemented as Handle = {index,generation}.
             // Now the potentially new uniform would be added and it's reference
             // count updated.
+            ROB_WARN(info.handle == handle);
             if (info.handle == handle)
+            {
                 return false;
+            }
         }
         ROB_ASSERT(m_uniformCount < MAX_UNIFORMS);
 

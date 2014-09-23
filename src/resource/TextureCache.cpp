@@ -50,6 +50,7 @@ namespace rob
         m_graphics->BindTexture(0, texture);
         Texture *t = m_graphics->GetTexture(texture);
         t->TexImage(width, height, static_cast<Texture::Format>(st_format), imageData);
+        m_graphics->BindTexture(0, InvalidHandle);
 
         return true;
     }
