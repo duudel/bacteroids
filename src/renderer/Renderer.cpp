@@ -238,7 +238,7 @@ namespace rob
         for (size_t i = 0; i < quarter; i++, angle += deltaAngle)
         {
             float sn, cs;
-            rob::SinCos(angle, sn, cs);
+            rob::FastSinCos(angle, sn, cs);
             sn *= radius;
             cs *= radius;
 
@@ -278,7 +278,7 @@ namespace rob
         for (size_t i = 0; i < quarter; i++, angle += deltaAngle)
         {
             float sn, cs;
-            rob::SinCos(angle, sn, cs);
+            rob::FastSinCos(angle, sn, cs);
             sn *= radius;
             cs *= radius;
 
@@ -319,7 +319,7 @@ namespace rob
         for (size_t i = 0; i < quarter; i++, angle += deltaAngle)
         {
             float sn, cs;
-            rob::SinCos(angle, sn, cs);
+            rob::FastSinCos(angle, sn, cs);
             sn *= radius;
             cs *= radius;
 
