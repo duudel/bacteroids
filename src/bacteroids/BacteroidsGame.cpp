@@ -51,9 +51,7 @@ namespace bact
             , m_bacterShader(InvalidHandle)
             , m_fontShader(InvalidHandle)
             , m_textInput()
-        {
-            m_random.Seed(GetTicks());
-        }
+        { }
 
         bool Initialize() override
         {
@@ -79,10 +77,9 @@ namespace bact
             m_player.SetPosition(0.0f, 0.0f);
             m_bacters.Init(GetAllocator());
             m_projectiles.Init(GetAllocator());
-            for (int i = 0; i < 6; i++)
-            {
-                SpawnBacter();
-            }
+
+            m_points = 0;
+
             return true;
         }
 
@@ -154,11 +151,10 @@ namespace bact
 
         void Update(const GameTime &gameTime) override
         {
-            static float num_spawn = 0.0f;
             static float spawn_rate = 0.1f;
+            static float num_spawn = 0.0f;
+            spawn_rate = std::log(1.0f + gameTime.GetTotalSeconds() * 0.1f) * 0.2f;
             num_spawn += spawn_rate * gameTime.GetDeltaSeconds();
-//            spawn_rate = spawn_rate + 0.05f * gameTime.GetDeltaSeconds();
-            spawn_rate = std::log(gameTime.GetTotalSeconds() * 0.1f);
             while (num_spawn >= 1.0f)
             {
                 SpawnBacter();
@@ -235,7 +231,10 @@ namespace bact
                 for (size_t b = 0; b < m_bacters_size; b++)
                 {
                     if (m_projectiles[i]->DoCollision(m_bacters[b]))
-                        m_bacters[b]->TakeHit(m_bacters, m_random);
+                    {
+                        int points = m_bacters[b]->TakeHit(m_bacters, m_random);
+                        m_points += points;
+                    }
                 }
 
                 m_projectiles[i]->Update(gameTime);
@@ -314,9 +313,13 @@ namespace bact
             const float h = m_screenVp.h;
             renderer.SetProjection(Projection_Orthogonal_lh(0, w, h, 0.0f, -1, 1));
 
+            char buf[64];
+            StringPrintF(buf, "Points: %i", m_points);
+
             renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
             renderer.BindFontShader();
-            renderer.DrawText(0, 0, "Hello! This is bacteroids");
+            renderer.DrawText(0, 0, buf);
+//            renderer.DrawText(0, 0, "Hello! This is bacteroids");
 
 //            const float cy = 40.0f;
 //            renderer.DrawText(0.0f, cy, m_textInput.GetText());
@@ -350,6 +353,8 @@ namespace bact
         ProjectileArray m_projectiles;
 
         GameObject **m_objects;
+
+        int m_points;
 
         Viewport m_playAreaVp;
         Viewport m_screenVp;

@@ -44,11 +44,14 @@ namespace bact
         void SetTarget(const GameObject *target)
         { m_target = target; }
 
-        void TakeHit(BacterArray &bacterArray, Random &random)
+        int TakeHit(BacterArray &bacterArray, Random &random)
         {
 //            m_health -= 10;
 //            if (m_health <= 0)
 //            {
+                int points = m_health;
+                float halfPoints = points / 2.0f;
+
                 float halfSize = m_size / 2.0f;
 
                 if (halfSize < 0.3f)
@@ -57,7 +60,10 @@ namespace bact
                 {
                     Bacter::Split(this, bacterArray, random);
                     m_size = halfSize;
+                    m_health = halfPoints + 0.6f;
                 }
+
+                return points;
 //            }
         }
 
@@ -150,6 +156,8 @@ namespace bact
             bacter2->SetPosition(bacter->GetPosition() + random.GetDirection()*0.1f);
             bacter2->SetRadius(bacter->GetRadius());
             bacter2->m_size = (bacter->m_size /= 2.0f);
+            float halfPoints = bacter->m_health / 2.0f;
+            bacter2->m_health = (bacter->m_health = halfPoints + 0.6f);
         }
 
         void Render(Renderer *renderer, const BacteroidsUniforms &uniforms)

@@ -3,6 +3,7 @@
 #define H_ROB_RANDOM_H
 
 #include "../Types.h"
+#include "../time/Time.h"
 
 #include <random>
 
@@ -14,7 +15,9 @@ namespace rob
     public:
         Random()
             : m_generator()
-        { }
+        {
+            Seed(GetTicks());
+        }
 
         void Seed(uint32_t seed)
         {
