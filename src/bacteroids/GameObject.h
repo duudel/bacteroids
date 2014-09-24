@@ -3,30 +3,19 @@
 #define H_BACT_GAME_OBJECT_H
 
 #include "Uniforms.h"
-#include "../application/GameTime.h"
+
 #include "../math/Math.h"
-#include "../memory/LinearAllocator.h"
-#include "../memory/Pool.h"
-#include "../memory/PtrAlign.h"
 
 namespace rob
 {
     class GameTime;
     class Renderer;
-    class LinearAllocator;
-    template <class T>
-    class Pool;
 } // rob
 
 namespace bact
 {
 
-    using rob::vec2f;
-    using rob::GameTime;
-    using rob::Renderer;
-    using rob::LinearAllocator;
-    using rob::Pool;
-    using rob::GetArraySize;
+    using namespace rob;
 
     class GameObject
     {

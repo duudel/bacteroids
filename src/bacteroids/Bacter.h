@@ -4,9 +4,6 @@
 
 #include "GameObject.h"
 
-#include "../math/Math.h"
-#include "../math/Vector2.h"
-
 namespace rob
 {
     class Random;
@@ -18,8 +15,6 @@ namespace bact
     class ObjectArray;
 
     using namespace rob;
-
-    const float BacterMinSize = 0.3f;
 
     class Bacter : public GameObject
     {
@@ -33,7 +28,6 @@ namespace bact
         void SetTarget(const GameObject *target)
         { m_target = target; }
 
-//        int TakeHit(BacterArray &bacterArray, Random &random)
         int TakeHit(ObjectArray &bacterArray, Random &random);
 
         void ModifySize(float sizeMod);
@@ -42,10 +36,7 @@ namespace bact
 
         void SplitSelf();
 
-//        static void TrySplit(Bacter *bacter, BacterArray &bacterArray, Random &random)
         static void TrySplit(Bacter *bacter, ObjectArray &bacterArray, Random &random);
-
-//        static bool Split(Bacter *bacter, BacterArray &bacterArray, Random &random)
         static bool Split(Bacter *bacter, ObjectArray &bacterArray, Random &random);
 
         void Render(Renderer *renderer, const BacteroidsUniforms &uniforms);

@@ -1,8 +1,12 @@
 
 #include "Player.h"
 #include "ObjectArray.h"
-#include "GameObject.h"
+
+#include "../renderer/Renderer.h"
 #include "../graphics/Graphics.h"
+
+#include "../application/GameTime.h"
+
 
 namespace bact
 {
@@ -34,7 +38,6 @@ namespace bact
         return cv;
     }
 
-//    void Player::Update(const GameTime &gameTime, const Input &input, ProjectileArray &projectiles, AudioSystem &audio)
     void Player::Update(const GameTime &gameTime, const Input &input, ObjectArray &projectiles, AudioSystem &audio)
     {
         vec2f vel= vec2f::Zero;
@@ -79,7 +82,6 @@ namespace bact
         }
     }
 
-//    void Player::Shoot(const GameTime &gameTime, ProjectileArray &projectiles, AudioSystem &audio)
     void Player::Shoot(const GameTime &gameTime, ObjectArray &projectiles, AudioSystem &audio)
     {
         if (m_cooldown <= 0.0f)

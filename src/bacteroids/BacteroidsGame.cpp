@@ -1,10 +1,8 @@
 
 #include "BacteroidsGame.h"
 
-#include "Bacter.h"
-#include "ObjectArray.h"
-#include "Projectile.h"
 #include "Player.h"
+#include "ObjectArray.h"
 #include "Uniforms.h"
 
 #include "../application/Window.h"
@@ -119,10 +117,8 @@ namespace bact
             renderer.GetGraphics()->AddProgramUniform(m_bacterShader, m_uniforms.m_anim);
 
             m_player.SetPosition(0.0f, 0.0f);
-            m_objectArray.Init(GetAllocator());
-            m_objects = GetAllocator().AllocateArray<GameObject*>(MAX_BACTERS + MAX_PROJECTILES + 1);
-
-            m_objectArray.AddObject(&m_player);
+            m_objects.Init(GetAllocator());
+            m_objects.AddObject(&m_player);
 
             m_score = 0;
 
@@ -204,9 +200,9 @@ namespace bact
         {
             const float D = vec2f(PLAY_AREA_RIGHT, PLAY_AREA_TOP).Length() + 1.5f;
 
-            if (!m_objectArray.CanObtainBacter()) return;
+            if (!m_objects.CanObtainBacter()) return;
 
-            Bacter *bacter = m_objectArray.ObtainBacter();
+            Bacter *bacter = m_objects.ObtainBacter();
             bacter->Setup(&m_player, m_random);
             bacter->SetPosition(m_random.GetDirection() * D);
         }
@@ -265,7 +261,7 @@ namespace bact
             else if (obj->GetType() == Projectile::TYPE)
             {
                 me->AddVelocity(obj->GetVelocity() * 0.5f);
-                m_score += me->TakeHit(m_objectArray, m_random);
+                m_score += me->TakeHit(m_objects, m_random);
             }
         }
 
@@ -311,24 +307,17 @@ namespace bact
 
         void DoCollisions()
         {
-//            size_t num_objects = 0;
-//            for (size_t i = 0; i < m_bacters.size; i++)
-//                m_objects[num_objects++] = m_bacters[i];
-//            for (size_t i = 0; i < m_projectiles.size; i++)
-//                m_objects[num_objects++] = m_projectiles[i];
-//            m_objects[num_objects++] = &m_player;
-
-            size_t num_objects = m_objectArray.Size();
+            size_t num_objects = m_objects.Size();
 
             for (size_t i = 0; i < num_objects; i++)
             {
-                GameObject *obj1 = m_objectArray[i];
+                GameObject *obj1 = m_objects[i];
                 vec2f p1 = obj1->GetPosition();
                 float r1 = obj1->GetRadius();
 
                 for (size_t j = i + 1; j < num_objects; j++)
                 {
-                    GameObject *obj2 = m_objectArray[j];
+                    GameObject *obj2 = m_objects[j];
                     vec2f p2 = obj2->GetPosition();
                     float r2 = obj2->GetRadius();
 
@@ -354,7 +343,7 @@ namespace bact
                                buttons & SDL_BUTTON_RMASK,
                                buttons & SDL_BUTTON_MMASK);
 
-            m_player.Update(gameTime, m_input, m_objectArray, GetAudio());
+            m_player.Update(gameTime, m_input, m_objects, GetAudio());
 
             vec2f pl_pos = m_player.GetPosition();
             const float pl_radius = m_player.GetRadius();
@@ -389,18 +378,16 @@ namespace bact
 
             DoCollisions();
 
-//            ResolveCollisionsBucketed();
-
-            for (size_t i = 0; i < m_objectArray.Size(); i++)
+            for (size_t i = 0; i < m_objects.Size(); i++)
             {
-                m_objectArray[i]->Update(gameTime);
+                m_objects[i]->Update(gameTime);
             }
 
-            for (size_t i = 0; i < m_objectArray.Size(); )
+            for (size_t i = 0; i < m_objects.Size(); )
             {
-                if (!m_objectArray[i]->IsAlive())
+                if (!m_objects[i]->IsAlive())
                 {
-                    m_objectArray.Remove(i);
+                    m_objects.Remove(i);
                     continue;
                 }
                 i++;
@@ -410,42 +397,6 @@ namespace bact
 //            {
 //                m_bacters[i]->Update(gameTime);
 //                Bacter::TrySplit(m_bacters[i], m_bacters, m_random);
-//            }
-//
-//            size_t m_bacters_size = m_bacters.size;
-//
-//            for (size_t i = 0; i < m_projectiles.size; i++)
-//            {
-////                for (size_t b = 0; b < m_bacters_size; b++)
-////                {
-////                    if (m_projectiles[i]->DoCollision(m_bacters[b]))
-////                    {
-////                        int points = m_bacters[b]->TakeHit(m_bacters, m_random);
-////                        m_score += points;
-////                    }
-////                }
-//
-//                m_projectiles[i]->Update(gameTime);
-//            }
-//
-//            for (size_t i = 0; i < m_projectiles.size; )
-//            {
-//                if (!m_projectiles[i]->IsAlive())
-//                {
-//                    m_projectiles.Remove(i);
-//                    continue;
-//                }
-//                i++;
-//            }
-//
-//            for (size_t i = 0; i < m_bacters.size; )
-//            {
-//                if (!m_bacters[i]->IsAlive())
-//                {
-//                    m_bacters.Remove(i);
-//                    continue;
-//                }
-//                i++;
 //            }
 
             m_fade.Update(gameTime.GetDeltaSeconds());
@@ -470,28 +421,10 @@ namespace bact
             renderer.SetColor(Color(0.05f, 0.13f, 0.15f));
             renderer.DrawFilledRectangle(PLAY_AREA_LEFT, PLAY_AREA_BOTTOM, PLAY_AREA_RIGHT, PLAY_AREA_TOP);
             renderer.SetTime(m_time.GetTime());
-//
-//            renderer.BindShader(m_bacterShader);
-//            for (size_t i = 0; i < m_bacters.size; i++)
-//            {
-//                Bacter *bacter = m_bacters[i];
-//                vec2f p = bacter->GetPosition();
-//                float r = bacter->GetRadius() * 1.5f;
-//
-//                if (p.x > PLAY_AREA_LEFT - r &&
-//                    p.x < PLAY_AREA_RIGHT + r &&
-//                    p.y > PLAY_AREA_BOTTOM - r &&
-//                    p.y < PLAY_AREA_TOP + r)
-//                {
-//                    renderer.BindShader(m_bacterShader);
-//                    bacter->Render(&renderer, m_uniforms);
-//                }
-//            }
 
-            renderer.BindShader(m_bacterShader);
-            for (size_t i = 0; i < m_objectArray.Size(); i++)
+            for (size_t i = 0; i < m_objects.Size(); i++)
             {
-                GameObject *obj = m_objectArray[i];
+                GameObject *obj = m_objects[i];
 
                 vec2f p = obj->GetPosition();
                 float r = obj->GetRadius() * 1.5f;
@@ -523,15 +456,6 @@ namespace bact
 
                 obj->Render(&renderer, m_uniforms);
             }
-
-//            renderer.BindShader(m_playerShader);
-//            m_player.Render(&renderer, m_uniforms);
-
-//            renderer.BindColorShader();
-//            for (size_t i = 0; i < m_projectiles.size; i++)
-//            {
-//                m_projectiles[i]->Render(&renderer, m_uniforms);
-//            }
 
             m_fade.Render(&renderer);
             m_pauseFade.Render(&renderer);
@@ -577,17 +501,12 @@ namespace bact
         Input m_input;
 
         Player m_player;
-//        BacterArray m_bacters;
-//        ProjectileArray m_projectiles;
+        ObjectArray m_objects;
 
-        ObjectArray m_objectArray;
+        int m_score;
 
         Fade m_fade;
         Fade m_pauseFade;
-
-        GameObject **m_objects;
-
-        int m_score;
 
         Viewport m_playAreaVp;
         Viewport m_screenVp;

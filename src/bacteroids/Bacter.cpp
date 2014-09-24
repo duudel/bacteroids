@@ -5,15 +5,19 @@
 #include "../renderer/Renderer.h"
 #include "../graphics/Graphics.h"
 
+#include "../application/GameTime.h"
+
 #include "../math/Random.h"
 
 namespace bact
 {
 
+    const float MIN_BACTER_SIZE = 0.3f;
+
     Bacter::Bacter()
         : GameObject(TYPE)
         , m_anim(0.0f)
-        , m_size(BacterMinSize), m_sizeMod(1.0f)
+        , m_size(MIN_BACTER_SIZE), m_sizeMod(1.0f)
         , m_target(nullptr)
         , m_points(10)
         , m_splitTimer(0.0f)
@@ -28,14 +32,13 @@ namespace bact
         m_anim = random.GetReal(0.0, 2.0 * PI_d);
     }
 
-//        int TakeHit(BacterArray &bacterArray, Random &random)
     int Bacter::TakeHit(ObjectArray &bacterArray, Random &random)
     {
         if (m_splitTimer > 0.0f) return 0;
 
         int points = m_points;
 
-        if (m_size / 2.0f < BacterMinSize)
+        if (m_size / 2.0f < MIN_BACTER_SIZE)
         {
             m_alive = false;
         }
@@ -94,14 +97,12 @@ namespace bact
         m_readyToSplitTimer = 0.0f;
     }
 
-//        static void TrySplit(Bacter *bacter, BacterArray &bacterArray, Random &random)
     void Bacter::TrySplit(Bacter *bacter, ObjectArray &bacterArray, Random &random)
     {
         if (bacter->m_readyToSplitTimer >= 6.0f)
             Split(bacter, bacterArray, random);
     }
 
-//        static bool Split(Bacter *bacter, BacterArray &bacterArray, Random &random)
     bool Bacter::Split(Bacter *bacter, ObjectArray &bacterArray, Random &random)
     {
         if (!bacterArray.CanObtainBacter()) return false;

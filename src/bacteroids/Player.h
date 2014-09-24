@@ -4,12 +4,10 @@
 
 #include "GameObject.h"
 
-#include "../Types.h"
-#include "../renderer/Renderer.h"
 #include "../input/Keyboard.h"
 #include "../input/Mouse.h"
-#include "../String.h"
 
+//TODO: implement some kind of bacteroids specific sound player
 #include "../audio/AudioSystem.h"
 
 namespace bact
@@ -17,7 +15,6 @@ namespace bact
 
     using namespace rob;
 
-    class ProjectileArray;
     class ObjectArray;
 
     class Input
@@ -77,11 +74,9 @@ namespace bact
         static void ClampVectorLength(vec2f &v, const float len);
         static vec2f ClampedVectorLength(const vec2f &v, const float len);
 
-//        void Update(const GameTime &gameTime, const Input &input, ProjectileArray &projectiles, AudioSystem &audio);
         void Update(const GameTime &gameTime, const Input &input, ObjectArray &projectiles, AudioSystem &audio);
 
         void Cooldown(const GameTime &gameTime);
-//        void Shoot(const GameTime &gameTime, ProjectileArray &projectiles, AudioSystem &audio);
         void Shoot(const GameTime &gameTime, ObjectArray &projectiles, AudioSystem &audio);
 
         void Render(Renderer *renderer, const BacteroidsUniforms &uniforms) override;

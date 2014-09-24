@@ -5,19 +5,19 @@
 #include "Bacter.h"
 #include "Projectile.h"
 
+#include "../memory/Pool.h"
+
 #include "../Types.h"
 
 namespace rob
 {
     class LinearAllocator;
-    template <class T> class Pool;
 } // rob
 
 namespace bact
 {
 
     using rob::LinearAllocator;
-    using rob::Pool;
 
     static const size_t MAX_BACTERS = 500;
     static const size_t MAX_PROJECTILES = 200;

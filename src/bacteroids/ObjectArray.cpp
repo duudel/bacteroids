@@ -1,6 +1,8 @@
 
 #include "ObjectArray.h"
 
+#include "../memory/LinearAllocator.h"
+
 namespace bact
 {
 
