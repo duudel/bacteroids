@@ -113,8 +113,8 @@ namespace rob
         m_fontProgram = CompileShaderProgram(g_fontVertexShader, g_fontFragmentShader);
 
 //        m_font = cache->GetFont("lucida_24.fnt");
-//        m_font = cache->GetFont("dejavu_24.fnt");
-        m_font = cache->GetFont("dejavu_48.df.fnt");
+        m_font = cache->GetFont("dejavu_24.fnt");
+//        m_font = cache->GetFont("dejavu_48.df.fnt");
 
         m_vertexBuffer = m_graphics->CreateVertexBuffer();
         m_graphics->BindVertexBuffer(m_vertexBuffer);
