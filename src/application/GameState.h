@@ -49,6 +49,7 @@ namespace rob
 
         virtual bool Initialize() { return true; }
 
+        virtual void RealtimeUpdate(const Time_t deltaMicroseconds) { }
         virtual void Update(const GameTime &gameTime) { }
         virtual void Render() { }
 

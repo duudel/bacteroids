@@ -18,7 +18,8 @@ namespace rob
         m_newExtension = ".tex";
     }
 
-    bool TextureBuilder::Build(const std::string &filename, const std::string &destFilename)
+    bool TextureBuilder::Build(const std::string &directory, const std::string &filename,
+                               const std::string &destDirectory, const std::string &destFilename)
     {
         FREE_IMAGE_FORMAT format = ::FreeImage_GetFileType(filename.c_str(), 0);
         if (format == FIF_UNKNOWN)

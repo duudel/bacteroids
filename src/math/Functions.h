@@ -27,6 +27,12 @@ namespace rob
     }
 
     template <class T>
+    inline T Clamp(T x, T a, T b)
+    {
+        return Max(a, Min(x, b));
+    }
+
+    template <class T>
     inline T Sqrt(T x)
     {
         return std::sqrt(x);

@@ -6,11 +6,11 @@
 namespace rob
 {
 
-    size_t CharToIndex(uint32_t character)
-    {
-        static const size_t firstPrintable = 32;
-        return character - firstPrintable;
-    }
+//    size_t CharToIndex(uint32_t character)
+//    {
+//        static const size_t firstPrintable = 32;
+//        return character - firstPrintable;
+//    }
 
     Font::Font()
         : m_base(0)
@@ -20,6 +20,8 @@ namespace rob
         , m_glyphCount(0)
         , m_textureCount(0)
     {
+        for (size_t i = 0; i < MAX_GLYPHS; i++)
+            m_glyphMapping[i] = 0;
 //        for (size_t i = 0; i < MAX_KERNING_GLYPHS; i++)
 //            for (size_t j = 0; j < MAX_KERNING_GLYPHS; j++)
 //                m_kerning[i][j] = 0;
@@ -54,18 +56,30 @@ namespace rob
 
     void Font::AddGlyph(uint32_t character, const Glyph &glyph)
     {
-        const size_t index = CharToIndex(character);
+        const size_t index = m_glyphCount++; //CharToIndex(character);
         ROB_ASSERT(index < MAX_GLYPHS);
-        m_glyph[index] = glyph;
-        m_glyphCount++;
+        m_glyphMapping[index] = character;
+        m_glyph[character] = glyph;
     }
 
     const Glyph& Font::GetGlyph(uint32_t character) const
     {
-        const size_t index = CharToIndex(character);
-        ROB_ASSERT(index < MAX_GLYPHS);
-        return m_glyph[index];
+//        const size_t index = CharToIndex(character);
+//        ROB_ASSERT(index < MAX_GLYPHS);
+//        return m_glyph[index];
+        ROB_ASSERT(character < MAX_GLYPHS);
+        return m_glyph[character];
     }
+
+    const Glyph& Font::GetGlyphByIndex(size_t index) const
+    {
+        ROB_ASSERT(index < m_glyphCount);
+        const uint32_t character = m_glyphMapping[index];
+        return GetGlyph(character);
+    }
+
+    size_t Font::GetGlyphCount() const
+    { return m_glyphCount; }
 
     void Font::AddTexture(size_t page, TextureHandle texture)
     {
@@ -83,29 +97,29 @@ namespace rob
     size_t Font::GetTextureCount() const
     { return m_textureCount; }
 
-    static int8_t g_kerningMap[256][256];
+//    static int8_t g_kerningMap[256][256];
 
-    void Font::AddKerning(uint32_t c1, uint32_t c2, int16_t kerning)
-    {
-        const size_t i1 = CharToIndex(c1);
-        const size_t i2 = CharToIndex(c2);
+//    void Font::AddKerning(uint32_t c1, uint32_t c2, int16_t kerning)
+//    {
+//        const size_t i1 = CharToIndex(c1);
+//        const size_t i2 = CharToIndex(c2);
 //        ROB_ASSERT(i1 < MAX_KERNING_GLYPHS); ROB_ASSERT(i2 < MAX_KERNING_GLYPHS);
 //        if (i1 > MAX_KERNING_GLYPHS || i2 > MAX_KERNING_GLYPHS)
 //            log::Info("!!!Kerning: ", kerning);
 //            return;
 //        log::Info("Kerning: ", kerning);
 //        m_kerning[i1][i2] = kerning;
-        g_kerningMap[i1][i2] = kerning;
-    }
+//        g_kerningMap[i1][i2] = kerning;
+//    }
 
-    int8_t Font::GetKerning(uint32_t c1, uint32_t c2)
-    {
-        const size_t i1 = CharToIndex(c1);
-        const size_t i2 = CharToIndex(c2);
-//        if (i1 > MAX_KERNING_GLYPHS || i2 > MAX_KERNING_GLYPHS) return 0;
-//        ROB_ASSERT(i1 < MAX_KERNING_GLYPHS); ROB_ASSERT(i2 < MAX_KERNING_GLYPHS);
-//        return m_kerning[i1][i2];
-        return g_kerningMap[i1][i2];
-    }
+//    int8_t Font::GetKerning(uint32_t c1, uint32_t c2)
+//    {
+//        const size_t i1 = CharToIndex(c1);
+//        const size_t i2 = CharToIndex(c2);
+////        if (i1 > MAX_KERNING_GLYPHS || i2 > MAX_KERNING_GLYPHS) return 0;
+////        ROB_ASSERT(i1 < MAX_KERNING_GLYPHS); ROB_ASSERT(i2 < MAX_KERNING_GLYPHS);
+////        return m_kerning[i1][i2];
+//        return g_kerningMap[i1][i2];
+//    }
 
 } // rob

@@ -1,21 +1,21 @@
 
-#ifndef H_ROB_RESOURCE_COPIER_H
-#define H_ROB_RESOURCE_COPIER_H
+#ifndef H_ROB_DF_FONT_BUILDER_H
+#define H_ROB_DF_FONT_BUILDER_H
 
 #include "ResourceBuilder.h"
 
 namespace rob
 {
 
-    class ResourceCopier : public ResourceBuilder
+    class DfFontBuilder : public ResourceBuilder
     {
     public:
-        ResourceCopier();
+        DfFontBuilder();
         bool Build(const std::string &directory, const std::string &filename,
                    const std::string &destDirectory, const std::string &destFilename) override;
     };
 
 } // rob
 
-#endif // H_ROB_RESOURCE_COPIER_H
+#endif // H_ROB_DF_FONT_BUILDER_H
 

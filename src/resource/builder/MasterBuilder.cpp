@@ -3,14 +3,16 @@
 #include "../../filesystem/FilesFromDirectory.h"
 #include "../../Log.h"
 
+#include "DfFontBuilder.h"
 #include "TextureBuilder.h"
 #include "ResourceCopier.h"
 
 namespace rob
 {
 
-    TextureBuilder g_textureBuilder;
-    ResourceCopier g_resourceCopier;
+    DfFontBuilder   g_dfFontBuilder;
+    TextureBuilder  g_textureBuilder;
+    ResourceCopier  g_resourceCopier;
 
     void MasterBuilder::Build(const char * const source, const char * const dest)
     {
@@ -25,7 +27,7 @@ namespace rob
             ResourceBuilder *builder = ResourceBuilder::m_tail;
             while (builder)
             {
-                if (builder->TryBuild(sourceFile, destFile))
+                if (builder->TryBuild(source, sourceFile, dest, destFile))
                     break;
                 builder = builder->m_next;
             }

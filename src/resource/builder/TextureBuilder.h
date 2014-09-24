@@ -11,7 +11,8 @@ namespace rob
     {
     public:
         TextureBuilder();
-        virtual bool Build(const std::string &filename, const std::string &destFilename) override;
+        bool Build(const std::string &directory, const std::string &filename,
+                   const std::string &destDirectory, const std::string &destFilename) override;
     };
 
 } // rob
