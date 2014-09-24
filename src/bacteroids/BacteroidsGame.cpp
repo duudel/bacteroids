@@ -258,7 +258,7 @@ namespace bact
             m_player.Update(gameTime, m_input, m_projectiles, GetAudio());
 
             vec2f pl_pos = m_player.GetPosition();
-            float pl_radius = m_player.GetRadius();
+            const float pl_radius = m_player.GetRadius();
 
                  if (pl_pos.x < PLAY_AREA_LEFT + pl_radius)   pl_pos.x = PLAY_AREA_LEFT + pl_radius;
             else if (pl_pos.x > PLAY_AREA_RIGHT - pl_radius)  pl_pos.x = PLAY_AREA_RIGHT - pl_radius;

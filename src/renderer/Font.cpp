@@ -35,9 +35,7 @@ namespace rob
     { return m_base; }
 
     void Font::SetHeight(uint16_t height)
-    {
-        m_height = height;
-    }
+    { m_height = height; }
 
     uint16_t Font::GetHeight() const
     { return m_height; }
