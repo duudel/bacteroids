@@ -16,8 +16,10 @@ namespace rob
         ResourceBuilder& operator = (const ResourceBuilder&) = delete;
         virtual ~ResourceBuilder() { }
 
-        bool TryBuild(const std::string &filename, const std::string &destFilename);
-        virtual bool Build(const std::string &filename, const std::string &destFilename) = 0;
+        bool TryBuild(const std::string &directory, const std::string &filename,
+                      const std::string &destDirectory, const std::string &destFilename);
+        virtual bool Build(const std::string &directory, const std::string &filename,
+                           const std::string &destDirectory, const std::string &destFilename) = 0;
 
     protected:
         std::vector<std::string> m_extensions;

@@ -26,7 +26,8 @@ namespace rob
         }
     }
 
-    bool ResourceBuilder::TryBuild(const std::string &filename, const std::string &destFilename)
+    bool ResourceBuilder::TryBuild(const std::string &directory, const std::string &filename,
+                                   const std::string &destDirectory, const std::string &destFilename)
     {
         for (size_t i = 0; i < m_extensions.size(); i++)
         {
@@ -50,7 +51,7 @@ namespace rob
                 if (!FileExists(newFilename.c_str()) ||
                     GetModifyTime(newFilename.c_str()) < GetModifyTime(filename.c_str()))
                 {
-                    if (Build(filename, newFilename))
+                    if (Build(directory, filename, destDirectory, newFilename))
                     {
                         log::Info("Built ", filename.c_str(), " to ", newFilename.c_str());
                     }

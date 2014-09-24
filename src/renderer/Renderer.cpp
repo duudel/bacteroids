@@ -113,7 +113,8 @@ namespace rob
         m_fontProgram = CompileShaderProgram(g_fontVertexShader, g_fontFragmentShader);
 
 //        m_font = cache->GetFont("lucida_24.fnt");
-        m_font = cache->GetFont("dejavu_24.fnt");
+//        m_font = cache->GetFont("dejavu_24.fnt");
+        m_font = cache->GetFont("dejavu_48.df.fnt");
 
         m_vertexBuffer = m_graphics->CreateVertexBuffer();
         m_graphics->BindVertexBuffer(m_vertexBuffer);
@@ -426,36 +427,45 @@ namespace rob
         float cursorX = x;
         float cursorY = y;
 
+//        const char * const start = text;
         const char * const end = text + textLen;
-        while (*text)
+        if (text != end)
         {
-            FontVertex *vertex = verticesStart;
-
-            const uint32_t c = DecodeUtf8(text, end);
-            const Glyph &glyph = m_font.GetGlyph(c);
-
-            uint16_t texturePage = glyph.m_textureIdx;
-            const TextureHandle textureHandle = m_font.GetTexture(texturePage);
-            const Texture *texture = m_graphics->GetTexture(textureHandle);
-
-            const size_t textureW = texture->GetWidth();
-            const size_t textureH = texture->GetHeight();
-
-            AddFontQuad(vertex, c, glyph, cursorX, cursorY, textureW, textureH);
-            while (text != end)
+            bool oneMore = false;
+            uint32_t c = DecodeUtf8(text, end);
+            do
             {
-                const uint32_t c = DecodeUtf8(text, end);
+                FontVertex *vertex = verticesStart;
+
                 const Glyph &glyph = m_font.GetGlyph(c);
-                if (glyph.m_textureIdx != texturePage)
-                    break;
+                uint16_t texturePage = glyph.m_textureIdx;
+                const TextureHandle textureHandle = m_font.GetTexture(texturePage);
+                const Texture *texture = m_graphics->GetTexture(textureHandle);
+
+                const size_t textureW = texture->GetWidth();
+                const size_t textureH = texture->GetHeight();
+
                 AddFontQuad(vertex, c, glyph, cursorX, cursorY, textureW, textureH);
-            }
 
-            const size_t vertexCount = vertex - verticesStart;
-            buffer->Write(0, vertexCount * sizeof(FontVertex), verticesStart);
+                oneMore = false;
+                while (text != end)
+                {
+                    c = DecodeUtf8(text, end);
+                    const Glyph &glyph = m_font.GetGlyph(c);
+                    if (glyph.m_textureIdx != texturePage)
+                    {
+                        oneMore = true;
+                        break;
+                    }
+                    AddFontQuad(vertex, c, glyph, cursorX, cursorY, textureW, textureH);
+                }
 
-            m_graphics->BindTexture(0, textureHandle);
-            m_graphics->DrawTriangleArrays(0, vertexCount);
+                const size_t vertexCount = vertex - verticesStart;
+                buffer->Write(0, vertexCount * sizeof(FontVertex), verticesStart);
+
+                m_graphics->BindTexture(0, textureHandle);
+                m_graphics->DrawTriangleArrays(0, vertexCount);
+            } while (oneMore || text != end);
         }
         m_vb_alloc.Reset();
     }
@@ -475,11 +485,12 @@ namespace rob
     float Renderer::GetTextWidth(const char *text, size_t charCount) const
     {
         float width = 0.0f;
-        for (; *text && charCount; )
+        int charC = charCount;
+        for (; *text && charC > 0; )
         {
             const char * const s = text;
             const uint32_t c = DecodeUtf8(text, 0);
-            charCount -= (text - s);
+            charC -= (text - s);
             const Glyph &glyph = m_font.GetGlyph(c);
             width += float(glyph.m_advance);
         }
