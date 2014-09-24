@@ -78,8 +78,9 @@ namespace bact
             m_player.SetPosition(0.0f, 0.0f);
             m_bacters.Init(GetAllocator());
             m_projectiles.Init(GetAllocator());
+            m_objects = GetAllocator().AllocateArray<GameObject*>(MAX_BACTERS + MAX_PROJECTILES + 1);
 
-            m_points = 0;
+            m_score = 0;
 
             m_player.shootSound = GetAudio().LoadSound("data/Laser_Shoot6.wav");
 //            m_player.shootSound = GetAudio().LoadSound("data/Hit_Hurt4.wav");
@@ -211,6 +212,39 @@ namespace bact
 //            log::Info("Bacter collision tests: ", n);
         }
 
+        void DoCollisions()
+        {
+            size_t num_objects = 0;
+            for (size_t i = 0; i < m_bacters.size; i++)
+                m_objects[num_objects++] = m_bacters[i];
+            for (size_t i = 0; i < m_projectiles.size; i++)
+                m_objects[num_objects++] = m_projectiles[i];
+            m_objects[num_objects++] = &m_player;
+
+            for (size_t i = 0; i < num_objects; i++)
+            {
+                GameObject *obj_i = m_objects[i];
+                vec2f pi = obj_i->GetPosition();
+                float ri = obj_i->GetRadius();
+
+                for (size_t j = i + 1; j < num_objects; j++)
+                {
+                    GameObject *obj_j = m_objects[j];
+                    vec2f pj = obj_j->GetPosition();
+                    float rj = obj_j->GetRadius();
+
+                    vec2f j_to_i = (pi - pj);
+                    float d = ri + rj - j_to_i.Length();
+
+                    if (d > 0.0f)
+                    {
+                        obj_i->DoCollision2(obj_j, j_to_i, d);
+                        obj_j->DoCollision2(obj_i, -j_to_i, d);
+                    }
+                }
+            }
+        }
+
         void UpdatePlayer(const GameTime &gameTime)
         {
             int mx, my, dx, dy;
@@ -248,7 +282,9 @@ namespace bact
 
             UpdatePlayer(gameTime);
 
-            ResolveCollisionsBucketed();
+            DoCollisions();
+
+//            ResolveCollisionsBucketed();
 
             for (size_t i = 0; i < m_bacters.size; i++)
             {
@@ -265,7 +301,7 @@ namespace bact
                     if (m_projectiles[i]->DoCollision(m_bacters[b]))
                     {
                         int points = m_bacters[b]->TakeHit(m_bacters, m_random);
-                        m_points += points;
+                        m_score += points;
                     }
                 }
 
@@ -346,7 +382,7 @@ namespace bact
             renderer.SetProjection(Projection_Orthogonal_lh(0, w, h, 0.0f, -1, 1));
 
             char buf[64];
-            StringPrintF(buf, "Points: %i", m_points);
+            StringPrintF(buf, "Score: %i", m_score);
 
             renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
             renderer.BindFontShader();
@@ -386,7 +422,7 @@ namespace bact
 
         GameObject **m_objects;
 
-        int m_points;
+        int m_score;
 
         Viewport m_playAreaVp;
         Viewport m_screenVp;
