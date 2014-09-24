@@ -1,6 +1,7 @@
 
 #include "Player.h"
-#include "Projectile.h"
+#include "ObjectArray.h"
+#include "GameObject.h"
 #include "../graphics/Graphics.h"
 
 namespace bact
@@ -33,7 +34,8 @@ namespace bact
         return cv;
     }
 
-    void Player::Update(const GameTime &gameTime, const Input &input, ProjectileArray &projectiles, AudioSystem &audio)
+//    void Player::Update(const GameTime &gameTime, const Input &input, ProjectileArray &projectiles, AudioSystem &audio)
+    void Player::Update(const GameTime &gameTime, const Input &input, ObjectArray &projectiles, AudioSystem &audio)
     {
         vec2f vel= vec2f::Zero;
         if (input.KeyDown(Keyboard::Scancode::W))
@@ -77,14 +79,15 @@ namespace bact
         }
     }
 
-    void Player::Shoot(const GameTime &gameTime, ProjectileArray &projectiles, AudioSystem &audio)
+//    void Player::Shoot(const GameTime &gameTime, ProjectileArray &projectiles, AudioSystem &audio)
+    void Player::Shoot(const GameTime &gameTime, ObjectArray &projectiles, AudioSystem &audio)
     {
         if (m_cooldown <= 0.0f)
         {
             m_cooldown = 0.1f;
-            if (projectiles.size == MAX_PROJECTILES) return;
+            if (!projectiles.CanObtainProjectile()) return;
 
-            Projectile *p = projectiles.Obtain();
+            Projectile *p = projectiles.ObtainProjectile();
 //            const vec2f dir = ClampedVectorLength(m_direction, 1.0f);
             vec2f dir = m_direction.SafeNormalized();
             if (dir.Length() < 0.9f) dir = vec2f::UnitX;
@@ -103,7 +106,7 @@ namespace bact
         renderer->DrawFilledCirlce(m_position.x, m_position.y, m_radius, Color(0.2f, 0.5f, 0.5f, 0.5f));
 
         renderer->SetColor(Color(2.0f, 1.0f, 0.6f));
-        const vec2f dpos = m_position + ClampedVectorLength(m_direction, 0.5f);
+        const vec2f dpos = m_position + ClampedVectorLength(m_direction, 1.5f);
         renderer->BindColorShader();
         renderer->DrawFilledCirlce(dpos.x, dpos.y, m_radius * 0.5f, Color(0.2f, 0.5f, 0.5f, 0.5f));
 

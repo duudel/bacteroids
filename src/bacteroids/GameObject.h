@@ -5,11 +5,17 @@
 #include "Uniforms.h"
 #include "../application/GameTime.h"
 #include "../math/Math.h"
+#include "../memory/LinearAllocator.h"
+#include "../memory/Pool.h"
+#include "../memory/PtrAlign.h"
 
 namespace rob
 {
     class GameTime;
     class Renderer;
+    class LinearAllocator;
+    template <class T>
+    class Pool;
 } // rob
 
 namespace bact
@@ -18,6 +24,9 @@ namespace bact
     using rob::vec2f;
     using rob::GameTime;
     using rob::Renderer;
+    using rob::LinearAllocator;
+    using rob::Pool;
+    using rob::GetArraySize;
 
     class GameObject
     {
@@ -67,7 +76,6 @@ namespace bact
         vec2f m_velocity;
         float m_radius;
         bool m_alive;
-
     };
 
 } // bact
