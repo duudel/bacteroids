@@ -66,68 +66,9 @@ namespace bact
             return points;
         }
 
-        void DoCollision(Bacter *b)
+        void ModifySize(float sizeMod)
         {
-            vec2f A  = GetPosition();
-            float Ar = GetRadius();
-            vec2f B  = b->GetPosition();
-            float Br = b->GetRadius();
-
-            vec2f BA = A - B;
-            float r = Ar + Br;
-            float d = r - BA.Length();
-            if (d > 0.0f)
-            {
-//                if (d > 0.3f)
-                {
-                    vec2f v = BA.SafeNormalized() * d/8.0f;
-                    AddVelocity(v);
-                    b->AddVelocity(-v);
-                    SetPosition(A + v/2.0f);
-                    b->SetPosition(B - v/2.0f);
-                }
-//                else
-//                {
-//                    vec2f v = Normalize(BA) * d/8.0f;
-//                    SetPosition(A + v);
-//                    b->SetPosition(B - v);
-//                }
-                m_sizeMod = Max(m_sizeMod, 1.0f + d / r);
-                b->m_sizeMod = Max(b->m_sizeMod, m_sizeMod);
-            }
-        }
-
-        void DoCollision(Player *pl)
-        {
-            vec2f A  = GetPosition();
-            float Ar = GetRadius();
-            vec2f B  = pl->GetPosition();
-            float Br = pl->GetRadius();
-
-            vec2f BA = A - B;
-            float r = Ar + Br;
-            float d = r - BA.Length();
-            if (d > 0.0f)
-            {
-                vec2f v = BA.SafeNormalized() * d/8.0f;
-                AddVelocity(v);
-                pl->AddVelocity(-v);
-                SetPosition(A + v/2.0f);
-                pl->SetPosition(B - v/2.0f);
-                m_sizeMod = Max(m_sizeMod, 1.0f + d / r);
-            }
-        }
-
-        void DoCollision2(GameObject *obj, const vec2f &objToMe, float dist) override
-        {
-            if (obj->GetType() == Bacter::TYPE || obj->GetType() == Player::TYPE)
-            {
-                vec2f v = objToMe.SafeNormalized() * dist/8.0f;
-                m_velocity += v;
-                m_position += v / 2.0f;
-                float r = m_radius + obj->GetRadius();
-                m_sizeMod = Max(m_sizeMod, 1.0f + dist / r);
-            }
+            m_sizeMod = Max(m_sizeMod, sizeMod);
         }
 
         void Update(const GameTime &gameTime) override

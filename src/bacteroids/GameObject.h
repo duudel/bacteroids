@@ -61,8 +61,6 @@ namespace bact
         virtual void Update(const GameTime &gameTime) { }
         virtual void Render(Renderer *renderer, const BacteroidsUniforms &uniforms) { }
 
-        virtual void DoCollision2(GameObject *obj, const vec2f &objToMe, float dist) { }
-
     protected:
         int m_type;
         vec2f m_position;

@@ -20,6 +20,11 @@ namespace bact
             SetRadius(0.2f);
         }
 
+        void SetAlive(bool alive)
+        {
+            m_alive = alive;
+        }
+
         void Update(const GameTime &gameTime) override
         {
             const float dt = gameTime.GetDeltaSeconds();
@@ -34,26 +39,6 @@ namespace bact
         {
             renderer->SetColor(Color(1.0f, 1.0f, 1.6f));
             renderer->DrawFilledCirlce(m_position.x, m_position.y, m_radius, Color(0.2f, 0.5f, 0.5f, 0.5f));
-        }
-
-        bool DoCollision(Bacter *b)
-        {
-            vec2f A  = GetPosition();
-            float Ar = GetRadius();
-            vec2f B  = b->GetPosition();
-            float Br = b->GetRadius();
-
-            vec2f BA = A - B;
-            float r = Ar + Br;
-            float d = r - BA.Length();
-            if (d > 0.0f)
-            {
-                m_alive = false;
-                b->AddVelocity(GetVelocity() * 0.5f);
-                return true;
-            }
-
-            return false;
         }
     };
 

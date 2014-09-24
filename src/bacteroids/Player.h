@@ -83,8 +83,6 @@ namespace bact
 
         void Render(Renderer *renderer, const BacteroidsUniforms &uniforms) override;
 
-        void DoCollision2(GameObject* obj, const vec2f& objToMe, float dist) override;
-
         SoundHandle shootSound;
     private:
         vec2f m_direction;

@@ -159,57 +159,100 @@ namespace bact
 
         static Bacter *bacterBuckets[4][MAX_BACTERS];
 
-        void ResolveCollisionsBucketed()
+//        void ResolveCollisionsBucketed()
+//        {
+//            size_t num_bacters[4] = {0};
+//            Bacter *(&bacters)[4][MAX_BACTERS] = bacterBuckets;
+//
+//            for (size_t i = 0; i < m_bacters.size; i++)
+//            {
+//                Bacter *bacter = m_bacters[i];
+//                const vec2f p = bacter->GetPosition();
+//                float r = bacter->GetRadius();
+//                if (p.x <= r && p.y <= r)
+//                    bacters[0][num_bacters[0]++] = bacter;
+//                if (p.x <= r && p.y >= -r)
+//                    bacters[1][num_bacters[1]++] = bacter;
+//                if (p.x >= -r && p.y <= r)
+//                    bacters[2][num_bacters[2]++] = bacter;
+//                if (p.x >= -r && p.y >= -r)
+//                    bacters[3][num_bacters[3]++] = bacter;
+//            }
+//
+//            int n = 0;
+//            for (size_t i = 0; i < 4; i++)
+//            {
+//                size_t num = num_bacters[i];
+//                Bacter **b = bacters[i];
+//                for (size_t j = 0; j < num; j++)
+//                {
+//                    b[j]->DoCollision(&m_player);
+//                    for (size_t k = j + 1; k < num; k++)
+//                    {
+//                        b[j]->DoCollision(b[k]);
+//                        n++;
+//                    }
+//                }
+//            }
+////            log::Info("Bacter collision tests: ", n);
+//        }
+
+        void BacterCollision(Bacter *me, GameObject *obj, const vec2f &objToMe, float dist)
         {
-            size_t num_bacters[4] = {0};
-            Bacter *(&bacters)[4][MAX_BACTERS] = bacterBuckets;
-
-            for (size_t i = 0; i < m_bacters.size; i++)
+            if (obj->GetType() == Bacter::TYPE || obj->GetType() == Player::TYPE)
             {
-                Bacter *bacter = m_bacters[i];
-                const vec2f p = bacter->GetPosition();
-                float r = bacter->GetRadius();
-                if (p.x <= r && p.y <= r)
-                    bacters[0][num_bacters[0]++] = bacter;
-                if (p.x <= r && p.y >= -r)
-                    bacters[1][num_bacters[1]++] = bacter;
-                if (p.x >= -r && p.y <= r)
-                    bacters[2][num_bacters[2]++] = bacter;
-                if (p.x >= -r && p.y >= -r)
-                    bacters[3][num_bacters[3]++] = bacter;
+                vec2f v = objToMe.SafeNormalized() * dist/8.0f;
+                vec2f p = me->GetPosition();
+                me->AddVelocity(v);
+                me->SetPosition(p + (v / 2.0f));
+                float r = me->GetRadius() + obj->GetRadius();
+                me->ModifySize(1.0f + dist / r);
             }
-
-            int n = 0;
-            for (size_t i = 0; i < 4; i++)
+            else if (obj->GetType() == Projectile::TYPE)
             {
-                size_t num = num_bacters[i];
-                Bacter **b = bacters[i];
-                for (size_t j = 0; j < num; j++)
-                {
-                    b[j]->DoCollision(&m_player);
-                    for (size_t k = j + 1; k < num; k++)
-                    {
-                        b[j]->DoCollision(b[k]);
-                        n++;
-                    }
-                }
+                me->AddVelocity(obj->GetVelocity() * 0.5f);
+                m_score += me->TakeHit(m_bacters, m_random);
             }
-//            log::Info("Bacter collision tests: ", n);
         }
 
-        void ResolveCollisions()
+        void PlayerCollision(Player *me, GameObject *obj, const vec2f &objToMe, float dist)
         {
-            int n = 0;
-            for (size_t i = 0; i < m_bacters.size; i++)
+            if (obj->GetType() == Bacter::TYPE)
             {
-                m_bacters[i]->DoCollision(&m_player);
-                for (size_t j = i + 1; j < m_bacters.size; j++)
-                {
-                    m_bacters[i]->DoCollision(m_bacters[j]);
-                    n++;
-                }
+                vec2f v = objToMe.SafeNormalized() * dist/8.0f;
+                vec2f p = me->GetPosition();
+                me->AddVelocity(v);
+                me->SetPosition(p + (v / 2.0f));
             }
-//            log::Info("Bacter collision tests: ", n);
+        }
+
+        void ProjectileCollision(Projectile *me, GameObject *obj, const vec2f &objToMe, float dist)
+        {
+            if (obj->GetType() == Bacter::TYPE)
+            {
+                me->SetAlive(false);
+            }
+        }
+
+        void DoCollision(GameObject *obj1, GameObject *obj2, const vec2f &from2To1, float dist)
+        {
+            switch (obj1->GetType())
+            {
+            case Bacter::TYPE:
+                BacterCollision((Bacter*)obj1, obj2, from2To1, dist);
+                break;
+
+            case Player::TYPE:
+                PlayerCollision((Player*)obj1, obj2, from2To1, dist);
+                break;
+
+            case Projectile::TYPE:
+                ProjectileCollision((Projectile*)obj1, obj2, from2To1, dist);
+                break;
+
+            default:
+                break;
+            }
         }
 
         void DoCollisions()
@@ -223,23 +266,23 @@ namespace bact
 
             for (size_t i = 0; i < num_objects; i++)
             {
-                GameObject *obj_i = m_objects[i];
-                vec2f pi = obj_i->GetPosition();
-                float ri = obj_i->GetRadius();
+                GameObject *obj1 = m_objects[i];
+                vec2f p1 = obj1->GetPosition();
+                float r1 = obj1->GetRadius();
 
                 for (size_t j = i + 1; j < num_objects; j++)
                 {
-                    GameObject *obj_j = m_objects[j];
-                    vec2f pj = obj_j->GetPosition();
-                    float rj = obj_j->GetRadius();
+                    GameObject *obj2 = m_objects[j];
+                    vec2f p2 = obj2->GetPosition();
+                    float r2 = obj2->GetRadius();
 
-                    vec2f j_to_i = (pi - pj);
-                    float d = ri + rj - j_to_i.Length();
+                    vec2f from2To1 = (p1 - p2);
+                    float dist = r1 + r2 - from2To1.Length();
 
-                    if (d > 0.0f)
+                    if (dist > 0.0f)
                     {
-                        obj_i->DoCollision2(obj_j, j_to_i, d);
-                        obj_j->DoCollision2(obj_i, -j_to_i, d);
+                        DoCollision(obj1, obj2, from2To1, dist);
+                        DoCollision(obj2, obj1, -from2To1, dist);
                     }
                 }
             }
@@ -296,14 +339,14 @@ namespace bact
 
             for (size_t i = 0; i < m_projectiles.size; i++)
             {
-                for (size_t b = 0; b < m_bacters_size; b++)
-                {
-                    if (m_projectiles[i]->DoCollision(m_bacters[b]))
-                    {
-                        int points = m_bacters[b]->TakeHit(m_bacters, m_random);
-                        m_score += points;
-                    }
-                }
+//                for (size_t b = 0; b < m_bacters_size; b++)
+//                {
+//                    if (m_projectiles[i]->DoCollision(m_bacters[b]))
+//                    {
+//                        int points = m_bacters[b]->TakeHit(m_bacters, m_random);
+//                        m_score += points;
+//                    }
+//                }
 
                 m_projectiles[i]->Update(gameTime);
             }
