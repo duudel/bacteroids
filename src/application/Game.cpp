@@ -10,6 +10,7 @@
 #include "../Log.h"
 
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_mixer.h>
 
 namespace rob
 {
@@ -27,6 +28,7 @@ namespace rob
         , m_stateAlloc()
     {
         ::SDL_Init(SDL_INIT_EVERYTHING);
+        ::Mix_Init(0);
 
         m_window = m_staticAlloc.new_object<Window>();
         m_graphics = m_staticAlloc.new_object<Graphics>(m_staticAlloc);
