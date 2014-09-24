@@ -85,7 +85,9 @@ namespace bact
             if (projectiles.size == MAX_PROJECTILES) return;
 
             Projectile *p = projectiles.Obtain();
-            const vec2f dir = ClampedVectorLength(m_direction, 1.0f);
+//            const vec2f dir = ClampedVectorLength(m_direction, 1.0f);
+            vec2f dir = m_direction.SafeNormalized();
+            if (dir.Length() < 0.9f) dir = vec2f::UnitX;
             p->SetPosition(m_position + dir * m_radius);
             p->SetVelocity(dir.x * 10.0f, dir.y * 10.0f);
 

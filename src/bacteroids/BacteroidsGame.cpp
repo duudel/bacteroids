@@ -147,7 +147,7 @@ namespace bact
 
         void SpawnBacter()
         {
-            const float D = vec2f(PLAY_AREA_RIGHT, PLAY_AREA_TOP).Length();
+            const float D = vec2f(PLAY_AREA_RIGHT, PLAY_AREA_TOP).Length() + 1.5f;
 
             if (m_bacters.size == MAX_BACTERS) return;
 
@@ -211,6 +211,29 @@ namespace bact
 //            log::Info("Bacter collision tests: ", n);
         }
 
+        void UpdatePlayer(const GameTime &gameTime)
+        {
+            int mx, my, dx, dy;
+            const uint32_t buttons = ::SDL_GetMouseState(&mx, &my);
+            ::SDL_GetRelativeMouseState(&dx, &dy);
+            m_input.SetMouse(mx, my, dx, dy);
+            m_input.SetButtons(buttons & SDL_BUTTON_LMASK,
+                               buttons & SDL_BUTTON_RMASK,
+                               buttons & SDL_BUTTON_MMASK);
+
+            m_player.Update(gameTime, m_input, m_projectiles, GetAudio());
+
+            vec2f pl_pos = m_player.GetPosition();
+            float pl_radius = m_player.GetRadius();
+
+                 if (pl_pos.x < PLAY_AREA_LEFT + pl_radius)   pl_pos.x = PLAY_AREA_LEFT + pl_radius;
+            else if (pl_pos.x > PLAY_AREA_RIGHT - pl_radius)  pl_pos.x = PLAY_AREA_RIGHT - pl_radius;
+                 if (pl_pos.y < PLAY_AREA_BOTTOM + pl_radius) pl_pos.y = PLAY_AREA_BOTTOM + pl_radius;
+            else if (pl_pos.y > PLAY_AREA_TOP - pl_radius)    pl_pos.y = PLAY_AREA_TOP - pl_radius;
+
+            m_player.SetPosition(pl_pos);
+        }
+
         void Update(const GameTime &gameTime) override
         {
             static float spawn_rate = 0.1f;
@@ -223,15 +246,7 @@ namespace bact
                 num_spawn -= 1.0f;
             }
 
-            int mx, my, dx, dy;
-            const uint32_t buttons = ::SDL_GetMouseState(&mx, &my);
-            ::SDL_GetRelativeMouseState(&dx, &dy);
-            m_input.SetMouse(mx, my, dx, dy);
-            m_input.SetButtons(buttons & SDL_BUTTON_LMASK,
-                               buttons & SDL_BUTTON_RMASK,
-                               buttons & SDL_BUTTON_MMASK);
-
-            m_player.Update(gameTime, m_input, m_projectiles, GetAudio());
+            UpdatePlayer(gameTime);
 
             ResolveCollisionsBucketed();
 

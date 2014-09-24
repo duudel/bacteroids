@@ -20,6 +20,8 @@ namespace bact
 
     using namespace rob;
 
+    const float BacterMinSize = 0.3f;
+
     class Bacter : public GameObject
     {
     public:
@@ -28,7 +30,7 @@ namespace bact
         Bacter()
             : GameObject(TYPE)
             , m_anim(0.0f)
-            , m_size(0.5f), m_sizeMod(1.0f)
+            , m_size(BacterMinSize), m_sizeMod(1.0f)
             , m_target(nullptr)
             , m_points(10)
             , m_splitTimer(0.0f)
@@ -52,7 +54,7 @@ namespace bact
 
             int points = m_points;
 
-            if (m_size / 2.0f < 0.3f)
+            if (m_size / 2.0f < BacterMinSize)
             {
                 m_alive = false;
             }
