@@ -212,7 +212,7 @@ namespace rob
                         if (!pageNameLen) pageNameLen = len;
 
                         ChangePageTextureExtension(pageName);
-                        // NOTE: To prevent from using the char[64] version decay to char*
+                        // NOTE: To prevent from using the char[64] version, decay to char* by using unary +
                         const ResourceID texture(+pageName);
                         font.AddTexture(i, cache->GetTexture(texture));
                     }

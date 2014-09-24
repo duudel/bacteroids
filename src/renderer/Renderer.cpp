@@ -340,22 +340,6 @@ namespace rob
             float angle = 0.0f;
             const float deltaAngle = 2.0f * PI_f / segments;
             vertices[0] = { 0.0f, 0.0f, center.r, center.g, center.b, center.a };
-//            for (size_t i = 0; i < quarter; i++, angle += deltaAngle)
-//            {
-//                float sn, cs;
-//                rob::FastSinCos(angle, sn, cs);
-//                sn *= radius;
-//                cs *= radius;
-//
-//                const size_t i0 = 1 + i;
-//                const size_t i1 = i0 + quarter;
-//                const size_t i2 = i1 + quarter;
-//                const size_t i3 = i2 + quarter;
-//                vertices[i0] = { -cs, -sn, m_color.r, m_color.g, m_color.b, m_color.a };
-//                vertices[i1] = { +sn, -cs, m_color.r, m_color.g, m_color.b, m_color.a };
-//                vertices[i2] = { +cs, +sn, m_color.r, m_color.g, m_color.b, m_color.a };
-//                vertices[i3] = { -sn, +cs, m_color.r, m_color.g, m_color.b, m_color.a };
-//            };
             for (size_t i = 0; i < quarter; i++, angle += deltaAngle)
             {
                 float sn, cs;
@@ -364,16 +348,10 @@ namespace rob
                 cs *= radius;
 
                 const size_t i0 = 1 + i;
-                vertices[i0] = { -cs, -sn, m_color.r, m_color.g, m_color.b, m_color.a };
-            };
-            for (size_t i = 0; i < quarter; i++)
-            {
-                const size_t i0 = 1 + i;
                 const size_t i1 = i0 + quarter;
                 const size_t i2 = i1 + quarter;
                 const size_t i3 = i2 + quarter;
-                const float sn = -vertices[i0].y;
-                const float cs = -vertices[i0].x;
+                vertices[i0] = { -cs, -sn, m_color.r, m_color.g, m_color.b, m_color.a };
                 vertices[i1] = { +sn, -cs, m_color.r, m_color.g, m_color.b, m_color.a };
                 vertices[i2] = { +cs, +sn, m_color.r, m_color.g, m_color.b, m_color.a };
                 vertices[i3] = { -sn, +cs, m_color.r, m_color.g, m_color.b, m_color.a };
@@ -392,7 +370,7 @@ namespace rob
         m_graphics->SetAttrib(1, 4, sizeof(ColorVertex), sizeof(float) * 2);
         m_graphics->DrawTriangleFanArrays(0, vertexCount);
 
-        m_vb_alloc.Reset();
+//        m_vb_alloc.Reset();
     }
 
 
