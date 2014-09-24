@@ -51,22 +51,11 @@ namespace rob
             gl_FragColor = vec4(1.0, 1.0, 1.0, color.a);
 
 //            float dist = texture2D(u_texture0, v_uv).r;
-//            float buffer = 0.48;
-////            float gamma = 32.0;
-//
-//            float dx = length(dFdx(v_uv.xy));
-//            float dy = length(dFdy(v_uv.xy));
-//            float gamma = 8.0 * 0.5 * (dx + dy);
-//
-//            float alpha = smoothstep(buffer - gamma, buffer + gamma, dist);
-//            gl_FragColor = vec4(alpha * v_color.rgb, alpha * v_color.a);
-
-
-//            float dist = texture2D(u_texture0, v_uv).r;
 //            vec4 color = v_color;
 //            float alpha = smoothstep(0.48, 0.5, dist);
-//            float alpha = smoothstep(0.46, 0.5, dist);
 //            gl_FragColor = vec4(color.rgb * alpha, alpha * color.a);
+
+//            float alpha = smoothstep(0.46, 0.5, dist);
 //            vec4 c = mix(vec4(1.0, 0.0, 1.0, 1.0), color, smoothstep(0.46, 0.52, dist));
 //            gl_FragColor = vec4(c.rgb * alpha, alpha * color.a);
         }

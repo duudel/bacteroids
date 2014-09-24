@@ -35,6 +35,11 @@ namespace rob
         if (frameTime > 25000)
             frameTime = 25000;
 
+        static Time_t lastTicks = m_ticker.GetTicks();
+        const Time_t ticks = m_ticker.GetTicks();
+        RealtimeUpdate(ticks - lastTicks);
+        lastTicks = ticks;
+
         m_gameTime.Update(frameTime);
         while (m_gameTime.Step())
         {
@@ -46,7 +51,7 @@ namespace rob
     void GameState::DoRender()
     {
         Render();
-        const Time_t time = m_time.GetTimeMicros();
+        const Time_t time = m_ticker.GetTicks(); // //m_time.GetTimeMicros();
         const Time_t frameTime = time - m_lastTime;
         m_lastTime = time;
 

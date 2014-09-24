@@ -42,11 +42,54 @@ namespace bact
     const float PLAY_AREA_BOTTOM    = -PLAY_AREA_H / 2.0f;
     const float PLAY_AREA_TOP       = -PLAY_AREA_BOTTOM;
 
+    class Fade
+    {
+    public:
+        explicit Fade(const Color &color)
+            : m_color(color)
+            , m_fade(0.0f)
+            , m_deltaFade(0.0f)
+            , m_maxFade(0.5f)
+        { }
+
+        void Activate(float delta)
+        { m_deltaFade = delta; }
+
+        void Reset()
+        {
+            m_deltaFade = 0.0f;
+            m_fade = 0.0f;
+        }
+
+        void Update(const float deltaTime)
+        {
+            m_fade += m_deltaFade * deltaTime;
+            m_fade = Clamp(m_fade, 0.0f, m_maxFade);
+        }
+
+        void Render(Renderer *renderer)
+        {
+            if (m_fade < 0.01f) return;
+            Color c = m_color;
+            c.a = m_fade;
+            renderer->SetColor(c);
+            renderer->DrawFilledRectangle(PLAY_AREA_LEFT, PLAY_AREA_BOTTOM,
+                                          PLAY_AREA_RIGHT, PLAY_AREA_TOP);
+        }
+    private:
+        Color m_color;
+        float m_fade;
+        float m_deltaFade;
+        float m_maxFade;
+    };
+
     class BacteroidsState : public GameState
     {
     public:
         BacteroidsState()
             : m_random()
+            , m_fade(Color(0.8f, 0.05f, 0.05f))
+            , m_pauseFade(Color(0.02f, 0.05f, 0.025f))
             , m_playerShader(InvalidHandle)
             , m_bacterShader(InvalidHandle)
             , m_fontShader(InvalidHandle)
@@ -118,17 +161,27 @@ namespace bact
         void TogglePause()
         {
             if (m_time.IsPaused())
+            {
                 m_time.Resume();
+                m_pauseFade.Reset();
+            }
             else
+            {
                 m_time.Pause();
+                m_pauseFade.Activate(1.0f);
+            }
         }
 
         void OnKeyPress(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods) override
         {
             if (key == Keyboard::Key::Escape)
                 QuitState();
-//            if (key == Key::P)
-//                TogglePause();
+            if (key == Keyboard::Key::P)
+                TogglePause();
+            if (key == Keyboard::Key::K)
+                m_fade.Activate(1.0f);
+            if (key == Keyboard::Key::L)
+                m_fade.Reset();
         }
 
         void OnKeyDown(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods) override
@@ -268,6 +321,12 @@ namespace bact
             m_player.SetPosition(pl_pos);
         }
 
+        void RealtimeUpdate(const Time_t deltaMicroseconds) override
+        {
+            const float deltaTime = float(deltaMicroseconds) / 1e6f;
+            m_pauseFade.Update(deltaTime);
+        }
+
         void Update(const GameTime &gameTime) override
         {
             static float spawn_rate = 0.1f;
@@ -327,6 +386,8 @@ namespace bact
                 }
                 i++;
             }
+
+            m_fade.Update(gameTime.GetDeltaSeconds());
         }
 
         void SetViewport(Viewport &vp)
@@ -375,6 +436,8 @@ namespace bact
                 m_projectiles[i]->Render(&renderer, m_uniforms);
             }
 
+            m_fade.Render(&renderer);
+            m_pauseFade.Render(&renderer);
 
             SetViewport(m_screenVp);
             const float w = m_screenVp.w;
@@ -419,6 +482,9 @@ namespace bact
         Player m_player;
         BacterArray m_bacters;
         ProjectileArray m_projectiles;
+
+        Fade m_fade;
+        Fade m_pauseFade;
 
         GameObject **m_objects;
 
