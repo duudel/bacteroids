@@ -118,4 +118,14 @@ namespace bact
 //            renderer->DrawText(m_position.x, m_position.y, velStr);
     }
 
+    void Player::DoCollision2(GameObject* obj, const vec2f& objToMe, float dist)
+    {
+        if (obj->GetType() == Bacter::TYPE)
+        {
+            vec2f v = objToMe.SafeNormalized() * dist/8.0f;
+            m_velocity += v;
+            m_position += v / 2.0f;
+        }
+    }
+
 } // bact

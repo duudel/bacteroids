@@ -118,18 +118,15 @@ namespace bact
             }
         }
 
-        void DoCollision2(Bacter *b, const vec2f &bToMe, float dist)
-        {
-            vec2f v = bToMe.SafeNormalized() * dist/8.0f;
-            m_velocity += v;
-            m_position += v / 2.0f;
-        }
-
         void DoCollision2(GameObject *obj, const vec2f &objToMe, float dist) override
         {
-            if (obj->GetType() == Bacter::TYPE)
+            if (obj->GetType() == Bacter::TYPE || obj->GetType() == Player::TYPE)
             {
-                DoCollision2((Bacter*)obj, objToMe, dist);
+                vec2f v = objToMe.SafeNormalized() * dist/8.0f;
+                m_velocity += v;
+                m_position += v / 2.0f;
+                float r = m_radius + obj->GetRadius();
+                m_sizeMod = Max(m_sizeMod, 1.0f + dist / r);
             }
         }
 
