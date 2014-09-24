@@ -50,9 +50,6 @@
 			<Add option="-Wfloat-equal" />
 			<Add option="-Winline" />
 			<Add option="-Wunreachable-code" />
-			<Add option="-Weffc++" />
-			<Add option="-pedantic" />
-			<Add option="-Wextra" />
 			<Add option="-Wall" />
 			<Add option="-std=c++11" />
 			<Add option="-msse2" />
