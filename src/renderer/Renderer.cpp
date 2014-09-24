@@ -237,8 +237,8 @@ namespace rob
     static const size_t CIRCLE_SEGMENTS = 48;
     static const float SEG_RADIUS_SCALE = 1.0f;
 
-    static ColorVertex* g_circleCache[16] = { 0 };
-    static ColorVertex g_circleCacheData[16 * 64] = { 0 };
+//    static ColorVertex* g_circleCache[16] = { 0 };
+//    static ColorVertex g_circleCacheData[16 * 64] = { 0 };
 
     void Renderer::DrawCirlce(float x, float y, float radius)
     {
