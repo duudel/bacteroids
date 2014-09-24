@@ -366,7 +366,7 @@ namespace bact
         {
             static float spawn_rate = 0.1f;
             static float num_spawn = 0.0f;
-            spawn_rate = std::log(1.0f + gameTime.GetTotalSeconds() * 0.1f) * 0.5f;
+            spawn_rate = Log(3.0f + gameTime.GetTotalSeconds() * 0.1f) * 0.5f;
             num_spawn += spawn_rate * gameTime.GetDeltaSeconds();
             while (num_spawn >= 1.0f)
             {
@@ -457,6 +457,7 @@ namespace bact
                 obj->Render(&renderer, m_uniforms);
             }
 
+            renderer.BindColorShader();
             m_fade.Render(&renderer);
             m_pauseFade.Render(&renderer);
 
