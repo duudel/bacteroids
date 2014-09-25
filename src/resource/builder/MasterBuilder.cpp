@@ -10,7 +10,8 @@
 namespace rob
 {
 
-    DfFontBuilder   g_dfFontBuilder;
+    // Not used at the moment
+//    DfFontBuilder   g_dfFontBuilder;
     TextureBuilder  g_textureBuilder;
     ResourceCopier  g_resourceCopier;
 

@@ -24,7 +24,7 @@ namespace rob
 
     bool FontCache::Load(const char * const filename, Font &font)
     {
-        std::ifstream in(filename, std::ios_base::binary);
+        std::ifstream in(filename, std::ios::binary);
         if (!in.is_open())
         {
             log::Error("Could not open font file ", filename);
@@ -42,9 +42,11 @@ namespace rob
 
     void ChangePageTextureExtension(char (&buffer)[64])
     {
-        size_t pos = 64 - 1;
-        while (pos && buffer[pos] != '.')
-            pos--;
+        size_t pos = 0;
+        for (size_t i = 0; i < 64 && buffer[i]; i++)
+        {
+            if (buffer[i] == '.') pos = i;
+        }
         buffer[++pos] = 't';
         buffer[++pos] = 'e';
         buffer[++pos] = 'x';
@@ -136,10 +138,12 @@ namespace rob
                         size_t len = ReadString(in, pageName);
                         if (!pageNameLen) pageNameLen = len;
 
+                        log::Info("FontCache: page: ", pageName, ", id: ", ResourceID(+pageName));
                         ChangePageTextureExtension(pageName);
                         // NOTE: To prevent from using the char[64] version, decay to char* by using unary +
                         const ResourceID texture(+pageName);
                         font.AddTexture(i, cache->GetTexture(texture));
+                        log::Info("FontCache: page: ", pageName, ", id: ", texture);
                     }
                 }
                 break;

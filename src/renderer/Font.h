@@ -42,7 +42,6 @@ namespace rob
         uint16_t GetLineSpacing() const;
 
         void AddGlyph(uint32_t index, const Glyph &glyph);
-//        void AddGlyphMapping(uint32_t character, uint32_t index);
         const Glyph& GetGlyph(uint32_t character) const;
 
         const Glyph& GetGlyphByIndex(size_t index) const;
@@ -51,9 +50,6 @@ namespace rob
         void AddTexture(size_t page, TextureHandle texture);
         TextureHandle GetTexture(size_t page) const;
         size_t GetTextureCount() const;
-
-//        void AddKerning(uint32_t c1, uint32_t c2, int16_t kerning);
-//        int8_t GetKerning(uint32_t c1, uint32_t c2);
 
     private:
         uint16_t m_base;
@@ -65,9 +61,6 @@ namespace rob
         Glyph m_glyph[MAX_GLYPHS];
         uint32_t m_glyphMapping[MAX_GLYPHS];
         size_t m_glyphCount;
-
-//        static const size_t MAX_KERNING_GLYPHS = 256;
-//        int8_t m_kerning[MAX_KERNING_GLYPHS][MAX_KERNING_GLYPHS];
 
         static const size_t MAX_TEXTURE_PAGES = 4;
         TextureHandle m_textures[MAX_TEXTURE_PAGES];

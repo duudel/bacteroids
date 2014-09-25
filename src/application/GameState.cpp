@@ -1,7 +1,9 @@
 
 #include "GameState.h"
 #include "../renderer/Renderer.h"
+
 #include "../math/Functions.h"
+#include "../math/Projection.h"
 
 #include "../String.h"
 
@@ -66,17 +68,26 @@ namespace rob
             m_frames = 0;
         }
 
+        m_renderer->SetView(m_defaultView);
+
         char buf[30];
         StringPrintF(buf, "FPS: %i", m_fps);
 
-        int w, h;
-        m_renderer->GetScreenSize(&w, &h);
+        const int w = m_defaultView.m_viewport.w;
+//        const int h = m_defaultView.m_viewport.h;
         const float tw = m_renderer->GetTextWidth(buf);
         const float x = float(w) - Max(tw, 120.0f);
 
         m_renderer->BindFontShader();
         m_renderer->SetColor(Color::White);
         m_renderer->DrawText(x, 0.0f, buf);
+    }
+
+    void GameState::Resize(int w, int h)
+    {
+        m_defaultView.SetViewport(0, 0, w, h);
+        m_defaultView.m_projection = Projection_Orthogonal_lh(0.0f, float(w), float(h), 0.0f, -1.0f, 1.0f);
+        OnResize(w, h);
     }
 
 } // rob

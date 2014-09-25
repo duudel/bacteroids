@@ -6,12 +6,6 @@
 namespace rob
 {
 
-//    size_t CharToIndex(uint32_t character)
-//    {
-//        static const size_t firstPrintable = 32;
-//        return character - firstPrintable;
-//    }
-
     Font::Font()
         : m_base(0)
         , m_height(0)
@@ -22,9 +16,6 @@ namespace rob
     {
         for (size_t i = 0; i < MAX_GLYPHS; i++)
             m_glyphMapping[i] = 0;
-//        for (size_t i = 0; i < MAX_KERNING_GLYPHS; i++)
-//            for (size_t j = 0; j < MAX_KERNING_GLYPHS; j++)
-//                m_kerning[i][j] = 0;
     }
 
     bool Font::IsReady() const
@@ -56,7 +47,7 @@ namespace rob
 
     void Font::AddGlyph(uint32_t character, const Glyph &glyph)
     {
-        const size_t index = m_glyphCount++; //CharToIndex(character);
+        const size_t index = m_glyphCount++;
         ROB_ASSERT(index < MAX_GLYPHS);
         m_glyphMapping[index] = character;
         m_glyph[character] = glyph;
@@ -64,9 +55,6 @@ namespace rob
 
     const Glyph& Font::GetGlyph(uint32_t character) const
     {
-//        const size_t index = CharToIndex(character);
-//        ROB_ASSERT(index < MAX_GLYPHS);
-//        return m_glyph[index];
         ROB_ASSERT(character < MAX_GLYPHS);
         return m_glyph[character];
     }
@@ -96,30 +84,5 @@ namespace rob
 
     size_t Font::GetTextureCount() const
     { return m_textureCount; }
-
-//    static int8_t g_kerningMap[256][256];
-
-//    void Font::AddKerning(uint32_t c1, uint32_t c2, int16_t kerning)
-//    {
-//        const size_t i1 = CharToIndex(c1);
-//        const size_t i2 = CharToIndex(c2);
-//        ROB_ASSERT(i1 < MAX_KERNING_GLYPHS); ROB_ASSERT(i2 < MAX_KERNING_GLYPHS);
-//        if (i1 > MAX_KERNING_GLYPHS || i2 > MAX_KERNING_GLYPHS)
-//            log::Info("!!!Kerning: ", kerning);
-//            return;
-//        log::Info("Kerning: ", kerning);
-//        m_kerning[i1][i2] = kerning;
-//        g_kerningMap[i1][i2] = kerning;
-//    }
-
-//    int8_t Font::GetKerning(uint32_t c1, uint32_t c2)
-//    {
-//        const size_t i1 = CharToIndex(c1);
-//        const size_t i2 = CharToIndex(c2);
-////        if (i1 > MAX_KERNING_GLYPHS || i2 > MAX_KERNING_GLYPHS) return 0;
-////        ROB_ASSERT(i1 < MAX_KERNING_GLYPHS); ROB_ASSERT(i2 < MAX_KERNING_GLYPHS);
-////        return m_kerning[i1][i2];
-//        return g_kerningMap[i1][i2];
-//    }
 
 } // rob

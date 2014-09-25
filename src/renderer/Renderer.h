@@ -8,6 +8,8 @@
 #include "Font.h"
 
 #include "../math/Types.h"
+#include "../math/Matrix4.h"
+
 #include "../memory/LinearAllocator.h"
 
 namespace rob
@@ -25,6 +27,23 @@ namespace rob
         UniformHandle texture0;
     };
 
+    struct Viewport
+    {
+        int x, y, w, h;
+    };
+
+    struct View
+    {
+        void SetViewport(int x, int y, int w, int h)
+        {
+            m_viewport.x = x; m_viewport.y = y;
+            m_viewport.w = w; m_viewport.h = h;
+        }
+
+        Viewport m_viewport;
+        mat4f m_projection;
+    };
+
     struct FontVertex;
 
     class Renderer
@@ -40,7 +59,9 @@ namespace rob
         Graphics* GetGraphics();
         const GlobalUniforms& GetGlobals() const;
 
-        void GetScreenSize(int *screenW, int *screenH) const;
+        void SetView(const View &view);
+        View GetView() const;
+
         void SetProjection(const mat4f &projection);
         void SetTime(uint64_t timeMicroseconds);
 
@@ -84,6 +105,8 @@ namespace rob
         Graphics *m_graphics;
 
         GlobalUniforms m_globals;
+
+        View m_view;
 
         VertexBufferHandle      m_vertexBuffer;
         ShaderProgramHandle     m_colorProgram;

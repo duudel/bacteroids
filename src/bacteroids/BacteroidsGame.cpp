@@ -28,11 +28,6 @@ namespace bact
 
     using namespace rob;
 
-    struct Viewport
-    {
-        int x, y, w, h;
-    };
-
     const float PLAY_AREA_W         = 24.0f;
     const float PLAY_AREA_H         = PLAY_AREA_W * 0.75f;
     const float PLAY_AREA_LEFT      = -PLAY_AREA_W / 2.0f;
@@ -143,19 +138,17 @@ namespace bact
 
         void OnResize(int w, int h) override
         {
-            float x_scl = w / PLAY_AREA_W;
-            float y_scl = h / PLAY_AREA_H;
-            float scale = (x_scl < y_scl) ? x_scl : y_scl;
+            const float x_scl = w / PLAY_AREA_W;
+            const float y_scl = h / PLAY_AREA_H;
+            const float scale = (x_scl < y_scl) ? x_scl : y_scl;
 
-            m_playAreaVp.w = scale * PLAY_AREA_W;
-            m_playAreaVp.h = scale * PLAY_AREA_H;
-            m_playAreaVp.x = (w - m_playAreaVp.w) / 2;
-            m_playAreaVp.y = (h - m_playAreaVp.h) / 2;
-
-            m_screenVp.x = 0;
-            m_screenVp.y = 0;
-            m_screenVp.w = w;
-            m_screenVp.h = h;
+            const int vpW = scale * PLAY_AREA_W;
+            const int vpH = scale * PLAY_AREA_H;
+            m_playView.SetViewport((w - vpW) / 2, (h - vpH) / 2, vpW, vpH);
+            m_playView.m_projection = Projection_Orthogonal_lh(PLAY_AREA_LEFT,
+                                                               PLAY_AREA_RIGHT,
+                                                               PLAY_AREA_BOTTOM,
+                                                               PLAY_AREA_TOP, -1.0f, 1.0f);
         }
 
         void TogglePause()
@@ -407,20 +400,16 @@ namespace bact
             m_fade.Update(gameTime.GetDeltaSeconds());
         }
 
-        void SetViewport(Viewport &vp)
-        {
-            GetRenderer().GetGraphics()->SetViewport(vp.x, vp.y, vp.w, vp.h);
-        }
+//        void SetViewport(Viewport &vp)
+//        {
+//            GetRenderer().GetGraphics()->SetViewport(vp.x, vp.y, vp.w, vp.h);
+//        }
 
         void Render() override
         {
             Renderer &renderer = GetRenderer();
 
-            SetViewport(m_playAreaVp);
-            renderer.SetProjection(Projection_Orthogonal_lh(PLAY_AREA_LEFT,
-                                                            PLAY_AREA_RIGHT,
-                                                            PLAY_AREA_BOTTOM,
-                                                            PLAY_AREA_TOP, -1, 1));
+            renderer.SetView(m_playView);
 
             renderer.BindColorShader();
             renderer.SetColor(Color(0.05f, 0.13f, 0.15f));
@@ -465,11 +454,7 @@ namespace bact
             m_fade.Render(&renderer);
             m_pauseFade.Render(&renderer);
 
-            SetViewport(m_screenVp);
-            const float w = m_screenVp.w;
-            const float h = m_screenVp.h;
-            renderer.SetProjection(Projection_Orthogonal_lh(0, w, h, 0.0f, -1, 1));
-
+            renderer.SetView(GetDefaultView());
             char buf[64];
             StringPrintF(buf, "Score: %i", m_score);
 
@@ -513,8 +498,7 @@ namespace bact
         Fade m_fade;
         Fade m_pauseFade;
 
-        Viewport m_playAreaVp;
-        Viewport m_screenVp;
+        View m_playView;
 
         TextInput m_textInput;
     };

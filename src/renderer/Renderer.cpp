@@ -142,16 +142,21 @@ namespace rob
     const GlobalUniforms& Renderer::GetGlobals() const
     { return m_globals; }
 
-    void Renderer::GetScreenSize(int *screenW, int *screenH) const
-    {
-        int x, y, w, h;
-        m_graphics->GetViewport(&x, &y, &w, &h);
-        *screenW = w;
-        *screenH = h;
-    }
-
     void Renderer::SetProjection(const mat4f &projection)
     { m_graphics->SetUniform(m_globals.projection, projection); }
+
+    void Renderer::SetView(const View &view)
+    {
+        m_view = view;
+        m_graphics->SetViewport(m_view.m_viewport.x,
+                                m_view.m_viewport.y,
+                                m_view.m_viewport.w,
+                                m_view.m_viewport.h);
+        SetProjection(m_view.m_projection);
+    }
+
+    View Renderer::GetView() const
+    { return m_view; }
 
     /// Set shader time in micro seconds. The time passed to shaders will be
     /// a fixed point number scaled to units of 1ms(=0.001s). The

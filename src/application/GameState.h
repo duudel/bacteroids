@@ -6,6 +6,8 @@
 #include "../time/MicroTicker.h"
 #include "../time/VirtualTime.h"
 
+#include "../renderer/Renderer.h"
+
 #include "../input/Keyboard.h"
 #include "../input/Mouse.h"
 #include "../input/TextInput.h"
@@ -19,7 +21,7 @@ namespace rob
     class LinearAllocator;
     class AudioSystem;
     class MasterCache;
-    class Renderer;
+//    class Renderer;
 
     class GameState
     {
@@ -41,10 +43,14 @@ namespace rob
         void SetRenderer(Renderer *renderer) { m_renderer = renderer; }
         Renderer& GetRenderer() { return *m_renderer; }
 
+        const View& GetDefaultView() const { return m_defaultView; }
+
         /// Gets called from Game. Handles fixed step update and calls virtual method Update.
         void DoUpdate();
         /// Gets called from Game. Calls virtual method Render.
         void DoRender();
+
+        void Resize(int w, int h);
 
 
         virtual bool Initialize() { return true; }
@@ -85,6 +91,8 @@ namespace rob
         Renderer *          m_renderer;
         bool m_quit;
         int m_nextState;
+
+        View m_defaultView;
 
         int m_fps;
         int m_frames;

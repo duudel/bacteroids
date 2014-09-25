@@ -116,10 +116,7 @@ namespace rob
     { m_state->OnTextInput(str); }
 
     void Game::OnResize(int w, int h)
-    {
-        m_graphics->SetViewport(0, 0, w, h);
-        m_state->OnResize(w, h);
-    }
+    { m_state->Resize(w, h); }
 
     void Memory(size_t totalBytes, size_t &MB, size_t &kB, size_t &B)
     {
