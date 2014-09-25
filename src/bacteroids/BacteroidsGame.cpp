@@ -524,12 +524,6 @@ namespace bact
     {
         if (key == Keyboard::Key::LAlt)
             m_window->ToggleGrabMouse();
-        if (key == Keyboard::Key::Num0)
-        {
-            Texture *tex = m_renderer->GetFontTexture();
-            log::Debug("Font texture: ", tex->GetObject(), " ", tex->GetWidth(), " ", tex->GetHeight());
-        }
-
         Game::OnKeyPress(key, scancode, mods);
     }
 

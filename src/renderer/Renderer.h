@@ -89,9 +89,6 @@ namespace rob
         float GetFontHeight() const;
         float GetFontLineSpacing() const;
 
-        // TODO: remove GetFontTexture, it's for debugging purposes only
-        Texture *GetFontTexture() const;
-
     private:
         void AddFontVertex(FontVertex *&vertex, const float x, const float y, const float u, const float v);
         void AddFontQuad(FontVertex *&vertex, const uint32_t c, const Glyph &glyph,

@@ -18,14 +18,13 @@ namespace rob
     {
         m_object = ::glCreateProgram();
 
-        // TODO: uncomment this after debugging "black texture" bug.
-//        for (size_t i = 0; i < MAX_UNIFORMS; i++)
-//        {
-//            UniformInfo &info = m_uniforms[i];
-//            info.handle = InvalidHandle;
-//            info.location = -1;
-//            info.generation = -1;
-//        }
+        for (size_t i = 0; i < MAX_UNIFORMS; i++)
+        {
+            UniformInfo &info = m_uniforms[i];
+            info.handle = InvalidHandle;
+            info.location = -1;
+            info.generation = -1;
+        }
     }
 
     ShaderProgram::~ShaderProgram()
