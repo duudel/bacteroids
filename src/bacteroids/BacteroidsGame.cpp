@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "ObjectArray.h"
 #include "Uniforms.h"
+#include "SoundPlayer.h"
 
 #include "../application/Window.h"
 #include "../application/GameState.h"
@@ -116,15 +117,13 @@ namespace bact
             renderer.GetGraphics()->AddProgramUniform(m_playerShader, m_uniforms.m_velocity);
             renderer.GetGraphics()->AddProgramUniform(m_bacterShader, m_uniforms.m_anim);
 
+            m_soundPlayer.Init(GetAudio(), GetCache());
+
             m_player.SetPosition(0.0f, 0.0f);
             m_objects.Init(GetAllocator());
             m_objects.AddObject(&m_player);
 
             m_score = 0;
-
-            m_player.shootSound = GetAudio().LoadSound("data/Laser_Shoot6.wav");
-//            m_player.shootSound = GetAudio().LoadSound("data/Hit_Hurt4.wav");
-//            m_player.shootSound = GetAudio().LoadSound("data/Explosion5.wav");
 
             return true;
         }
@@ -134,8 +133,6 @@ namespace bact
             GetRenderer().GetGraphics()->DestroyShaderProgram(m_playerShader);
             GetRenderer().GetGraphics()->DestroyShaderProgram(m_bacterShader);
             GetRenderer().GetGraphics()->DestroyShaderProgram(m_fontShader);
-
-            GetAudio().UnloadSound(m_player.shootSound);
         }
 
         void OnResize(int w, int h) override
@@ -343,7 +340,7 @@ namespace bact
                                buttons & SDL_BUTTON_RMASK,
                                buttons & SDL_BUTTON_MMASK);
 
-            m_player.Update(gameTime, m_input, m_objects, GetAudio());
+            m_player.Update(gameTime, m_input, m_objects, m_soundPlayer);
 
             vec2f pl_pos = m_player.GetPosition();
             const float pl_radius = m_player.GetRadius();
@@ -396,7 +393,7 @@ namespace bact
 //            for (size_t i = 0; i < m_bacters.size; i++)
 //            {
 //                m_bacters[i]->Update(gameTime);
-//                Bacter::TrySplit(m_bacters[i], m_bacters, m_random);
+//                Bacter::TrySplit(m_bacters[i], m_bacters, m_random); // TODO: spontaneous bacter splitting needed!
 //            }
 
             m_fade.Update(gameTime.GetDeltaSeconds());
@@ -498,6 +495,7 @@ namespace bact
         ShaderProgramHandle m_bacterShader;
         ShaderProgramHandle m_fontShader;
         BacteroidsUniforms m_uniforms;
+        SoundPlayer m_soundPlayer;
 
         Input m_input;
 

@@ -7,15 +7,13 @@
 #include "../input/Keyboard.h"
 #include "../input/Mouse.h"
 
-//TODO: implement some kind of bacteroids specific sound player
-#include "../audio/AudioSystem.h"
-
 namespace bact
 {
 
     using namespace rob;
 
     class ObjectArray;
+    class SoundPlayer;
 
     class Input
     {
@@ -74,14 +72,13 @@ namespace bact
         static void ClampVectorLength(vec2f &v, const float len);
         static vec2f ClampedVectorLength(const vec2f &v, const float len);
 
-        void Update(const GameTime &gameTime, const Input &input, ObjectArray &projectiles, AudioSystem &audio);
+        void Update(const GameTime &gameTime, const Input &input, ObjectArray &projectiles, SoundPlayer &sounds);
 
         void Cooldown(const GameTime &gameTime);
-        void Shoot(const GameTime &gameTime, ObjectArray &projectiles, AudioSystem &audio);
+        void Shoot(const GameTime &gameTime, ObjectArray &projectiles, SoundPlayer &sounds);
 
         void Render(Renderer *renderer, const BacteroidsUniforms &uniforms) override;
 
-        SoundHandle shootSound;
     private:
         vec2f m_direction;
         float m_cooldown;
