@@ -268,6 +268,7 @@ namespace bact
                 vec2f p = me->GetPosition();
                 me->AddVelocity(v);
                 me->SetPosition(p + (v / 2.0f));
+                me->TakeHit();
             }
         }
 
@@ -330,6 +331,8 @@ namespace bact
 
         void UpdatePlayer(const GameTime &gameTime)
         {
+            if (!m_player.IsAlive()) return;
+
             m_input.UpdateMouse();
             m_player.Update(gameTime, m_input, m_objects, m_soundPlayer);
 
@@ -446,7 +449,15 @@ namespace bact
             renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
             renderer.BindFontShader();
             renderer.DrawText(0, 0, buf);
-//            renderer.DrawText(0, 0, "Hello! This is bacteroids");
+
+            const float hx = 10.0f;
+            const float hy = 10.0f + renderer.GetFontHeight();
+
+            renderer.BindColorShader();
+            renderer.SetColor(Color(0.5f, 0.5f, 0.5f));
+            renderer.DrawFilledRectangle(hx, hy, hx + 100.0f, hy + 10.0f);
+            renderer.SetColor(Color(0.85f, 0.05f, 0.05f));
+            renderer.DrawFilledRectangle(hx, hy, hx + m_player.GetHealth(), hy + 10.0f);
 
 //            const float cy = 40.0f;
 //            renderer.DrawText(0.0f, cy, m_textInput.GetText());

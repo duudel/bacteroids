@@ -48,6 +48,9 @@ namespace bact
     public:
         Player();
 
+        void TakeHit();
+        float GetHealth() const;
+
         void Update(const GameTime &gameTime, const Input &input, ObjectArray &projectiles, SoundPlayer &sounds);
 
         void Cooldown(const GameTime &gameTime);

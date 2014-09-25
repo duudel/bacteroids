@@ -15,10 +15,21 @@ namespace bact
     Player::Player()
         : GameObject(TYPE)
         , m_direction(0.0f, 1.0f)
+        , m_health(100.0f)
         , m_cooldown(0.0f)
     {
         SetRadius(0.8f);
     }
+
+    void Player::TakeHit()
+    {
+        m_health -= 0.1f;
+        if (m_health <= 0.0f)
+            m_alive = false;
+    }
+
+    float Player::GetHealth() const
+    { return m_health; }
 
     void Player::Update(const GameTime &gameTime, const Input &input, ObjectArray &projectiles, SoundPlayer &sounds)
     {
