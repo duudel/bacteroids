@@ -1,6 +1,7 @@
 
 #include "Player.h"
 #include "ObjectArray.h"
+#include "SoundPlayer.h"
 
 #include "../renderer/Renderer.h"
 #include "../graphics/Graphics.h"
@@ -38,7 +39,7 @@ namespace bact
         return cv;
     }
 
-    void Player::Update(const GameTime &gameTime, const Input &input, ObjectArray &projectiles, AudioSystem &audio)
+    void Player::Update(const GameTime &gameTime, const Input &input, ObjectArray &projectiles, SoundPlayer &sounds)
     {
         vec2f vel= vec2f::Zero;
         if (input.KeyDown(Keyboard::Scancode::W))
@@ -68,7 +69,7 @@ namespace bact
         Cooldown(gameTime);
         if (input.ButtonDown(MouseButton::Left))
         {
-            Shoot(gameTime, projectiles, audio);
+            Shoot(gameTime, projectiles, sounds);
         }
     }
 
@@ -82,7 +83,7 @@ namespace bact
         }
     }
 
-    void Player::Shoot(const GameTime &gameTime, ObjectArray &projectiles, AudioSystem &audio)
+    void Player::Shoot(const GameTime &gameTime, ObjectArray &projectiles, SoundPlayer &sounds)
     {
         if (m_cooldown <= 0.0f)
         {
@@ -96,7 +97,7 @@ namespace bact
             p->SetPosition(m_position + dir * m_radius);
             p->SetVelocity(dir.x * 10.0f, dir.y * 10.0f);
 
-            audio.PlaySound(shootSound, 0.25f);
+            sounds.PlayShootSound();
         }
     }
 
