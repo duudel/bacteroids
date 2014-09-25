@@ -12,15 +12,20 @@ const ShaderDef g_playerShader = {
         uniform mat4 u_projection;
         uniform vec4 u_position;
         uniform vec4 u_velocity;
-        uniform float u_time;
+        uniform int u_time_ms;
         attribute vec2 a_position;
         attribute vec4 a_color;
         varying vec4 v_color;
         void main()
         {
-            float scale = sin(u_time * 16.0) * 0.5;
-            vec2 pos = a_position; // - u_position.xy;
-//            float radius = length(pos);
+            const int T_resolution = 1000;
+            const int WrapPeriod = int(T_resolution*2*3.14159);
+
+            int time = u_time_ms;
+            float t = mod(time * 16.0, WrapPeriod) / float(T_resolution);
+
+            float scale = sin(t) * 0.5;
+            vec2 pos = a_position;
             vec2 vel = u_velocity.xy;
             vec2 offset = vel * dot(pos, vel * scale) * 0.05;
             pos += u_position.xy + offset;
@@ -46,7 +51,7 @@ const ShaderDef g_bacterShader = {
     GLSL(
         uniform mat4 u_projection;
         uniform vec4 u_position;
-        uniform float u_time;
+        uniform int u_time_ms;
         uniform float u_anim;
         attribute vec2 a_position;
         attribute vec4 a_color;
@@ -54,15 +59,26 @@ const ShaderDef g_bacterShader = {
         varying float v_dist;
         void main()
         {
-            vec2 pos = a_position; // - u_position.xy;
+            const int T_resolution = 1000;
+            const int WrapPeriod = int(T_resolution*2*3.14159);
+
+            int time = u_time_ms;
+
+            vec2 pos = a_position;
             float radius = length(pos);
             float dist = 0.0;
             if (radius > 0.01)
             {
-                float t = u_time * 10;
+                float t1 = mod(time * 12, WrapPeriod) / float(T_resolution);
+                float t2 = mod(time * 10, WrapPeriod) / float(T_resolution);
+
                 float a = atan(pos.x, pos.y);
-                float w = sin(u_anim + t*1.2 + a*11.0) * 2.3;
-                float u = sin(u_anim - t*1.0 + a*5.0) * 3.0;
+                float phase1 = u_anim + a*11.0;
+                float phase2 = u_anim + a*5.0;
+
+                float w = sin(phase1 + t1) * 2.3;
+                float u = sin(phase2 - t2) * 3.0;
+
                 float r = (1.0 + (w + u)/65.0) * radius;
                 pos = normalize(pos) * r;
                 dist = 1.0;

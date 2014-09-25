@@ -21,7 +21,7 @@ namespace rob
     {
         UniformHandle projection;
         UniformHandle position;
-        UniformHandle time;
+        UniformHandle time_ms;
         UniformHandle texture0;
     };
 
@@ -42,7 +42,7 @@ namespace rob
 
         void GetScreenSize(int *screenW, int *screenH) const;
         void SetProjection(const mat4f &projection);
-        void SetTime(float time);
+        void SetTime(uint64_t timeMicroseconds);
 
         void BindShader(ShaderProgramHandle shader);
         void BindColorShader();

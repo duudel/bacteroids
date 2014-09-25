@@ -7,6 +7,7 @@
 #include "../Types.h"
 
 #include "../math/Types.h"
+#include "../math/Vector2.h"
 #include "../math/Vector4.h"
 #include "../math/Matrix4.h"
 
@@ -19,8 +20,10 @@ namespace rob
 
         static UploadFunc GetUploadFuncFromType(UniformType type);
 
-        void SetValue(int value);
+        void SetValue(int32_t value);
+//        void SetValue(uint32_t value);
         void SetValue(float value);
+        void SetValue(const vec2f &value);
         void SetValue(const vec4f &value);
         void SetValue(const mat4f &value);
 
@@ -29,8 +32,9 @@ namespace rob
         UniformType m_type;
         union
         {
-            int m_int;
+            int32_t m_int;
             float m_float;
+            float m_vec2[2];
             float m_vec4[4];
             float m_mat4[16];
         } m_value;

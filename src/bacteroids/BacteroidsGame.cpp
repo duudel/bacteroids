@@ -126,6 +126,9 @@ namespace bact
 //            m_player.shootSound = GetAudio().LoadSound("data/Hit_Hurt4.wav");
 //            m_player.shootSound = GetAudio().LoadSound("data/Explosion5.wav");
 
+            for (size_t i = 0; i < 6; i++)
+                SpawnBacter(0.5f);
+
             return true;
         }
 
@@ -196,9 +199,9 @@ namespace bact
         }
 
 
-        void SpawnBacter()
+        void SpawnBacter(float distMod = 1.0f)
         {
-            const float D = vec2f(PLAY_AREA_RIGHT, PLAY_AREA_TOP).Length() + 1.5f;
+            const float D = vec2f(PLAY_AREA_RIGHT, PLAY_AREA_TOP).Length() * distMod + 1.5f;
 
             if (!m_objects.CanObtainBacter()) return;
 
@@ -365,8 +368,8 @@ namespace bact
         void Update(const GameTime &gameTime) override
         {
             static float spawn_rate = 0.1f;
-            static float num_spawn = 0.0f;
-            spawn_rate = std::log(1.0f + gameTime.GetTotalSeconds() * 0.1f) * 0.5f;
+            static float num_spawn = 1.0f;
+            spawn_rate = std::log(10.0f + gameTime.GetTotalSeconds() * 0.1f) * 0.5f;
             num_spawn += spawn_rate * gameTime.GetDeltaSeconds();
             while (num_spawn >= 1.0f)
             {
@@ -420,7 +423,7 @@ namespace bact
             renderer.BindColorShader();
             renderer.SetColor(Color(0.05f, 0.13f, 0.15f));
             renderer.DrawFilledRectangle(PLAY_AREA_LEFT, PLAY_AREA_BOTTOM, PLAY_AREA_RIGHT, PLAY_AREA_TOP);
-            renderer.SetTime(m_time.GetTime());
+            renderer.SetTime(m_time.GetTimeMicros());
 
             for (size_t i = 0; i < m_objects.Size(); i++)
             {
