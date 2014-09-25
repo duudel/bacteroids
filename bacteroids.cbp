@@ -123,6 +123,7 @@
 		<Unit filename="src/graphics/VertexBuffer.h" />
 		<Unit filename="src/input/Keyboard.cpp" />
 		<Unit filename="src/input/Keyboard.h" />
+		<Unit filename="src/input/Mouse.cpp" />
 		<Unit filename="src/input/Mouse.h" />
 		<Unit filename="src/input/TextInput.cpp" />
 		<Unit filename="src/input/TextInput.h" />

@@ -330,14 +330,7 @@ namespace bact
 
         void UpdatePlayer(const GameTime &gameTime)
         {
-            int mx, my, dx, dy;
-            const uint32_t buttons = ::SDL_GetMouseState(&mx, &my);
-            ::SDL_GetRelativeMouseState(&dx, &dy);
-            m_input.SetMouse(mx, my, dx, dy);
-            m_input.SetButtons(buttons & SDL_BUTTON_LMASK,
-                               buttons & SDL_BUTTON_RMASK,
-                               buttons & SDL_BUTTON_MMASK);
-
+            m_input.UpdateMouse();
             m_player.Update(gameTime, m_input, m_objects, m_soundPlayer);
 
             vec2f pl_pos = m_player.GetPosition();
@@ -396,11 +389,6 @@ namespace bact
 
             m_fade.Update(gameTime.GetDeltaSeconds());
         }
-
-//        void SetViewport(Viewport &vp)
-//        {
-//            GetRenderer().GetGraphics()->SetViewport(vp.x, vp.y, vp.w, vp.h);
-//        }
 
         void Render() override
         {

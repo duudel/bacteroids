@@ -19,47 +19,26 @@ namespace bact
     {
     public:
         void SetKey(Keyboard::Scancode key, bool down)
-        {
-            m_keys[static_cast<size_t>(key)] = down;
-        }
+        { m_keys[static_cast<size_t>(key)] = down; }
 
         bool KeyDown(Keyboard::Scancode key) const
-        {
-            return m_keys[static_cast<size_t>(key)];
-        }
+        { return m_keys[static_cast<size_t>(key)]; }
 
-        void SetButtons(bool left, bool right, bool mid)
-        {
-            m_buttons[static_cast<size_t>(MouseButton::Left)] = left;
-            m_buttons[static_cast<size_t>(MouseButton::Right)] = right;
-            m_buttons[static_cast<size_t>(MouseButton::Middle)] = mid;
-        }
+        void UpdateMouse()
+        { GetMouseState(m_mouse); }
 
         bool ButtonDown(MouseButton button) const
-        {
-            return m_buttons[static_cast<size_t>(button)];
-        }
+        { return m_mouse.ButtonDown(button); }
 
-        void SetMouse(float mx, float my, float dx, float dy)
-        {
-            m_mousePositionX = mx;
-            m_mousePositionY = my;
-            m_mouseDeltaX = dx;
-            m_mouseDeltaY = dy;
-        }
+        vec2f GetMousePosition() const
+        { return m_mouse.GetPosition(); }
 
-        float GetMouseX() const { return m_mousePositionX; }
-        float GetMouseY() const { return m_mousePositionY; }
-        float GetMouseDeltaX() const { return m_mouseDeltaX; }
-        float GetMouseDeltaY() const { return m_mouseDeltaY; }
+        vec2f GetMouseDelta() const
+        { return m_mouse.GetDeltaPosition(); }
 
     private:
         bool m_keys[static_cast<size_t>(Keyboard::Scancode::NUM_KEYS)];
-        bool m_buttons[static_cast<size_t>(MouseButton::NUM_BUTTONS)];
-        float m_mousePositionX;
-        float m_mousePositionY;
-        float m_mouseDeltaX;
-        float m_mouseDeltaY;
+        Mouse m_mouse;
     };
 
     class Player : public GameObject
@@ -68,9 +47,6 @@ namespace bact
         static const int TYPE = 1;
     public:
         Player();
-
-        static void ClampVectorLength(vec2f &v, const float len);
-        static vec2f ClampedVectorLength(const vec2f &v, const float len);
 
         void Update(const GameTime &gameTime, const Input &input, ObjectArray &projectiles, SoundPlayer &sounds);
 
@@ -81,6 +57,7 @@ namespace bact
 
     private:
         vec2f m_direction;
+        float m_health;
         float m_cooldown;
     };
 

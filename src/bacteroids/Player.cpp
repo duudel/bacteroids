@@ -20,25 +20,6 @@ namespace bact
         SetRadius(0.8f);
     }
 
-    //static
-    void Player::ClampVectorLength(vec2f &v, const float len)
-    {
-        const float l = v.Length();
-        if (l > len)
-        {
-            v /= l;
-            v *= len;
-        }
-    }
-
-    //static
-    vec2f Player::ClampedVectorLength(const vec2f &v, const float len)
-    {
-        vec2f cv(v);
-        ClampVectorLength(cv, len);
-        return cv;
-    }
-
     void Player::Update(const GameTime &gameTime, const Input &input, ObjectArray &projectiles, SoundPlayer &sounds)
     {
         vec2f vel= vec2f::Zero;
@@ -59,10 +40,7 @@ namespace bact
         ClampVectorLength(m_velocity, 2.0f);
         m_position += m_velocity * dt;
 
-        const float mdx = input.GetMouseDeltaX();
-        const float mdy = -input.GetMouseDeltaY();
-
-        const vec2f delta(mdx, mdy);
+        const vec2f delta = input.GetMouseDelta() * vec2f(1.0f, -1.0f);
         m_direction += delta * dt;
         ClampVectorLength(m_direction, 2.5f);
 

@@ -8,6 +8,25 @@
 namespace rob
 {
 
+    template <class V, class T>
+    inline void ClampVectorLength(V &v, const T len)
+    {
+        const float l = v.Length();
+        if (l > len)
+        {
+            v /= l;
+            v *= len;
+        }
+    }
+
+    template <class V, class T>
+    inline V ClampedVectorLength(const V &v, const T len)
+    {
+        V cv(v);
+        ClampVectorLength(cv, len);
+        return cv;
+    }
+
     template <class T>
     inline T Abs(T a)
     {

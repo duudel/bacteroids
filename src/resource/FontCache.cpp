@@ -138,12 +138,12 @@ namespace rob
                         size_t len = ReadString(in, pageName);
                         if (!pageNameLen) pageNameLen = len;
 
-                        log::Info("FontCache: page: ", pageName, ", id: ", ResourceID(+pageName));
+//                        log::Info("FontCache: page: ", pageName, ", id: ", ResourceID(+pageName));
                         ChangePageTextureExtension(pageName);
                         // NOTE: To prevent from using the char[64] version, decay to char* by using unary +
                         const ResourceID texture(+pageName);
                         font.AddTexture(i, cache->GetTexture(texture));
-                        log::Info("FontCache: page: ", pageName, ", id: ", texture);
+//                        log::Info("FontCache: page: ", pageName, ", id: ", texture);
                     }
                 }
                 break;

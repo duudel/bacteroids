@@ -2,6 +2,8 @@
 #ifndef H_ROB_MATH_VECTOR2_H
 #define H_ROB_MATH_VECTOR2_H
 
+#include "simd/Simd.h"
+
 namespace rob
 {
 
