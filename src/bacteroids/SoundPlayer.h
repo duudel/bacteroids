@@ -27,7 +27,7 @@ namespace bact
 
         void PlayShootSound()
         {
-            m_audio->PlaySound(m_shootSound);
+            m_audio->PlaySound(m_shootSound, 0.25f);
         }
 
     private:

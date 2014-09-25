@@ -279,6 +279,18 @@ namespace rob
         }
     }
 
+    void Graphics::SetUniform(UniformHandle u, const vec2f &value)
+    {
+        Uniform *uniform = GetUniform(u);
+        ROB_ASSERT(uniform->m_type == UniformType::Vec2);
+        uniform->SetValue(value);
+        if (m_bind.shaderProgram != InvalidHandle)
+        {
+            ShaderProgram *p = m_shaderPrograms.Get(m_bind.shaderProgram);
+            p->UpdateUniforms(this);
+        }
+    }
+
     void Graphics::SetUniform(UniformHandle u, const vec4f &value)
     {
         Uniform *uniform = GetUniform(u);

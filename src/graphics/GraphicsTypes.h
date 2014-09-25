@@ -27,7 +27,8 @@ namespace rob
 
     enum class UniformType
     {
-        Int, Float,
+        Int, //UInt,
+        Float, Vec2,
         Vec4, Mat4
     };
 

@@ -22,11 +22,16 @@ namespace rob
         SoundHandle LoadSound(const char * const filename);
         void UnloadSound(SoundHandle sound);
 
+        void SetMute(bool mute);
+        void ToggleMute();
+        bool IsMuted() const;
+
         void PlaySound(SoundHandle sound, float volume = 1.0f);
 
 
     private:
         Pool<Sound> m_sounds;
+        bool m_muted;
     };
 
 } // rob

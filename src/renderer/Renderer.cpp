@@ -82,7 +82,7 @@ namespace rob
 
         m_graphics->AddProgramUniform(p, m_globals.projection);
         m_graphics->AddProgramUniform(p, m_globals.position);
-        m_graphics->AddProgramUniform(p, m_globals.time);
+        m_graphics->AddProgramUniform(p, m_globals.time_ms);
         m_graphics->AddProgramUniform(p, m_globals.texture0);
         return p;
     }
@@ -103,10 +103,10 @@ namespace rob
     {
         m_globals.projection    = m_graphics->CreateGlobalUniform("u_projection", UniformType::Mat4);
         m_globals.position      = m_graphics->CreateGlobalUniform("u_position", UniformType::Vec4);
-        m_globals.time          = m_graphics->CreateGlobalUniform("u_time", UniformType::Float);
+        m_globals.time_ms      = m_graphics->CreateGlobalUniform("u_time_ms", UniformType::Int);
         m_globals.texture0      = m_graphics->CreateGlobalUniform("u_texture0", UniformType::Int);
         m_graphics->SetUniform(m_globals.projection, mat4f::Identity);
-        m_graphics->SetUniform(m_globals.time, 0.0f);
+        m_graphics->SetUniform(m_globals.time_ms, 0);
         m_graphics->SetUniform(m_globals.texture0, 0);
 
         m_colorProgram = CompileShaderProgram(g_colorVertexShader, g_colorFragmentShader);
@@ -132,7 +132,7 @@ namespace rob
             m_graphics->DestroyShaderProgram(m_fontProgram);
         m_graphics->DecRefUniform(m_globals.projection);
         m_graphics->DecRefUniform(m_globals.position);
-        m_graphics->DecRefUniform(m_globals.time);
+        m_graphics->DecRefUniform(m_globals.time_ms);
         m_graphics->DecRefUniform(m_globals.texture0);
     }
 
@@ -153,8 +153,22 @@ namespace rob
     void Renderer::SetProjection(const mat4f &projection)
     { m_graphics->SetUniform(m_globals.projection, projection); }
 
-    void Renderer::SetTime(float time)
-    { m_graphics->SetUniform(m_globals.time, time); }
+    /// Set shader time in micro seconds. The time passed to shaders will be
+    /// a fixed point number scaled to units of 1ms(=0.001s). The
+    /// time will wrap every 100 000s ~= 55h. This is unavoidable as the shader
+    ///  can only handle 32bit signed integers, and we don't want negative time
+    /// due to int wrapping. So we wrap it explicitly before that happens. This
+    /// means the time in shaders should never be multiplied by a factor greater
+    /// than 20 as it would cause the time to wrap near the explicit wrap limit
+    /// causing negative numbers. (NOTE: if the time is converted to float,
+    /// there is no problems with wrapping, but the precision is lost).
+    void Renderer::SetTime(uint64_t timeMicroseconds)
+    {
+        uint32_t wrapMax = 100000000u;
+        uint32_t utime_ms = timeMicroseconds / 1000;
+        int32_t time_ms = utime_ms % wrapMax;
+        m_graphics->SetUniform(m_globals.time_ms, time_ms);
+    }
 
 
     void Renderer::BindShader(ShaderProgramHandle shader)

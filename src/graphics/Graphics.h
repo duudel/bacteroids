@@ -75,6 +75,7 @@ namespace rob
 
         void SetUniform(UniformHandle u, int value);
         void SetUniform(UniformHandle u, float value);
+        void SetUniform(UniformHandle u, const vec2f &value);
         void SetUniform(UniformHandle u, const vec4f &value);
         void SetUniform(UniformHandle u, const mat4f &value);
 
