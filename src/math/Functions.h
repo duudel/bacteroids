@@ -39,6 +39,12 @@ namespace rob
     }
 
     template <class T>
+    inline T Log(T x)
+    {
+        return std::log(x);
+    }
+
+    template <class T>
     inline T Sin(T x)
     {
         return std::sin(x);
