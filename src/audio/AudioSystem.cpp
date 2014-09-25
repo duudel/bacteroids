@@ -17,6 +17,7 @@ namespace rob
 
     AudioSystem::AudioSystem(LinearAllocator &alloc)
         : m_sounds()
+        , m_muted(false)
     {
         if (::Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 1024) != 0)
         {
@@ -60,8 +61,18 @@ namespace rob
         m_sounds.Return(theSound);
     }
 
+    void AudioSystem::SetMute(bool mute)
+    { m_muted = mute; }
+
+    void AudioSystem::ToggleMute()
+    { SetMute(!IsMuted()); }
+
+    bool AudioSystem::IsMuted() const
+    { return m_muted; }
+
     void AudioSystem::PlaySound(SoundHandle sound, float volume)
     {
+        if (IsMuted()) return;
         if (sound == InvalidSound) return;
 
         Mix_Chunk *chunk = m_sounds.Get(sound)->chunk;

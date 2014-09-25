@@ -178,6 +178,8 @@ namespace bact
                 QuitState();
             if (key == Keyboard::Key::P)
                 TogglePause();
+            if (key == Keyboard::Key::M)
+                GetAudio().ToggleMute();
             if (key == Keyboard::Key::K)
                 m_fade.Activate(1.0f);
             if (key == Keyboard::Key::L)
