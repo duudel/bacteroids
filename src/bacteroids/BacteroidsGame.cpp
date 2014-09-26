@@ -5,6 +5,7 @@
 #include "ObjectArray.h"
 #include "Uniforms.h"
 #include "SoundPlayer.h"
+#include "FadeEffect.h"
 
 #include "../application/Window.h"
 #include "../application/GameState.h"
@@ -35,53 +36,6 @@ namespace bact
     const float PLAY_AREA_RIGHT     = -PLAY_AREA_LEFT;
     const float PLAY_AREA_BOTTOM    = -PLAY_AREA_H / 2.0f;
     const float PLAY_AREA_TOP       = -PLAY_AREA_BOTTOM;
-
-    class Fade
-    {
-    public:
-        explicit Fade(const Color &color)
-            : m_color(color)
-            , m_fade(0.0f)
-            , m_deltaFade(0.0f)
-            , m_fadeAcceleration(0.0f)
-            , m_maxFade(0.5f)
-        { }
-
-        void SetFadeAcceleration(float acc)
-        { m_fadeAcceleration = acc; }
-
-        void Activate(float delta)
-        { m_deltaFade = delta; }
-
-        void Reset()
-        {
-            m_deltaFade = 0.0f;
-            m_fade = 0.0f;
-        }
-
-        void Update(const float deltaTime)
-        {
-            m_deltaFade += m_fadeAcceleration * deltaTime;
-            m_fade += m_deltaFade * deltaTime;
-            m_fade = Clamp(m_fade, 0.0f, m_maxFade);
-        }
-
-        void Render(Renderer *renderer)
-        {
-            if (m_fade < 0.01f) return;
-            Color c = m_color;
-            c.a = m_fade;
-            renderer->SetColor(c);
-            renderer->DrawFilledRectangle(PLAY_AREA_LEFT, PLAY_AREA_BOTTOM,
-                                          PLAY_AREA_RIGHT, PLAY_AREA_TOP);
-        }
-    private:
-        Color m_color;
-        float m_fade;
-        float m_deltaFade;
-        float m_fadeAcceleration;
-        float m_maxFade;
-    };
 
     class BacteroidsState : public GameState
     {
