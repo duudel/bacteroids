@@ -167,8 +167,6 @@
 		<Unit filename="src/resource/SoundCache.h" />
 		<Unit filename="src/resource/TextureCache.cpp" />
 		<Unit filename="src/resource/TextureCache.h" />
-		<Unit filename="src/resource/builder/DfFontBuilder.cpp" />
-		<Unit filename="src/resource/builder/DfFontBuilder.h" />
 		<Unit filename="src/resource/builder/MasterBuilder.cpp" />
 		<Unit filename="src/resource/builder/MasterBuilder.h" />
 		<Unit filename="src/resource/builder/ResourceBuilder.cpp" />
