@@ -46,23 +46,15 @@ namespace rob
         varying vec4 v_color;
         void main()
         {
-//            vec4 color = texture2D(u_texture0, v_uv);
-////            gl_FragColor = v_color * color;
-//            gl_FragColor = vec4(1.0, 1.0, 1.0, color.a);
+            vec4 color = v_color;
 
-//            float dist = texture2D(u_texture0, v_uv).r;
-//            vec4 color = v_color;
-//            float alpha = smoothstep(0.48, 0.5, dist);
-//            gl_FragColor = vec4(color.rgb * alpha, alpha * color.a);
+//            float alpha = texture2D(u_texture0, v_uv).r;
 
             float buffer = 0.5;
             float gamma = 0.02;
-
-            vec4 color = v_color;
             float dist = texture2D(u_texture0, v_uv).r;
             float alpha = smoothstep(buffer - gamma, buffer + gamma, dist);
-//            vec4 c = mix(vec4(1.0, 0.0, 1.0, 1.0), color, smoothstep(0.46, 0.52, dist));
-//            gl_FragColor = vec4(c.rgb * alpha, alpha * color.a);
+
             gl_FragColor = vec4(color.rgb, alpha * color.a);
         }
     );

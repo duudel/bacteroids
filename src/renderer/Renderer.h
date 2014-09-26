@@ -98,7 +98,6 @@ namespace rob
                            float &cursorX, float &cursorY,
                            const size_t textureW, const size_t textureH);
 
-
     private:
         LinearAllocator m_alloc;
         LinearAllocator m_vb_alloc;

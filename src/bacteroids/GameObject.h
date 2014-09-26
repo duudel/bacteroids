@@ -56,6 +56,9 @@ namespace bact
         bool IsAlive() const
         { return m_alive; }
 
+        bool IsDead() const
+        { return !m_alive; }
+
         virtual void Update(const GameTime &gameTime) { }
         virtual void Render(Renderer *renderer, const BacteroidsUniforms &uniforms) { }
 

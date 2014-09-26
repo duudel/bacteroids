@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "ObjectArray.h"
 #include "SoundPlayer.h"
+#include "Input.h"
 
 #include "../renderer/Renderer.h"
 #include "../graphics/Graphics.h"
@@ -23,7 +24,7 @@ namespace bact
 
     void Player::TakeHit()
     {
-        m_health -= 0.1f;
+        m_health -= 0.2f;
         if (m_health <= 0.0f)
             m_alive = false;
     }
@@ -90,10 +91,8 @@ namespace bact
         }
     }
 
-    void Player::Render(Renderer *renderer, const BacteroidsUniforms &uniforms) //, ShaderProgramHandle fontShader)
+    void Player::Render(Renderer *renderer, const BacteroidsUniforms &uniforms)
     {
-        vec4f velocity(m_velocity.x, m_velocity.y, 0.0f, 0.0f);
-        renderer->GetGraphics()->SetUniform(uniforms.m_velocity, velocity);
         renderer->SetColor(Color(1.0f, 1.0f, 1.6f));
         renderer->DrawFilledCirlce(m_position.x, m_position.y, m_radius, Color(0.2f, 0.5f, 0.5f, 0.5f));
 
@@ -101,16 +100,6 @@ namespace bact
         const vec2f dpos = m_position + ClampedVectorLength(m_direction, 1.5f);
         renderer->BindColorShader();
         renderer->DrawFilledCirlce(dpos.x, dpos.y, m_radius * 0.5f, Color(0.2f, 0.5f, 0.5f, 0.5f));
-
-//            const vec4f dpos2 = m_position + m_direction;
-//            renderer->DrawFilledCirlce(dpos2.x, dpos2.y, m_radius * 0.5f, Color(0.2f, 0.5f, 0.5f, 0.5f));
-
-//            char velStr[32];
-//            StringPrintF(velStr, "%.3f,%.3f", m_velocity.x, m_velocity.y);
-
-//            renderer->SetColor(Color::Red);
-//            renderer->BindShader(fontShader);
-//            renderer->DrawText(m_position.x, m_position.y, velStr);
     }
 
 } // bact

@@ -6,6 +6,7 @@
 #include "../math/Projection.h"
 
 #include "../String.h"
+#include "../time/Time.h"
 
 namespace rob
 {
@@ -52,7 +53,11 @@ namespace rob
 
     void GameState::DoRender()
     {
+        if (m_time.IsPaused())
+            Delay(20);
+
         Render();
+
         const Time_t time = m_ticker.GetTicks(); // //m_time.GetTimeMicros();
         const Time_t frameTime = time - m_lastTime;
         m_lastTime = time;
