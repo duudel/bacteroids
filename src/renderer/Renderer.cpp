@@ -258,9 +258,6 @@ namespace rob
     static const size_t CIRCLE_SEGMENTS = 48;
     static const float SEG_RADIUS_SCALE = 1.0f;
 
-//    static ColorVertex* g_circleCache[16] = { 0 };
-//    static ColorVertex g_circleCacheData[16 * 64] = { 0 };
-
     void Renderer::DrawCirlce(float x, float y, float radius)
     {
         const size_t segs = CIRCLE_SEGMENTS * (radius / SEG_RADIUS_SCALE);
@@ -349,38 +346,26 @@ namespace rob
         const size_t vertexCount = segments + 2;
         ColorVertex* vertices = m_vb_alloc.AllocateArray<ColorVertex>(vertexCount);
 
-//        ColorVertex* vertices = nullptr;
-//        const size_t cacheIdx = segments / 3;
-//        if (g_circleCache[cacheIdx])
-//            vertices = &g_circleCacheData[cacheIdx * 64];
+        float angle = 0.0f;
+        const float deltaAngle = 2.0f * PI_f / segments;
+        vertices[0] = { 0.0f, 0.0f, center.r, center.g, center.b, center.a };
+        for (size_t i = 0; i < quarter; i++, angle += deltaAngle)
+        {
+            float sn, cs;
+            rob::FastSinCos(angle, sn, cs);
+            sn *= radius;
+            cs *= radius;
 
-//        if (!vertices)
-//        {
-//            vertices = &g_circleCacheData[cacheIdx * 64];//m_vb_alloc.AllocateArray<ColorVertex>(vertexCount);
-
-            float angle = 0.0f;
-            const float deltaAngle = 2.0f * PI_f / segments;
-            vertices[0] = { 0.0f, 0.0f, center.r, center.g, center.b, center.a };
-            for (size_t i = 0; i < quarter; i++, angle += deltaAngle)
-            {
-                float sn, cs;
-                rob::FastSinCos(angle, sn, cs);
-                sn *= radius;
-                cs *= radius;
-
-                const size_t i0 = 1 + i;
-                const size_t i1 = i0 + quarter;
-                const size_t i2 = i1 + quarter;
-                const size_t i3 = i2 + quarter;
-                vertices[i0] = { -cs, -sn, m_color.r, m_color.g, m_color.b, m_color.a };
-                vertices[i1] = { +sn, -cs, m_color.r, m_color.g, m_color.b, m_color.a };
-                vertices[i2] = { +cs, +sn, m_color.r, m_color.g, m_color.b, m_color.a };
-                vertices[i3] = { -sn, +cs, m_color.r, m_color.g, m_color.b, m_color.a };
-            };
-            vertices[2 + segments - 1] = vertices[1];
-
-//            g_circleCache[cacheIdx] = vertices;
-//        }
+            const size_t i0 = 1 + i;
+            const size_t i1 = i0 + quarter;
+            const size_t i2 = i1 + quarter;
+            const size_t i3 = i2 + quarter;
+            vertices[i0] = { -cs, -sn, m_color.r, m_color.g, m_color.b, m_color.a };
+            vertices[i1] = { +sn, -cs, m_color.r, m_color.g, m_color.b, m_color.a };
+            vertices[i2] = { +cs, +sn, m_color.r, m_color.g, m_color.b, m_color.a };
+            vertices[i3] = { -sn, +cs, m_color.r, m_color.g, m_color.b, m_color.a };
+        };
+        vertices[2 + segments - 1] = vertices[1];
 
         m_graphics->SetUniform(m_globals.position, vec4f(x, y, 0.0f, 1.0f));
 
@@ -391,7 +376,7 @@ namespace rob
         m_graphics->SetAttrib(1, 4, sizeof(ColorVertex), sizeof(float) * 2);
         m_graphics->DrawTriangleFanArrays(0, vertexCount);
 
-//        m_vb_alloc.Reset();
+        m_vb_alloc.Reset();
     }
 
 
