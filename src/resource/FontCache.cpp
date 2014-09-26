@@ -69,6 +69,7 @@ namespace rob
         if (version != BmfVersion)
         {
             log::Error("Font cache: Wrong version. Expected ", BmfVersion, ", found ", static_cast<unsigned int>(version));
+            return false;
         }
 
         size_t pageCount = 0;

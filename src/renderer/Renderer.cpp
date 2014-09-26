@@ -100,6 +100,7 @@ namespace rob
         , m_fontProgram(InvalidHandle)
         , m_color(Color::White)
         , m_font()
+        , m_fontScale(1.0f)
     {
         m_globals.projection    = m_graphics->CreateGlobalUniform("u_projection", UniformType::Mat4);
         m_globals.position      = m_graphics->CreateGlobalUniform("u_position", UniformType::Vec4);
@@ -113,9 +114,9 @@ namespace rob
         m_fontProgram = CompileShaderProgram(g_fontVertexShader, g_fontFragmentShader);
 
 //        m_font = cache->GetFont("lucida_24.fnt");
-        m_font = cache->GetFont("dejavu_24.fnt");
+//        m_font = cache->GetFont("dejavu_24.fnt");
 //        m_font = cache->GetFont("dejavu_48.df.fnt");
-//        m_font = cache->GetFont("dejavu_96.df.fnt");
+        m_font = cache->GetFont("dejavu_96.fnt");
 
         m_vertexBuffer = m_graphics->CreateVertexBuffer();
         m_graphics->BindVertexBuffer(m_vertexBuffer);
@@ -408,17 +409,16 @@ namespace rob
     {
         if (std::isprint(c) && c != ' ')
         {
-            const float gW = float(glyph.m_width);
-            const float gH = float(glyph.m_height);
-
-            const float uvW = gW / textureW;
-            const float uvH = -gH / textureH;
+            const float gW = float(glyph.m_width) * m_fontScale;
+            const float gH = float(glyph.m_height) * m_fontScale;
+            const float uvW = float(glyph.m_width) / textureW;
+            const float uvH = -float(glyph.m_height) / textureH;
 
             const float uvX = float(glyph.m_x) / textureW;
             const float uvY = -float(glyph.m_y) / textureH;
 
-            const float cX = cursorX + glyph.m_offsetX;
-            const float cY = cursorY + glyph.m_offsetY;
+            const float cX = cursorX + glyph.m_offsetX * m_fontScale;
+            const float cY = cursorY + glyph.m_offsetY * m_fontScale;
 
             AddFontVertex(vertex, cX,       cY,         uvX,        uvY);
             AddFontVertex(vertex, cX + gW,  cY,         uvX + uvW,  uvY);
@@ -428,7 +428,7 @@ namespace rob
             AddFontVertex(vertex, cX + gW,  cY + gH,    uvX + uvW,  uvY + uvH);
         }
 
-        cursorX += glyph.m_advance;
+        cursorX += float(glyph.m_advance) * m_fontScale;
     }
 
     void Renderer::DrawText(float x, float y, const char *text)
@@ -497,7 +497,7 @@ namespace rob
         {
             const uint32_t c = DecodeUtf8(text, 0);
             const Glyph &glyph = m_font.GetGlyph(c);
-            width += float(glyph.m_advance);
+            width += float(glyph.m_advance) * m_fontScale;
         }
         return width;
     }
@@ -512,7 +512,7 @@ namespace rob
             const uint32_t c = DecodeUtf8(text, 0);
             charC -= (text - s);
             const Glyph &glyph = m_font.GetGlyph(c);
-            width += float(glyph.m_advance);
+            width += float(glyph.m_advance) * m_fontScale;
         }
         return width;
     }
@@ -591,10 +591,16 @@ namespace rob
         return width;
     }
 
+    void Renderer::SetFontScale(float scale)
+    { m_fontScale = scale; }
+
+    float Renderer::GetFontScale() const
+    { return m_fontScale; }
+
     float Renderer::GetFontHeight() const
-    { return m_font.GetHeight(); }
+    { return m_font.GetHeight() * m_fontScale; }
 
     float Renderer::GetFontLineSpacing() const
-    { return m_font.GetLineSpacing(); }
+    { return m_font.GetLineSpacing() * m_fontScale; }
 
 } // rob

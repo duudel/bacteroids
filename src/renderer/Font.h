@@ -62,7 +62,7 @@ namespace rob
         uint32_t m_glyphMapping[MAX_GLYPHS];
         size_t m_glyphCount;
 
-        static const size_t MAX_TEXTURE_PAGES = 4;
+        static const size_t MAX_TEXTURE_PAGES = 8;
         TextureHandle m_textures[MAX_TEXTURE_PAGES];
         size_t m_textureCount;
     };

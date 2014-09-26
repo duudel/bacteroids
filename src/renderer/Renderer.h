@@ -86,6 +86,9 @@ namespace rob
         float GetTextWidthAscii(const char *text) const;
         float GetTextWidthAscii(const char *text, size_t charCount) const;
 
+        void SetFontScale(float scale);
+        float GetFontScale() const;
+
         float GetFontHeight() const;
         float GetFontLineSpacing() const;
 
@@ -111,6 +114,7 @@ namespace rob
 
         Color m_color;
         Font m_font;
+        float m_fontScale;
     };
 
 } // rob

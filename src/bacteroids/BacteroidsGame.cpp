@@ -443,6 +443,7 @@ namespace bact
             m_pauseFade.Render(&renderer);
 
             renderer.SetView(GetDefaultView());
+            renderer.SetFontScale(1.0f);
             char buf[64];
             StringPrintF(buf, "Score: %i", m_score);
 
