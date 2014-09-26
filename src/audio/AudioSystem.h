@@ -10,6 +10,7 @@ namespace rob
     class LinearAllocator;
 
     struct Sound;
+
     typedef unsigned int SoundHandle;
     static const SoundHandle InvalidSound = ~0;
 
@@ -30,7 +31,22 @@ namespace rob
 
 
     private:
+        struct Buffer
+        {
+            unsigned int buffer;
+        };
+
+        struct Channel
+        {
+            unsigned int source;
+        };
+
+        static const size_t MAX_CHANNELS = 16;
+
+    private:
         Pool<Sound> m_sounds;
+        Pool<Buffer> m_buffers;
+        Channel m_channels[MAX_CHANNELS];
         bool m_muted;
     };
 
