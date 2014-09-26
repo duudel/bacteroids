@@ -39,8 +39,6 @@ const ShaderDef g_playerShader = {
         varying vec4 v_color;
         void main()
         {
-//            float d = v_dist;
-//            d = 0.08 + smoothstep(0.0, 0.7, d) * 0.42 + 0.5 * smoothstep(0.75, 1.0, d);
             gl_FragColor = v_color;
         }
     )
@@ -99,6 +97,36 @@ const ShaderDef g_bacterShader = {
             d = 0.08 + smoothstep(0.0, 0.7, d) * 0.42 + 0.5 * smoothstep(0.75, 1.0, d);
 //            gl_FragColor = vec4(v_color.rgb * d, 0.4 + d);
             gl_FragColor = vec4(v_color.rgb * d, d);
+        }
+    )
+};
+
+const ShaderDef g_projectileShader = {
+     // Vertex shader
+    GLSL(
+        uniform mat4 u_projection;
+        uniform vec4 u_position;
+        uniform vec4 u_velocity;
+        attribute vec2 a_position;
+        attribute vec4 a_color;
+        varying vec4 v_color;
+        void main()
+        {
+            vec2 pos = a_position;
+            vec2 vel = u_velocity.xy;
+            vec2 offset = vel * dot(pos, vel) * 0.005;
+            pos += u_position.xy + offset;
+            gl_Position = u_projection * vec4(pos, 0.0, 1.0);
+            v_color = a_color;
+        }
+    ),
+
+    // Fragment shader
+    GLSL(
+        varying vec4 v_color;
+        void main()
+        {
+            gl_FragColor = v_color;
         }
     )
 };

@@ -25,6 +25,7 @@ namespace bact
         : m_random()
         , m_playerShader(InvalidHandle)
         , m_bacterShader(InvalidHandle)
+        , m_projectileShader(InvalidHandle)
         , m_fontShader(InvalidHandle)
         , m_damageFade(Color(0.8f, 0.05f, 0.05f))
         , m_pauseFade(Color(0.02f, 0.05f, 0.025f))
@@ -40,13 +41,19 @@ namespace bact
                                                        g_playerShader.m_fragmentShader);
         m_bacterShader = renderer.CompileShaderProgram(g_bacterShader.m_vertexShader,
                                                        g_bacterShader.m_fragmentShader);
+        m_projectileShader = renderer.CompileShaderProgram(g_projectileShader.m_vertexShader,
+                                                       g_projectileShader.m_fragmentShader);
         m_fontShader = renderer.CompileShaderProgram(g_fontShader.m_vertexShader,
                                                        g_fontShader.m_fragmentShader);
 
         m_uniforms.m_velocity = renderer.GetGraphics()->CreateUniform("u_velocity", UniformType::Vec4);
         m_uniforms.m_anim = renderer.GetGraphics()->CreateUniform("u_anim", UniformType::Float);
+
         renderer.GetGraphics()->AddProgramUniform(m_playerShader, m_uniforms.m_velocity);
+        renderer.GetGraphics()->AddProgramUniform(m_projectileShader, m_uniforms.m_velocity);
+
         renderer.GetGraphics()->AddProgramUniform(m_bacterShader, m_uniforms.m_anim);
+        renderer.GetGraphics()->AddProgramUniform(m_bacterShader, m_uniforms.m_velocity);
 
         m_soundPlayer.Init(GetAudio(), GetCache());
 
@@ -68,6 +75,7 @@ namespace bact
     {
         GetRenderer().GetGraphics()->DestroyShaderProgram(m_playerShader);
         GetRenderer().GetGraphics()->DestroyShaderProgram(m_bacterShader);
+        GetRenderer().GetGraphics()->DestroyShaderProgram(m_projectileShader);
         GetRenderer().GetGraphics()->DestroyShaderProgram(m_fontShader);
     }
 
@@ -371,7 +379,8 @@ namespace bact
                 break;
 
             case Projectile::TYPE:
-                renderer.BindColorShader();
+//                renderer.BindColorShader();
+                renderer.BindShader(m_projectileShader);
                 break;
 
             default:
@@ -379,6 +388,9 @@ namespace bact
                 break;
             }
 
+            const vec2f vel2 = obj->GetVelocity();
+            const vec4f velocity(vel2.x, vel2.y, 0.0f, 0.0f);
+            renderer.GetGraphics()->SetUniform(m_uniforms.m_velocity, velocity);
             obj->Render(&renderer, m_uniforms);
         }
 

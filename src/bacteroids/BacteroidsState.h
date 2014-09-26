@@ -61,6 +61,7 @@ namespace bact
 
         ShaderProgramHandle m_playerShader;
         ShaderProgramHandle m_bacterShader;
+        ShaderProgramHandle m_projectileShader;
         ShaderProgramHandle m_fontShader;
         BacteroidsUniforms m_uniforms;
         SoundPlayer m_soundPlayer;
