@@ -118,6 +118,12 @@ namespace bact
             TogglePause();
         if (key == Keyboard::Key::M)
             GetAudio().ToggleMute();
+
+        if (m_player.IsDead())
+        {
+            if (key == Keyboard::Key::Space)
+                ChangeState(2);
+        }
     }
 
     void BacteroidsState::OnKeyDown(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods)
@@ -344,16 +350,49 @@ namespace bact
         m_damageFade.Update(gameTime.GetDeltaSeconds());
     }
 
+    void BacteroidsState::RenderPause()
+    {
+        Renderer &renderer = GetRenderer();
+        renderer.SetFontScale(4.0f);
+        renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
+        renderer.BindFontShader();
+
+        const Viewport vp = renderer.GetView().m_viewport;
+//            const float fontH = renderer.GetFontHeight();
+        const float textW = renderer.GetTextWidth("Game paused");
+        renderer.DrawText((vp.w - textW) / 2.0f, vp.h / 3.0f, "Game paused");
+    }
+
+    void BacteroidsState::RenderGameOver()
+    {
+        Renderer &renderer = GetRenderer();
+        renderer.SetFontScale(4.0f);
+        renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
+        renderer.BindFontShader();
+
+        const Viewport vp = renderer.GetView().m_viewport;
+
+        const float fontH = renderer.GetFontHeight();
+        const char * const gameOver = "Game over";
+        const float gameOverW = renderer.GetTextWidth(gameOver);
+        renderer.DrawText((vp.w - gameOverW) / 2.0f, vp.h / 3.0f, gameOver);
+
+        renderer.SetFontScale(1.0f);
+        const char * const instruction = "Press [space] to continue";
+        const float textW = renderer.GetTextWidth(instruction);
+        renderer.DrawText((vp.w - textW) / 2.0f, vp.h / 3.0f + fontH, instruction);
+    }
+
     void BacteroidsState::Render()
     {
         Renderer &renderer = GetRenderer();
+        renderer.SetTime(m_time.GetTimeMicros());
 
         renderer.SetView(m_playView);
 
         renderer.BindColorShader();
         renderer.SetColor(Color(0.05f, 0.13f, 0.15f));
         renderer.DrawFilledRectangle(PLAY_AREA_LEFT, PLAY_AREA_BOTTOM, PLAY_AREA_RIGHT, PLAY_AREA_TOP);
-        renderer.SetTime(m_time.GetTimeMicros());
 
         for (size_t i = 0; i < m_objects.Size(); i++)
         {
@@ -403,25 +442,11 @@ namespace bact
 
         if (m_time.IsPaused())
         {
-            renderer.SetFontScale(4.0f);
-            renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
-            renderer.BindFontShader();
-
-            const Viewport vp = renderer.GetView().m_viewport;
-//            const float fontH = renderer.GetFontHeight();
-            const float textW = renderer.GetTextWidth("Game paused");
-            renderer.DrawText((vp.w - textW) / 2.0f, vp.h / 3.0f, "Game paused");
+            RenderPause();
         }
         else if (m_player.IsDead())
         {
-            renderer.SetFontScale(4.0f);
-            renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
-            renderer.BindFontShader();
-
-            const Viewport vp = renderer.GetView().m_viewport;
-//            const float fontH = renderer.GetFontHeight();
-            const float textW = renderer.GetTextWidth("Game over");
-            renderer.DrawText((vp.w - textW) / 2.0f, vp.h / 3.0f, "Game over");
+            RenderGameOver();
         }
 
         renderer.SetFontScale(1.0f);

@@ -30,4 +30,9 @@ namespace bact
         Game::OnKeyPress(key, scancode, mods);
     }
 
+    void Bacteroids::HandleStateChange(int state)
+    {
+        if (state == 2) m_state->QuitState();
+    }
+
 } // bact

@@ -31,16 +31,19 @@ namespace bact
         ~BacteroidsState();
 
         bool Initialize() override;
+        void RealtimeUpdate(const Time_t deltaMicroseconds) override;
+        void Update(const GameTime &gameTime) override;
+        void Render() override;
 
         void OnResize(int w, int h) override;
-
-        void TogglePause();
 
         void OnKeyPress(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods) override;
         void OnKeyDown(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods) override;
         void OnKeyUp(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods) override;
         void OnTextInput(const char *str) override;
 
+    private:
+        void TogglePause();
 
         void SpawnBacter(float distMod = 1.0f);
 
@@ -52,9 +55,8 @@ namespace bact
         void DoCollisions();
         void UpdatePlayer(const GameTime &gameTime);
 
-        void RealtimeUpdate(const Time_t deltaMicroseconds) override;
-        void Update(const GameTime &gameTime) override;
-        void Render() override;
+        void RenderPause();
+        void RenderGameOver();
 
     private:
         Random m_random;
