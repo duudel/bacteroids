@@ -10,7 +10,6 @@
 
 #include "../input/Keyboard.h"
 #include "../input/Mouse.h"
-#include "../input/TextInput.h"
 #include "../Log.h"
 #include "../String.h"
 

@@ -11,6 +11,7 @@
 #include "ObjectArray.h"
 #include "FadeEffect.h"
 
+#include "../input/TextInput.h"
 #include "../math/Random.h"
 
 namespace bact

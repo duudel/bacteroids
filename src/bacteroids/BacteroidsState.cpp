@@ -386,14 +386,28 @@ namespace bact
         m_damageFade.Render(&renderer);
         m_pauseFade.Render(&renderer);
 
+
         renderer.SetView(GetDefaultView());
+
+        if (m_time.IsPaused())
+        {
+            renderer.SetFontScale(4.0f);
+            renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
+            renderer.BindFontShader();
+
+            const Viewport vp = renderer.GetView().m_viewport;
+            const float fontH = renderer.GetFontHeight();
+            const float textW = renderer.GetTextWidth("Game paused");
+            renderer.DrawText((vp.w - textW) / 2.0f, vp.h / 3.0f, "Game paused");
+        }
+
         renderer.SetFontScale(1.0f);
         char buf[64];
         StringPrintF(buf, "Score: %i", m_score);
 
         renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
         renderer.BindFontShader();
-        renderer.DrawText(0, 0, buf);
+        renderer.DrawText(0.0f, 0.0f, buf);
 
         const float hx = 10.0f;
         const float hy = 10.0f + renderer.GetFontHeight();

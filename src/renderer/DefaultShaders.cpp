@@ -48,13 +48,13 @@ namespace rob
         {
             vec4 color = v_color;
 
-            float alpha = texture2D(u_texture0, v_uv).r;
+//            float alpha = texture2D(u_texture0, v_uv).r;
 
-//            float buffer = 0.5;
-//            float gamma = 0.02;
-//
-//            float dist = texture2D(u_texture0, v_uv).r;
-//            float alpha = smoothstep(buffer - gamma, buffer + gamma, dist);
+            float buffer = 0.5;
+            float gamma = 0.02;
+            float dist = texture2D(u_texture0, v_uv).r;
+            float alpha = smoothstep(buffer - gamma, buffer + gamma, dist);
+
             gl_FragColor = vec4(color.rgb, alpha * color.a);
         }
     );
