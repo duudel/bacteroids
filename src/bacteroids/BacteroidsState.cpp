@@ -206,7 +206,7 @@ namespace bact
             me->SetPosition(p + (v / 2.0f));
             me->TakeHit();
             m_damageFade.Activate(1.0f);
-            if (!me->IsAlive())
+            if (me->IsDead())
             {
                 m_damageFade.SetFadeAcceleration(0.0f);
                 m_damageFade.Activate(1.0f);
@@ -396,9 +396,20 @@ namespace bact
             renderer.BindFontShader();
 
             const Viewport vp = renderer.GetView().m_viewport;
-            const float fontH = renderer.GetFontHeight();
+//            const float fontH = renderer.GetFontHeight();
             const float textW = renderer.GetTextWidth("Game paused");
             renderer.DrawText((vp.w - textW) / 2.0f, vp.h / 3.0f, "Game paused");
+        }
+        else if (m_player.IsDead())
+        {
+            renderer.SetFontScale(4.0f);
+            renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
+            renderer.BindFontShader();
+
+            const Viewport vp = renderer.GetView().m_viewport;
+//            const float fontH = renderer.GetFontHeight();
+            const float textW = renderer.GetTextWidth("Game over");
+            renderer.DrawText((vp.w - textW) / 2.0f, vp.h / 3.0f, "Game over");
         }
 
         renderer.SetFontScale(1.0f);

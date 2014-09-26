@@ -45,18 +45,16 @@ namespace bact
         c.a = m_fade;
         renderer->SetColor(c);
 
-        const Viewport vp = renderer->GetView().m_viewport;
-        renderer->DrawFilledRectangle(vp.x, vp.y, vp.x + vp.w, vp.y + vp.h);
+        View view = renderer->GetView();
+        const mat4f proj = view.m_projection;
 
-        float w = vp.w / 2.0f;
-        float h = vp.h / 2.0f;
-        vec4f p0(vp.x - w, vp.y - h, 0.0f, 1.0f);
-        vec4f p1(vp.x + w, vp.y + h, 0.0f, 1.0f);
+        view.m_projection = mat4f::Identity;
+        renderer->SetView(view);
 
-        const mat4f proj = renderer->GetView().m_projection;
-        p0 = proj * p0;
-        p1 = proj * p1;
-        renderer->DrawFilledRectangle(p0.x, p0.y, p1.x, p1.y);
+        renderer->DrawFilledRectangle(-1.0f, -1.0f, 1.0f, 1.0f);
+
+        view.m_projection = proj;
+        renderer->SetView(view);
     }
 
 } // bact
