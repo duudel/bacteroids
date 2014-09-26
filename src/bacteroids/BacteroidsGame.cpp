@@ -85,7 +85,7 @@ namespace bact
             , m_playerShader(InvalidHandle)
             , m_bacterShader(InvalidHandle)
             , m_fontShader(InvalidHandle)
-            , m_fade(Color(0.8f, 0.05f, 0.05f))
+            , m_damageFade(Color(0.8f, 0.05f, 0.05f))
             , m_pauseFade(Color(0.02f, 0.05f, 0.025f))
             , m_textInput()
         { }
@@ -171,9 +171,9 @@ namespace bact
             if (key == Keyboard::Key::M)
                 GetAudio().ToggleMute();
             if (key == Keyboard::Key::K)
-                m_fade.Activate(1.0f);
+                m_damageFade.Activate(1.0f);
             if (key == Keyboard::Key::L)
-                m_fade.Reset();
+                m_damageFade.Reset();
         }
 
         void OnKeyDown(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods) override
@@ -390,7 +390,7 @@ namespace bact
 //                Bacter::TrySplit(m_bacters[i], m_bacters, m_random); // TODO: spontaneous bacter splitting needed!
 //            }
 
-            m_fade.Update(gameTime.GetDeltaSeconds());
+            m_damageFade.Update(gameTime.GetDeltaSeconds());
         }
 
         void Render() override
@@ -440,7 +440,7 @@ namespace bact
             }
 
             renderer.BindColorShader();
-            m_fade.Render(&renderer);
+            m_damageFade.Render(&renderer);
             m_pauseFade.Render(&renderer);
 
             renderer.SetView(GetDefaultView());
@@ -494,7 +494,7 @@ namespace bact
 
         int m_score;
 
-        Fade m_fade;
+        Fade m_damageFade;
         Fade m_pauseFade;
 
         View m_playView;
