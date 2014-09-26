@@ -4,14 +4,20 @@
 
 #include "../memory/Pool.h"
 
+#include <AL/alc.h>
+
 namespace rob
 {
 
     class LinearAllocator;
 
     struct Sound;
+    struct Channel;
+
     typedef unsigned int SoundHandle;
     static const SoundHandle InvalidSound = ~0;
+
+    static const size_t MAX_CHANNELS = 16;
 
     class AudioSystem
     {
@@ -22,15 +28,23 @@ namespace rob
         SoundHandle LoadSound(const char * const filename);
         void UnloadSound(SoundHandle sound);
 
+        void SetMasterVolume(float volume);
+
         void SetMute(bool mute);
         void ToggleMute();
         bool IsMuted() const;
 
         void PlaySound(SoundHandle sound, float volume = 1.0f);
 
+        void Update();
 
     private:
+        ALCdevice *m_device;
+        ALCcontext *m_context;
         Pool<Sound> m_sounds;
+        Pool<Channel> m_channelPool;
+        Channel *m_channels[MAX_CHANNELS];
+        float m_masterVolume;
         bool m_muted;
     };
 
