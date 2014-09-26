@@ -58,7 +58,7 @@ const ShaderDef g_bacterShader = {
         void main()
         {
             const int T_resolution = 1000;
-            const int WrapPeriod = int(T_resolution*2*3.14159);
+            const int WrapPeriod = 6283;//int(T_resolution*2*3.14159);
 
             int time = u_time_ms;
 

@@ -72,6 +72,7 @@ namespace bact
 
         Player m_player;
         ObjectArray m_objects;
+        GameObject **m_quadTree;
 
         int m_score;
 

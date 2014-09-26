@@ -170,7 +170,7 @@ namespace rob
     void Renderer::SetTime(uint64_t timeMicroseconds)
     {
         uint32_t wrapMax = 100000000u;
-        uint32_t utime_ms = timeMicroseconds / 1000;
+        uint32_t utime_ms = timeMicroseconds / 1000ull;
         int32_t time_ms = utime_ms % wrapMax;
         m_graphics->SetUniform(m_globals.time_ms, time_ms);
     }
