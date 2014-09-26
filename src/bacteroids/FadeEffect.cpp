@@ -11,7 +11,7 @@ namespace bact
 
     using namespace rob;
 
-    Fade::Fade(const Color &color)
+    FadeEffect::FadeEffect(const Color &color)
         : m_color(color)
         , m_fade(0.0f)
         , m_deltaFade(0.0f)
@@ -19,26 +19,26 @@ namespace bact
         , m_maxFade(0.5f)
     { }
 
-    void Fade::SetFadeAcceleration(float acc)
+    void FadeEffect::SetFadeAcceleration(float acc)
     { m_fadeAcceleration = acc; }
 
-    void Fade::Activate(float delta)
+    void FadeEffect::Activate(float delta)
     { m_deltaFade = delta; }
 
-    void Fade::Reset()
+    void FadeEffect::Reset()
     {
         m_deltaFade = 0.0f;
         m_fade = 0.0f;
     }
 
-    void Fade::Update(const float deltaTime)
+    void FadeEffect::Update(const float deltaTime)
     {
         m_deltaFade += m_fadeAcceleration * deltaTime;
         m_fade += m_deltaFade * deltaTime;
         m_fade = Clamp(m_fade, 0.0f, m_maxFade);
     }
 
-    void Fade::Render(Renderer *renderer)
+    void FadeEffect::Render(Renderer *renderer)
     {
         if (m_fade < 0.01f) return;
         Color c = m_color;

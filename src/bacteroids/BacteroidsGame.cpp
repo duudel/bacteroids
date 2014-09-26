@@ -461,8 +461,8 @@ namespace bact
 
         int m_score;
 
-        Fade m_damageFade;
-        Fade m_pauseFade;
+        FadeEffect m_damageFade;
+        FadeEffect m_pauseFade;
 
         View m_playView;
 

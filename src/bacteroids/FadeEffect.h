@@ -12,10 +12,10 @@ namespace rob
 namespace bact
 {
 
-    class Fade
+    class FadeEffect
     {
     public:
-        explicit Fade(const rob::Color &color);
+        explicit FadeEffect(const rob::Color &color);
 
         void SetFadeAcceleration(float acc);
         void Activate(float delta);
