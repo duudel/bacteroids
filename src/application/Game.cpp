@@ -88,6 +88,7 @@ namespace rob
         m_state->SetAudio(m_audio);
         m_state->SetCache(m_cache);
         m_state->SetRenderer(m_renderer);
+        m_state->SetWindow(m_window);
         m_state->Initialize();
     }
 

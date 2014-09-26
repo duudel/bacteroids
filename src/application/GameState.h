@@ -22,6 +22,7 @@ namespace rob
     class AudioSystem;
     class MasterCache;
 //    class Renderer;
+    class Window;
 
     class GameState
     {
@@ -42,6 +43,9 @@ namespace rob
 
         void SetRenderer(Renderer *renderer) { m_renderer = renderer; }
         Renderer& GetRenderer() { return *m_renderer; }
+
+        void SetWindow(Window *window) { m_window = window; }
+        Window& GetWindow() { return *m_window; }
 
         const View& GetDefaultView() const { return m_defaultView; }
 
@@ -89,6 +93,7 @@ namespace rob
         AudioSystem *       m_audio;
         MasterCache *       m_cache;
         Renderer *          m_renderer;
+        Window *            m_window;
         bool m_quit;
         int m_nextState;
 

@@ -43,8 +43,12 @@ namespace bact
             : m_color(color)
             , m_fade(0.0f)
             , m_deltaFade(0.0f)
+            , m_fadeAcceleration(0.0f)
             , m_maxFade(0.5f)
         { }
+
+        void SetFadeAcceleration(float acc)
+        { m_fadeAcceleration = acc; }
 
         void Activate(float delta)
         { m_deltaFade = delta; }
@@ -57,6 +61,7 @@ namespace bact
 
         void Update(const float deltaTime)
         {
+            m_deltaFade += m_fadeAcceleration * deltaTime;
             m_fade += m_deltaFade * deltaTime;
             m_fade = Clamp(m_fade, 0.0f, m_maxFade);
         }
@@ -74,6 +79,7 @@ namespace bact
         Color m_color;
         float m_fade;
         float m_deltaFade;
+        float m_fadeAcceleration;
         float m_maxFade;
     };
 
@@ -120,6 +126,8 @@ namespace bact
 
             m_score = 0;
 
+            m_damageFade.SetFadeAcceleration(-10.0f);
+
             for (size_t i = 0; i < 6; i++)
                 SpawnBacter(0.5f);
 
@@ -154,11 +162,13 @@ namespace bact
             {
                 m_time.Resume();
                 m_pauseFade.Reset();
+                GetWindow().GrabMouse();
             }
             else
             {
                 m_time.Pause();
                 m_pauseFade.Activate(1.0f);
+                GetWindow().UnGrabMouse();
             }
         }
 
@@ -170,10 +180,6 @@ namespace bact
                 TogglePause();
             if (key == Keyboard::Key::M)
                 GetAudio().ToggleMute();
-            if (key == Keyboard::Key::K)
-                m_damageFade.Activate(1.0f);
-            if (key == Keyboard::Key::L)
-                m_damageFade.Reset();
         }
 
         void OnKeyDown(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods) override
@@ -269,6 +275,12 @@ namespace bact
                 me->AddVelocity(v);
                 me->SetPosition(p + (v / 2.0f));
                 me->TakeHit();
+                m_damageFade.Activate(1.0f);
+                if (!me->IsAlive())
+                {
+                    m_damageFade.SetFadeAcceleration(0.0f);
+                    m_damageFade.Activate(1.0f);
+                }
             }
         }
 
