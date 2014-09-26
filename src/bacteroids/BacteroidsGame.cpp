@@ -439,6 +439,7 @@ namespace bact
                 obj->Render(&renderer, m_uniforms);
             }
 
+            renderer.BindColorShader();
             m_fade.Render(&renderer);
             m_pauseFade.Render(&renderer);
 
