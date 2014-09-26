@@ -2,6 +2,7 @@
 #include "Player.h"
 #include "ObjectArray.h"
 #include "SoundPlayer.h"
+#include "Input.h"
 
 #include "../renderer/Renderer.h"
 #include "../graphics/Graphics.h"

@@ -82,7 +82,12 @@
 		<Unit filename="src/bacteroids/Bacter.h" />
 		<Unit filename="src/bacteroids/BacteroidsGame.cpp" />
 		<Unit filename="src/bacteroids/BacteroidsGame.h" />
+		<Unit filename="src/bacteroids/BacteroidsState.cpp" />
+		<Unit filename="src/bacteroids/BacteroidsState.h" />
+		<Unit filename="src/bacteroids/FadeEffect.cpp" />
+		<Unit filename="src/bacteroids/FadeEffect.h" />
 		<Unit filename="src/bacteroids/GameObject.h" />
+		<Unit filename="src/bacteroids/Input.h" />
 		<Unit filename="src/bacteroids/ObjectArray.cpp" />
 		<Unit filename="src/bacteroids/ObjectArray.h" />
 		<Unit filename="src/bacteroids/Player.cpp" />
