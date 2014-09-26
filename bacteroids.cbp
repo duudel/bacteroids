@@ -50,16 +50,17 @@
 			<Add option="-Wfloat-equal" />
 			<Add option="-Winline" />
 			<Add option="-Wunreachable-code" />
-			<Add option="-Wall" />
 			<Add option="-std=c++11" />
+			<Add option="-Wall" />
 			<Add option="-msse2" />
 			<Add option="-Wno-unused-parameter" />
 		</Compiler>
 		<Linker>
 			<Add option="-lmingw32" />
-			<Add option="-lSDL2main -lSDL2 -lSDL2_mixer" />
+			<Add option="-lSDL2main -lSDL2" />
 			<Add option="-lglew32 -lopengl32" />
 			<Add option="-lFreeImage" />
+			<Add option="-lOpenAL32" />
 		</Linker>
 		<Unit filename="TODO.txt" />
 		<Unit filename="src/Assert.cpp" />
@@ -76,6 +77,8 @@
 		<Unit filename="src/application/GameTime.h" />
 		<Unit filename="src/application/Window.cpp" />
 		<Unit filename="src/application/Window.h" />
+		<Unit filename="src/audio/ALCheck.cpp" />
+		<Unit filename="src/audio/ALCheck.h" />
 		<Unit filename="src/audio/AudioSystem.cpp" />
 		<Unit filename="src/audio/AudioSystem.h" />
 		<Unit filename="src/bacteroids/Bacter.cpp" />
