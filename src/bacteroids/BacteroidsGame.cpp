@@ -280,6 +280,7 @@ namespace bact
                 {
                     m_damageFade.SetFadeAcceleration(0.0f);
                     m_damageFade.Activate(1.0f);
+                    m_soundPlayer.PlayPlayerDeathSound();
                 }
             }
         }
