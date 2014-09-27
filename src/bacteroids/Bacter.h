@@ -12,7 +12,7 @@ namespace rob
 namespace bact
 {
 
-    class ObjectArray;
+    class SoundPlayer;
 
     using namespace rob;
 
@@ -51,7 +51,8 @@ namespace bact
         bool WantsToSplit() const;
         bool CanSplit() const;
         bool DiesIfSplits() const;
-        void Split(Random &random);
+
+        void Split(Random &random, SoundPlayer &sounds);
 
         void Update(const GameTime &gameTime) override;
 

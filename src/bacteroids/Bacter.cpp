@@ -1,6 +1,6 @@
 
 #include "Bacter.h"
-#include "ObjectArray.h"
+#include "SoundPlayer.h"
 
 #include "../renderer/Renderer.h"
 #include "../graphics/Graphics.h"
@@ -46,12 +46,12 @@ namespace bact
         return (m_size / 2.0f < MIN_BACTER_SIZE);
     }
 
-    void Bacter::Split(Random &random)
+    void Bacter::Split(Random &random, SoundPlayer &sounds)
     {
-        if (m_splitTimer > 0.0f) return;
         if (m_size / 2.0f < MIN_BACTER_SIZE)
         {
             m_alive = false;
+            sounds.PlayBacterDeathSound();
             return;
         }
         m_size = m_size / 2.0f;
