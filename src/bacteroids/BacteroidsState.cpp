@@ -178,10 +178,10 @@ namespace bact
                     {
                         Bacter *bacter = m_objects.ObtainBacter();
                         bacter->CopyAttributes(me);
-                        bacter->Split(m_random);
+                        bacter->Split(m_random, m_soundPlayer);
                     }
                 }
-                me->Split(m_random);
+                me->Split(m_random, m_soundPlayer);
             }
         }
     }
@@ -296,10 +296,10 @@ namespace bact
                             {
                                 Bacter *other = m_objects.ObtainBacter();
                                 other->CopyAttributes(bacter);
-                                other->Split(m_random);
+                                other->Split(m_random, m_soundPlayer);
                             }
                         }
-                        bacter->Split(m_random);
+                        bacter->Split(m_random, m_soundPlayer);
                     }
                 }
             }
@@ -367,7 +367,7 @@ namespace bact
             GameObject *obj = m_objects[i];
 
             vec2f p = obj->GetPosition();
-            float r = obj->GetRadius() * 1.5f;
+            float r = obj->GetRadius() * 1.1f;
 
             if ((p.x > PLAY_AREA_LEFT - r && p.x < PLAY_AREA_RIGHT + r &&
                  p.y > PLAY_AREA_BOTTOM - r && p.y < PLAY_AREA_TOP + r) == false)
