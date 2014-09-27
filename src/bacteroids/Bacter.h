@@ -23,21 +23,37 @@ namespace bact
     public:
         Bacter();
 
-        void Setup(const GameObject *target, Random &random);
-
         void SetTarget(const GameObject *target)
         { m_target = target; }
+        void ModifySize(float sizeMod)
+        { m_sizeMod = Max(m_sizeMod, sizeMod); }
 
-        int TakeHit(ObjectArray &bacterArray, Random &random);
+        void CopyAttributes(const Bacter *other)
+        {
+            m_position = other->m_position;
+            m_velocity = other->m_velocity;
+            m_radius = other->m_radius;
+            m_alive = other->m_alive;
+            m_anim = other->m_anim;
+            m_size = other->m_size;
+            m_sizeMod = other->m_sizeMod;
+            m_target = other->m_target;
+            m_points = other->m_points;
+            m_splitTimer = other->m_splitTimer;
+            m_readyToSplitTimer = other->m_readyToSplitTimer;
+        }
 
-        void ModifySize(float sizeMod);
+        void RandomizeAnimation(Random &random);
+
+        int GetPoints() const
+        { return m_points; }
+
+        bool WantsToSplit() const;
+        bool CanSplit() const;
+        bool DiesIfSplits() const;
+        void Split(Random &random);
 
         void Update(const GameTime &gameTime) override;
-
-        void SplitSelf();
-
-        static void TrySplit(Bacter *bacter, ObjectArray &bacterArray, Random &random);
-        static bool Split(Bacter *bacter, ObjectArray &bacterArray, Random &random);
 
         void Render(Renderer *renderer, const BacteroidsUniforms &uniforms);
 

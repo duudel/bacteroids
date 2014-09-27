@@ -87,6 +87,7 @@
 		<Unit filename="src/bacteroids/BacteroidsGame.h" />
 		<Unit filename="src/bacteroids/BacteroidsState.cpp" />
 		<Unit filename="src/bacteroids/BacteroidsState.h" />
+		<Unit filename="src/bacteroids/CollisionTesting.inl" />
 		<Unit filename="src/bacteroids/FadeEffect.cpp" />
 		<Unit filename="src/bacteroids/FadeEffect.h" />
 		<Unit filename="src/bacteroids/GameObject.h" />
