@@ -21,8 +21,9 @@ namespace bact
     static const float PLAY_AREA_TOP    = -PLAY_AREA_BOTTOM;
 
 
-    BacteroidsState::BacteroidsState()
-        : m_random()
+    BacteroidsState::BacteroidsState(GameData &gameData)
+        : m_gameData(gameData)
+        , m_random()
         , m_playerShader(InvalidHandle)
         , m_bacterShader(InvalidHandle)
         , m_projectileShader(InvalidHandle)
@@ -115,7 +116,7 @@ namespace bact
     void BacteroidsState::OnKeyPress(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods)
     {
         if (key == Keyboard::Key::Escape)
-            ChangeState(1);
+            ChangeState(STATE_MENU);    // TODO: pause/unpause
         if (key == Keyboard::Key::P)
             TogglePause();
         if (key == Keyboard::Key::M)
@@ -124,23 +125,18 @@ namespace bact
         if (m_player.IsDead())
         {
             if (key == Keyboard::Key::Space)
-                ChangeState(3);
+            {
+                m_gameData.m_score = m_score;
+                ChangeState(STATE_HIGH_SCORE);
+            }
         }
     }
 
     void BacteroidsState::OnKeyDown(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods)
-    {
-//            TextInputHandler(m_textInput).OnKeyDown(key, mods);
-        m_input.SetKey(scancode, true);
-    }
+    { m_input.SetKey(scancode, true); }
 
     void BacteroidsState::OnKeyUp(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods)
     { m_input.SetKey(scancode, false); }
-
-    void BacteroidsState::OnTextInput(const char *str)
-    {
-//            TextInputHandler(m_textInput).OnTextInput(str);
-    }
 
 
     void BacteroidsState::SpawnBacter(float distMod /*= 1.0f*/)

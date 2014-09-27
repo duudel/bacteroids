@@ -3,6 +3,7 @@
 #define H_BACT_BACTEROIDS_STATE_H
 
 #include "../application/GameState.h"
+#include "Bacteroids.h"
 
 #include "SoundPlayer.h"
 #include "Uniforms.h"
@@ -27,7 +28,7 @@ namespace bact
     class BacteroidsState : public GameState
     {
     public:
-        BacteroidsState();
+        BacteroidsState(GameData &gameData);
         ~BacteroidsState();
 
         bool Initialize() override;
@@ -40,7 +41,6 @@ namespace bact
         void OnKeyPress(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods) override;
         void OnKeyDown(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods) override;
         void OnKeyUp(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods) override;
-        void OnTextInput(const char *str) override;
 
     private:
         void TogglePause();
@@ -59,6 +59,7 @@ namespace bact
         void RenderGameOver();
 
     private:
+        GameData &m_gameData;
         Random m_random;
 
         ShaderProgramHandle m_playerShader;

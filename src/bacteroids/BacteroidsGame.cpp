@@ -13,14 +13,55 @@ namespace bact
 
     using namespace rob;
 
+    struct TextLayout
+    {
+        Renderer &m_renderer;
+        vec2f m_cursor;
+        vec2f m_start;
+
+        TextLayout(Renderer &renderer, float x, float y)
+            : m_renderer(renderer)
+            , m_cursor(x, y)
+            , m_start(x, y)
+        { }
+
+        void AddLine()
+        {
+            m_cursor.x = m_start.x;
+            m_cursor.y += m_renderer.GetFontHeight();
+        }
+
+        void AddText(const char *str, const float width)
+        {
+            m_renderer.DrawText(m_cursor.x + width, m_cursor.y, str);
+            m_cursor.x += width + m_renderer.GetTextWidth(str);
+        }
+
+        void AddTextAlignC(const char *str, const float width)
+        {
+            const float tw = m_renderer.GetTextWidth(str);
+            m_renderer.DrawText(m_cursor.x + (width - tw / 2.0f), m_cursor.y, str);
+            m_cursor.x += width;
+        }
+
+        void AddTextAlignR(const char *str, const float width)
+        {
+            const float tw = m_renderer.GetTextWidth(str);
+            m_renderer.DrawText(m_cursor.x + width - tw, m_cursor.y, str);
+            m_cursor.x += width;
+        }
+    };
+
     class MenuState : public GameState
     {
     public:
-        MenuState()
+        MenuState(GameData &gameData)
+            : m_gameData(gameData)
         { }
 
         bool Initialize() override
         {
+            m_gameData.m_score = -1;
 //            float r = 0.05f, g = 0.13f, b = 0.15f, s = 0.5f;
 //            GetRenderer().GetGraphics()->SetClearColor(r*s, g*s, b*s);
 
@@ -39,22 +80,19 @@ namespace bact
             renderer.BindFontShader();
 
             const Viewport vp = renderer.GetView().m_viewport;
+            TextLayout layout(renderer, vp.w / 2.0f, vp.h / 3.0f);
 
             renderer.SetFontScale(4.0f);
-            const float titleH = renderer.GetFontHeight();
-            const char * const bacteroids = "Bacteroids";
-            const float bacteroidsW = renderer.GetTextWidth(bacteroids);
-            renderer.DrawText((vp.w - bacteroidsW) / 2.0f, vp.h / 3.0f, bacteroids);
+            layout.AddTextAlignC("Bacteroids", 0.0f);
+            layout.AddLine();
 
             renderer.SetFontScale(1.0f);
-            const float fontH = renderer.GetFontHeight();
-            const char * const instruction = "Press [space] to start";
-            const float textW = renderer.GetTextWidth(instruction);
-            renderer.DrawText((vp.w - textW) / 2.0f, vp.h / 3.0f + titleH, instruction);
-
-            const char * const instruction2 = "Press [return] for high scores";
-            const float textW2 = renderer.GetTextWidth(instruction2);
-            renderer.DrawText((vp.w - textW2) / 2.0f, vp.h / 3.0f + titleH + fontH, instruction2);
+            layout.AddTextAlignC("Press [space] to start", 0.0f);
+            layout.AddLine();
+            layout.AddTextAlignC("Press [return] to show high scores", 0.0f);
+            layout.AddLine();
+            layout.AddTextAlignC("Press [esc] to exit", 0.0f);
+            layout.AddLine();
         }
 
         void OnKeyPress(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods) override
@@ -66,23 +104,37 @@ namespace bact
             if (key == Keyboard::Key::Return)
                 ChangeState(3);
         }
+    private:
+        GameData &m_gameData;
     };
 
 
     class HighScoreState : public GameState
     {
     public:
-        HighScoreState()
-        { }
+        HighScoreState(GameData &gameData)
+            : m_gameData(gameData)
+            , m_scoreIndex(HighScoreList::INVALID_INDEX)
+            , m_nameInput()
+        {
+            m_nameInput.SetLengthLimit(HighScoreList::MAX_NAME_LENGTH);
+        }
 
         bool Initialize() override
         {
+            const int score = m_gameData.m_score;
+            if (score != -1)
+            {
+                m_scoreIndex = m_gameData.m_highScores.AddScore(score);
+            }
             return true;
         }
 
         ~HighScoreState()
-        {
-        }
+        { }
+
+        bool InsertingNewScore() const
+        { return m_scoreIndex != HighScoreList::INVALID_INDEX; }
 
         void Render() override
         {
@@ -93,22 +145,46 @@ namespace bact
 
             const Viewport vp = renderer.GetView().m_viewport;
 
-            renderer.SetFontScale(4.0f);
-            const float titleH = renderer.GetFontHeight();
-            const char * const highScores = "High scores";
-            const float highScoresW = renderer.GetTextWidth(highScores);
-            renderer.DrawText((vp.w - highScoresW) / 2.0f, vp.h / 5.0f, highScores);
+            TextLayout layout(renderer, vp.w / 2.0f, 10.0f);
+
+            renderer.SetFontScale(3.0f);
+            layout.AddTextAlignC("High scores", 0.0f);
+            layout.AddLine();
 
             renderer.SetFontScale(1.0f);
-            const float fontH = renderer.GetFontHeight();
-            const char * const instruction2 = "Press [return] after entering name:";
-            const float textW2 = renderer.GetTextWidth(instruction2);
-            renderer.DrawText((vp.w - textW2) / 2.0f, vp.h / 3.0f + titleH, instruction2);
+            layout.AddLine();
 
-            const float nameW = renderer.GetTextWidth(m_nameInput.GetText());
-            const float x = (vp.w - nameW) / 2.0f;
-            const float y = vp.h / 3.0f + titleH + fontH;
-            renderer.DrawText(x, y, m_nameInput.GetText());
+            if (InsertingNewScore())
+            {
+                layout.AddTextAlignC("Press [return] after entering name", 0.0f);
+            }
+            else
+            {
+                layout.AddTextAlignC("Press [return] or [esc] to return to main menu", 0.0f);
+            }
+            layout.AddLine();
+            layout.AddLine();
+
+            renderer.SetFontScale(1.2f);
+            const HighScoreList &highScores = m_gameData.m_highScores;
+
+            char buf[20];
+            for (size_t i = 0; i < highScores.GetScoreCount(); i++)
+            {
+                if (i == m_scoreIndex)
+                {
+                    renderer.SetColor(Color(0.05f, 1.0f, 0.05f));
+                    layout.AddTextAlignR(m_nameInput.GetText(), -10.0f);
+                }
+                else
+                {
+                    renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
+                    layout.AddTextAlignR(highScores.GetName(i), -10.0f);
+                }
+                StringPrintF(buf, "%i", highScores.GetScore(i));
+                layout.AddText(buf, 10.0f);
+                layout.AddLine();
+            }
         }
 
         void OnTextInput(const char *str) override
@@ -118,7 +194,20 @@ namespace bact
 
         void OnKeyPress(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods) override
         {
-            if (key == Keyboard::Key::Return && m_nameInput.GetLength() > 0)
+            if (key == Keyboard::Key::Return)
+            {
+                if (InsertingNewScore() && m_nameInput.GetLength() > 0)
+                {
+                    m_gameData.m_highScores.SetName(m_scoreIndex, m_nameInput.GetText());
+                    m_gameData.m_highScores.Save();
+                    m_scoreIndex = HighScoreList::INVALID_INDEX;
+                }
+                else
+                {
+                    ChangeState(1);
+                }
+            }
+            else if (key == Keyboard::Key::Escape)
             {
                 ChangeState(1);
             }
@@ -129,10 +218,15 @@ namespace bact
             TextInputHandler(m_nameInput).OnKeyDown(key, mods);
         }
     private:
+        GameData &m_gameData;
+        size_t m_scoreIndex;
         TextInput m_nameInput;
     };
 
 
+    Bacteroids::Bacteroids()
+        : m_gameData()
+    { }
 
     bool Bacteroids::Initialize()
     {
@@ -145,9 +239,9 @@ namespace bact
         );
         m_window->GrabMouse();
 
-        m_highScores.Load();
+        m_gameData.m_highScores.Load();
 
-        ChangeState<MenuState>();
+        HandleStateChange(STATE_MENU);
         return true;
     }
 
@@ -162,12 +256,11 @@ namespace bact
     {
         switch (state)
         {
-        case 0: break;
+        case STATE_NO_CHANGE: break;
 
-        case 1: ChangeState<MenuState>(); break;
-        case 2: ChangeState<BacteroidsState>(); break;
-        case 3: ChangeState<HighScoreState>(); break;
-        case 4: m_state->QuitState(); break;
+        case STATE_MENU:        ChangeState<MenuState>(m_gameData); break;
+        case STATE_GAME:        ChangeState<BacteroidsState>(m_gameData); break;
+        case STATE_HIGH_SCORE:  ChangeState<HighScoreState>(m_gameData); break;
         default:
             log::Error("Invalid state change (", state, ")");
             break;
