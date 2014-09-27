@@ -91,6 +91,8 @@
 		<Unit filename="src/bacteroids/FadeEffect.cpp" />
 		<Unit filename="src/bacteroids/FadeEffect.h" />
 		<Unit filename="src/bacteroids/GameObject.h" />
+		<Unit filename="src/bacteroids/HighScoreList.cpp" />
+		<Unit filename="src/bacteroids/HighScoreList.h" />
 		<Unit filename="src/bacteroids/Input.h" />
 		<Unit filename="src/bacteroids/ObjectArray.cpp" />
 		<Unit filename="src/bacteroids/ObjectArray.h" />
