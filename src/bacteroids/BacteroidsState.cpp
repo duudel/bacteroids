@@ -115,7 +115,7 @@ namespace bact
     void BacteroidsState::OnKeyPress(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods)
     {
         if (key == Keyboard::Key::Escape)
-            QuitState();
+            ChangeState(1);
         if (key == Keyboard::Key::P)
             TogglePause();
         if (key == Keyboard::Key::M)
@@ -124,7 +124,7 @@ namespace bact
         if (m_player.IsDead())
         {
             if (key == Keyboard::Key::Space)
-                ChangeState(2);
+                ChangeState(3);
         }
     }
 
@@ -484,7 +484,6 @@ namespace bact
                 break;
 
             case Projectile::TYPE:
-//                renderer.BindColorShader();
                 renderer.BindShader(m_projectileShader);
                 break;
 

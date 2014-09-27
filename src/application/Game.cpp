@@ -73,10 +73,6 @@ namespace rob
             return false;
         }
 
-        int w, h;
-        m_window->GetSize(&w, &h);
-        OnResize(w, h);
-
         return true;
     }
 
@@ -88,6 +84,10 @@ namespace rob
         m_state->SetRenderer(m_renderer);
         m_state->SetWindow(m_window);
         m_state->Initialize();
+
+        int w, h;
+        m_window->GetSize(&w, &h);
+        OnResize(w, h);
     }
 
     void Game::Run()
