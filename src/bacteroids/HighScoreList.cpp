@@ -37,7 +37,7 @@ namespace bact
         if (!in.is_open()) return false;
 
         in.read(reinterpret_cast<char*>(&m_scoreCount), sizeof(uint32_t));
-        if (m_scoreCount >= MAX_SCORE_COUNT)
+        if (m_scoreCount > MAX_SCORE_COUNT)
         {
             rob::log::Error("Corrupt high score file: ", filename);
             return false;
@@ -108,7 +108,7 @@ namespace bact
             last = m_scoreCount++;
 
         for (size_t i = last; i > index; i--)
-            m_scores[i] = m_scores[i - i];
+            m_scores[i] = m_scores[i - 1];
 
         rob::CopyStringN(m_scores[index].m_name, "");
         m_scores[index].m_score = score;

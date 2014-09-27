@@ -27,14 +27,53 @@ namespace bact
 
         void AddLine()
         {
+            AddLines(1);
+        }
+
+        void AddLines(int n)
+        {
             m_cursor.x = m_start.x;
-            m_cursor.y += m_renderer.GetFontHeight();
+            m_cursor.y += m_renderer.GetFontHeight() * n;
         }
 
         void AddText(const char *str, const float width)
         {
             m_renderer.DrawText(m_cursor.x + width, m_cursor.y, str);
             m_cursor.x += width + m_renderer.GetTextWidth(str);
+        }
+
+        void DrawCursor(const float x, const float y)
+        {
+            m_renderer.BindColorShader();
+            m_renderer.DrawLine(x, y, x, y + m_renderer.GetFontHeight());
+            m_renderer.BindFontShader();
+        }
+
+        void AddTextInput(const TextInput &input, const float width)
+        {
+            const float cx = m_cursor.x + width;
+            const float cy = m_cursor.y;
+            m_renderer.DrawText(cx, cy, input.GetText());
+
+            const float cursorX = m_renderer.GetTextWidth(input.GetText(), input.GetCursor());
+            DrawCursor(cx + cursorX, cy);
+
+            m_cursor.x = cx + m_renderer.GetTextWidth(input.GetText());
+        }
+
+        void AddTextAlignL(const char *str, const float width)
+        {
+            m_renderer.DrawText(m_cursor.x + width, m_cursor.y, str);
+        }
+
+        void AddTextInputAlignL(const TextInput &input, const float width)
+        {
+            const float cx = m_cursor.x + width;
+            const float cy = m_cursor.y;
+            m_renderer.DrawText(cx, cy, input.GetText());
+
+            const float cursorX = m_renderer.GetTextWidth(input.GetText(), input.GetCursor());
+            DrawCursor(cx + cursorX, cy);
         }
 
         void AddTextAlignC(const char *str, const float width)
@@ -44,10 +83,36 @@ namespace bact
             m_cursor.x += width;
         }
 
+        void AddTextInputAlignC(const TextInput &input, const float width)
+        {
+            const float tw = m_renderer.GetTextWidth(input.GetText());
+            const float cx = m_cursor.x + (width - tw / 2.0f);
+            const float cy = m_cursor.y;
+            m_renderer.DrawText(cx, cy, input.GetText());
+
+            const float cursorX = m_renderer.GetTextWidth(input.GetText(), input.GetCursor());
+            DrawCursor(cx + cursorX, cy);
+
+            m_cursor.x += width;
+        }
+
         void AddTextAlignR(const char *str, const float width)
         {
             const float tw = m_renderer.GetTextWidth(str);
             m_renderer.DrawText(m_cursor.x + width - tw, m_cursor.y, str);
+            m_cursor.x += width;
+        }
+
+        void AddTextInputAlignR(const TextInput &input, const float width)
+        {
+            const float tw = m_renderer.GetTextWidth(input.GetText());
+            const float cx = m_cursor.x + width - tw;
+            const float cy = m_cursor.y;
+            m_renderer.DrawText(cx, cy, input.GetText());
+
+            const float cursorX = m_renderer.GetTextWidth(input.GetText(), input.GetCursor());
+            DrawCursor(cx + cursorX, cy);
+
             m_cursor.x += width;
         }
     };
@@ -62,18 +127,16 @@ namespace bact
         bool Initialize() override
         {
             m_gameData.m_score = -1;
-//            float r = 0.05f, g = 0.13f, b = 0.15f, s = 0.5f;
-//            GetRenderer().GetGraphics()->SetClearColor(r*s, g*s, b*s);
-
             return true;
         }
 
         ~MenuState()
-        {
-        }
+        { }
 
         void Render() override
         {
+            Delay(20);
+
             Renderer &renderer = GetRenderer();
             renderer.SetView(GetDefaultView());
             renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
@@ -117,7 +180,7 @@ namespace bact
             , m_scoreIndex(HighScoreList::INVALID_INDEX)
             , m_nameInput()
         {
-            m_nameInput.SetLengthLimit(HighScoreList::MAX_NAME_LENGTH);
+            m_nameInput.SetLengthLimit(HighScoreList::MAX_NAME_LENGTH - 1);
         }
 
         bool Initialize() override
@@ -138,6 +201,8 @@ namespace bact
 
         void Render() override
         {
+            Delay(20);
+
             Renderer &renderer = GetRenderer();
             renderer.SetView(GetDefaultView());
             renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
@@ -149,21 +214,7 @@ namespace bact
 
             renderer.SetFontScale(3.0f);
             layout.AddTextAlignC("High scores", 0.0f);
-            layout.AddLine();
-
-            renderer.SetFontScale(1.0f);
-            layout.AddLine();
-
-            if (InsertingNewScore())
-            {
-                layout.AddTextAlignC("Press [return] after entering name", 0.0f);
-            }
-            else
-            {
-                layout.AddTextAlignC("Press [return] or [esc] to return to main menu", 0.0f);
-            }
-            layout.AddLine();
-            layout.AddLine();
+            layout.AddLines(2);
 
             renderer.SetFontScale(1.2f);
             const HighScoreList &highScores = m_gameData.m_highScores;
@@ -171,19 +222,38 @@ namespace bact
             char buf[20];
             for (size_t i = 0; i < highScores.GetScoreCount(); i++)
             {
+                StringPrintF(buf, "%i.", i + 1);
                 if (i == m_scoreIndex)
                 {
-                    renderer.SetColor(Color(0.05f, 1.0f, 0.05f));
-                    layout.AddTextAlignR(m_nameInput.GetText(), -10.0f);
+                    renderer.SetColor(Color(0.25f, 1.0f, 0.25f));
+                    layout.AddTextAlignL(buf, -260.0f);
+                    layout.AddTextInputAlignL(m_nameInput, -200.0f);
                 }
                 else
                 {
                     renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
-                    layout.AddTextAlignR(highScores.GetName(i), -10.0f);
+                    layout.AddTextAlignL(buf, -260.0f);
+                    layout.AddTextAlignL(highScores.GetName(i), -200.0f);
                 }
                 StringPrintF(buf, "%i", highScores.GetScore(i));
-                layout.AddText(buf, 10.0f);
+                layout.AddTextAlignR(buf, 200.0f);
                 layout.AddLine();
+            }
+
+            const int emptyLines = HighScoreList::MAX_SCORE_COUNT - highScores.GetScoreCount();
+            layout.AddLines(emptyLines);
+
+            renderer.SetFontScale(1.0f);
+            layout.AddLine();
+
+            renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
+            if (InsertingNewScore())
+            {
+                layout.AddTextAlignC("Press [return] after entering name", 0.0f);
+            }
+            else
+            {
+                layout.AddTextAlignC("Press [return] or [esc] to return to main menu", 0.0f);
             }
         }
 
