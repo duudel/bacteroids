@@ -150,7 +150,8 @@ namespace bact
         if (!m_objects.CanObtainBacter()) return;
 
         Bacter *bacter = m_objects.ObtainBacter();
-        bacter->Setup(&m_player, m_random);
+        bacter->SetTarget(&m_player);
+        bacter->RandomizeAnimation(m_random);
         bacter->SetPosition(m_random.GetDirection() * D);
     }
 
@@ -167,8 +168,21 @@ namespace bact
         }
         else if (obj->GetType() == Projectile::TYPE)
         {
-            me->AddVelocity(obj->GetVelocity() * 0.5f);
-            m_score += me->TakeHit(m_objects, m_random);
+            if (me->CanSplit())
+            {
+                m_score += me->GetPoints();
+                me->AddVelocity(obj->GetVelocity() * 0.5f);
+                if (!me->DiesIfSplits())
+                {
+                    if (m_objects.CanObtainBacter())
+                    {
+                        Bacter *bacter = m_objects.ObtainBacter();
+                        bacter->CopyAttributes(me);
+                        bacter->Split(m_random);
+                    }
+                }
+                me->Split(m_random);
+            }
         }
     }
 
@@ -222,134 +236,7 @@ namespace bact
 
     void BacteroidsState::DoCollisions()
     {
-    #define BUCKETED_COLLISION 1
-    #if defined(BUCKETED_COLLISION)
-        size_t num_objects = m_objects.Size();
-
-        size_t q[5] = {0};
-
-        for (size_t i = 0; i < num_objects; i++)
-        {
-            GameObject *o = m_objects[i];
-            vec2f p = o->GetPosition();
-            float r = o->GetRadius();
-
-            if (p.x + r < 0.0f && p.y + r < 0.0f)
-            {
-                size_t q0 = q[0]++;
-                size_t q1 = q[1]++;
-                size_t q2 = q[2]++;
-                size_t q3 = q[3]++;
-                size_t q4 = q[4]++;
-                m_quadTree[q4] = m_quadTree[q3];
-                m_quadTree[q3] = m_quadTree[q2];
-                m_quadTree[q2] = m_quadTree[q1];
-                m_quadTree[q1] = m_quadTree[q0];
-                m_quadTree[q0] = o;
-            }
-            else if (p.x + r < 0.0f && p.y - r > 0.0f)
-            {
-                size_t q1 = q[1]++;
-                size_t q2 = q[2]++;
-                size_t q3 = q[3]++;
-                size_t q4 = q[4]++;
-                m_quadTree[q4] = m_quadTree[q3];
-                m_quadTree[q3] = m_quadTree[q2];
-                m_quadTree[q2] = m_quadTree[q1];
-                m_quadTree[q1] = o;
-            }
-            else if (p.x - r > 0.0f && p.y + r < 0.0f)
-            {
-                size_t q2 = q[2]++;
-                size_t q3 = q[3]++;
-                size_t q4 = q[4]++;
-                m_quadTree[q4] = m_quadTree[q3];
-                m_quadTree[q3] = m_quadTree[q2];
-                m_quadTree[q2] = o;
-            }
-            else if (p.x - r > 0.0f && p.y - r > 0.0f)
-            {
-                size_t q3 = q[3]++;
-                size_t q4 = q[4]++;
-                m_quadTree[q4] = m_quadTree[q3];
-                m_quadTree[q3] = o;
-            }
-            else
-            {
-                size_t q4 = q[4]++;
-                m_quadTree[q4] = o;
-            }
-        }
-
-        for (size_t k = 0, i = 0; k < 5; k++)
-        {
-            for (; i < q[k]; i++)
-            {
-                GameObject *obj1 = m_quadTree[i];
-                vec2f p1 = obj1->GetPosition();
-                float r1 = obj1->GetRadius();
-
-                for (size_t j = i + 1; j < q[k]; j++)
-                {
-                    GameObject *obj2 = m_quadTree[j];
-                    vec2f p2 = obj2->GetPosition();
-                    float r2 = obj2->GetRadius();
-
-                    vec2f from2To1 = (p1 - p2);
-                    float dist = r1 + r2 - from2To1.Length();
-
-                    if (dist > 0.0f)
-                    {
-                        DoCollision(obj1, obj2, from2To1, dist);
-                        DoCollision(obj2, obj1, -from2To1, dist);
-                    }
-                }
-
-                if (k == 4) continue;
-
-                for (size_t j = q[3]; j < q[4]; j++)
-                {
-                    GameObject *obj2 = m_quadTree[j];
-                    vec2f p2 = obj2->GetPosition();
-                    float r2 = obj2->GetRadius();
-
-                    vec2f from2To1 = (p1 - p2);
-                    float dist = r1 + r2 - from2To1.Length();
-
-                    if (dist > 0.0f)
-                    {
-                        DoCollision(obj1, obj2, from2To1, dist);
-                        DoCollision(obj2, obj1, -from2To1, dist);
-                    }
-                }
-            }
-        }
-    #else
-        size_t num_objects = m_objects.Size();
-
-        for (size_t i = 0; i < num_objects; i++)
-        {
-            GameObject *obj1 = m_objects[i];
-            vec2f p1 = obj1->GetPosition();
-            float r1 = obj1->GetRadius();
-
-            for (size_t j = i + 1; j < num_objects; j++)
-            {
-                GameObject *obj2 = m_objects[j];
-                vec2f p2 = obj2->GetPosition();
-                float r2 = obj2->GetRadius();
-
-                vec2f from2To1 = (p1 - p2);
-                float dist = r1 + r2 - from2To1.Length();
-
-                if (dist > 0.0f)
-                {
-                    DoCollision(obj1, obj2, from2To1, dist);
-                    DoCollision(obj2, obj1, -from2To1, dist);
-                }
-            }
-        }
-    #endif // BUCKETED_COLLISION
+    #include "CollisionTesting.inl"
     }
 
     void BacteroidsState::UpdatePlayer(const GameTime &gameTime)
@@ -395,6 +282,27 @@ namespace bact
         for (size_t i = 0; i < m_objects.Size(); i++)
         {
             m_objects[i]->Update(gameTime);
+            // TODO: Spontaneous splitting is very much a hack I says. Fix pls.
+            if (m_objects[i]->GetType() == Bacter::TYPE)
+            {
+                Bacter *bacter = (Bacter*)m_objects[i];
+                if (bacter->WantsToSplit())
+                {
+                    if (bacter->CanSplit())
+                    {
+                        if (!bacter->DiesIfSplits())
+                        {
+                            if (m_objects.CanObtainBacter())
+                            {
+                                Bacter *other = m_objects.ObtainBacter();
+                                other->CopyAttributes(bacter);
+                                other->Split(m_random);
+                            }
+                        }
+                        bacter->Split(m_random);
+                    }
+                }
+            }
         }
 
         for (size_t i = 0; i < m_objects.Size(); )
@@ -406,12 +314,6 @@ namespace bact
             }
             i++;
         }
-
-//            for (size_t i = 0; i < m_bacters.size; i++)
-//            {
-//                m_bacters[i]->Update(gameTime);
-//                Bacter::TrySplit(m_bacters[i], m_bacters, m_random); // TODO: spontaneous bacter splitting needed!
-//            }
 
         m_damageFade.Update(gameTime.GetDeltaSeconds());
     }

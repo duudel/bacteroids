@@ -26,33 +26,41 @@ namespace bact
         SetRadius(1.0f);
     }
 
-    void Bacter::Setup(const GameObject *target, Random &random)
+    void Bacter::RandomizeAnimation(Random &random)
     {
-        SetTarget(target);
         m_anim = random.GetReal(0.0, 2.0 * PI_d);
     }
 
-    int Bacter::TakeHit(ObjectArray &bacterArray, Random &random)
+    bool Bacter::WantsToSplit() const
     {
-        if (m_splitTimer > 0.0f) return 0;
+        return (m_readyToSplitTimer >= 6.0f);
+    }
 
-        int points = m_points;
+    bool Bacter::CanSplit() const
+    {
+        return (m_splitTimer <= 0.0f);
+    }
 
+    bool Bacter::DiesIfSplits() const
+    {
+        return (m_size / 2.0f < MIN_BACTER_SIZE);
+    }
+
+    void Bacter::Split(Random &random)
+    {
+        if (m_splitTimer > 0.0f) return;
         if (m_size / 2.0f < MIN_BACTER_SIZE)
         {
             m_alive = false;
+            return;
         }
-        else if (!Bacter::Split(this, bacterArray, random))
-        {
-            SplitSelf();
-        }
-
-        return points;
-    }
-
-    void Bacter::ModifySize(float sizeMod)
-    {
-        m_sizeMod = Max(m_sizeMod, sizeMod);
+        m_size = m_size / 2.0f;
+        m_points = m_points / 2.0f + 0.6f; // points is at least 1
+        m_splitTimer = 0.1f;
+        m_readyToSplitTimer = 0.0f;
+        RandomizeAnimation(random);
+        m_position += random.GetDirection() * 0.1f;
+        return;
     }
 
     void Bacter::Update(const GameTime &gameTime)
@@ -87,36 +95,6 @@ namespace bact
 
         m_radius = Sqrt(m_size * m_sizeMod);
         m_sizeMod = 1.0f;
-    }
-
-    void Bacter::SplitSelf()
-    {
-        m_size = m_size / 2.0f;
-        m_points = m_points / 2.0f + 0.6f; // points is at least 1
-        m_splitTimer = 0.1f;
-        m_readyToSplitTimer = 0.0f;
-    }
-
-    void Bacter::TrySplit(Bacter *bacter, ObjectArray &bacterArray, Random &random)
-    {
-        if (bacter->m_readyToSplitTimer >= 6.0f)
-            Split(bacter, bacterArray, random);
-    }
-
-    bool Bacter::Split(Bacter *bacter, ObjectArray &bacterArray, Random &random)
-    {
-        if (!bacterArray.CanObtainBacter()) return false;
-
-        Bacter *bacter2 = bacterArray.ObtainBacter();
-        bacter2->Setup(bacter->m_target, random);
-        bacter2->SetPosition(bacter->GetPosition() + random.GetDirection()*0.1f);
-        bacter2->SetRadius(bacter->GetRadius());
-        bacter2->m_size = bacter->m_size;
-        bacter2->m_points = bacter->m_points;
-        bacter->SplitSelf();
-        bacter2->SplitSelf();
-
-        return true;
     }
 
     void Bacter::Render(Renderer *renderer, const BacteroidsUniforms &uniforms)
