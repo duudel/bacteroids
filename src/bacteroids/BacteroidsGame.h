@@ -3,6 +3,7 @@
 #define H_BACT_BACTEROIDS_GAME_H
 
 #include "../application/Game.h"
+#include "HighScoreList.h"
 
 namespace bact
 {
@@ -15,6 +16,8 @@ namespace bact
 
     protected:
         void HandleStateChange(int state) override;
+
+        HighScoreList m_highScores;
     };
 
 } // bact

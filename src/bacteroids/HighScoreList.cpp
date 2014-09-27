@@ -1,7 +1,12 @@
 
 #include "HighScoreList.h"
 
+#include "../Log.h"
 #include "../String.h"
+
+#include <SDL2/SDL.h>
+#include <string>
+#include <fstream>
 
 namespace bact
 {
@@ -12,12 +17,58 @@ namespace bact
 
     bool HighScoreList::Load()
     {
+        char * const appPath = ::SDL_GetPrefPath("donkions", "Bacteroids");
+        std::string filename;
+        if (appPath)
+        {
+            filename = appPath;
+            ::SDL_free(appPath);
+        }
+        filename += "highscore.lst";
 
+        std::ifstream in(filename.c_str(), std::ios::binary);
+        if (in.is_open()) return false;
+
+        in.read(reinterpret_cast<char*>(&m_scoreCount), sizeof(uint32_t));
+        if (m_scoreCount >= MAX_SCORE_COUNT)
+        {
+            rob::log::Error("Corrupt high score file: ", filename);
+            return false;
+        }
+
+        for (size_t i = 0; i < m_scoreCount; i++)
+        {
+            if (!in)
+            {
+                rob::log::Error("Corrupt high score file, not enough scores: ", filename);
+                return false;
+            }
+            in.read(reinterpret_cast<char*>(&m_scores[i]), sizeof(Score));
+            // TODO: make sure the score is valid, i.e score > 0 and name ends with '\0'.
+        }
+        return true;
     }
 
     bool HighScoreList::Save()
     {
+        char * const appPath = ::SDL_GetPrefPath("donkions", "Bacteroids");
+        std::string filename;
+        if (appPath)
+        {
+            filename = appPath;
+            ::SDL_free(appPath);
+        }
+        filename += "highscore.lst";
 
+        std::ofstream out(filename.c_str(), std::ios::binary);
+        if (out.is_open()) return false;
+
+        out.write(reinterpret_cast<const char*>(&m_scoreCount), sizeof(uint32_t));
+        for (size_t i = 0; i < m_scoreCount; i++)
+        {
+            out.write(reinterpret_cast<const char*>(&m_scores[i]), sizeof(Score));
+        }
+        return true;
     }
 
     size_t HighScoreList::GetIndex(int score) const

@@ -26,7 +26,8 @@ namespace rob
         : m_length(0)
         , m_cursor(0)
     {
-        m_text[MAX_LENGTH] = 0;
+        for (size_t i = 0; i <= MAX_LENGTH; i++)
+            m_text[i] = 0;
     }
 
     const char* TextInput::GetText() const
