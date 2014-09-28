@@ -298,7 +298,7 @@ namespace bact
         for (size_t i = 0; i < m_objects.Size(); i++)
         {
             m_objects[i]->Update(gameTime, PLAY_AREA);
-            // TODO: Spontaneous splitting is very much a hack I says. Fix pls.
+            // TODO: Spontaneous splitting is very much a hack I says. Fix pls. Solution CES?
             if (m_objects[i]->GetType() == Bacter::TYPE)
             {
                 Bacter *bacter = (Bacter*)m_objects[i];
@@ -335,11 +335,23 @@ namespace bact
         layout.AddLine();
 
         renderer.SetFontScale(1.0f);
-        layout.AddTextAlignC("[Esc] to resume", 0.0f);
+        layout.AddTextAlignC("[Esc] - Resume", 0.0f);
         layout.AddLine();
-        layout.AddTextAlignC("[Q] to exit to main menu", 0.0f);
-        layout.AddLines(2);
-        layout.AddTextAlignC("[M] to mute/unmute", 0.0f);
+        layout.AddTextAlignC("[Q] - Exit to main menu", 0.0f);
+
+//        renderer.SetFontScale(1.0f);
+//        layout.AddTextAlignR("[Esc]", -100.0f);
+//        layout.AddTextAlignL("- Resume", 10.0f);
+//        layout.AddLine();
+//        layout.AddTextAlignR("[Q]", -100.0f);
+//        layout.AddTextAlignL("- Exit to main menu", 10.0f);
+
+//        renderer.SetFontScale(1.0f);
+//        layout.AddTextAlignC("[Esc] to resume", 0.0f);
+//        layout.AddLine();
+//        layout.AddTextAlignC("[Q] to exit to main menu", 0.0f);
+//        layout.AddLines(2);
+//        layout.AddTextAlignC("[M] to mute/unmute", 0.0f);
     }
 
     void BacteroidsState::RenderGameOver()
@@ -408,34 +420,51 @@ namespace bact
             RenderGameOver();
         }
 
-        TextLayout layout(renderer, 0.0f, 0.0f);
+        {
+            TextLayout layout(renderer, 0.0f, 0.0f);
 
-        renderer.BindFontShader();
-        renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
-        renderer.SetFontScale(1.0f);
+            renderer.BindFontShader();
+            renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
+            renderer.SetFontScale(1.0f);
 
-        char buf[64];
-        StringPrintF(buf, "Score: %i", m_score);
-        layout.AddText(buf, 0.0f);
-        layout.AddLine();
+            char buf[64];
+            StringPrintF(buf, "Score: %i", m_score);
+            layout.AddText(buf, 0.0f);
+            layout.AddLine();
 
-        StringPrintF(buf, "Kills: %i", m_kills);
-        layout.AddText(buf, 0.0f);
-        layout.AddLine();
+            StringPrintF(buf, "Kills: %i", m_kills);
+            layout.AddText(buf, 0.0f);
+            layout.AddLine();
 
-        const int ptPerKill = (m_kills) ? (m_score / m_kills) : 0;
-        StringPrintF(buf, "pt per kill: %i", ptPerKill);
-        layout.AddText(buf, 0.0f);
-        layout.AddLine();
+            const float ptPerKill = (m_kills) ? (m_score / float(m_kills)) : 0;
+            StringPrintF(buf, "pt per kill: %.1f", ptPerKill);
+            layout.AddText(buf, 0.0f);
+            layout.AddLine();
 
-        const float hx = 10.0f;
-        const float hy = layout.m_cursor.y + 10.0f;
+            const float hx = 10.0f;
+            const float hy = layout.m_cursor.y + 10.0f;
 
-        renderer.BindColorShader();
-        renderer.SetColor(Color(0.5f, 0.5f, 0.5f));
-        renderer.DrawFilledRectangle(hx, hy, hx + 100.0f, hy + 10.0f);
-        renderer.SetColor(Color(0.85f, 0.05f, 0.05f));
-        renderer.DrawFilledRectangle(hx, hy, hx + m_player.GetHealth(), hy + 10.0f);
+            renderer.BindColorShader();
+            renderer.SetColor(Color(0.5f, 0.5f, 0.5f));
+            renderer.DrawFilledRectangle(hx, hy, hx + 100.0f, hy + 10.0f);
+            renderer.SetColor(Color(0.85f, 0.05f, 0.05f));
+            renderer.DrawFilledRectangle(hx, hy, hx + m_player.GetHealth(), hy + 10.0f);
+        }
+
+        {
+            const Viewport vp = renderer.GetView().m_viewport;
+
+            TextLayout layout(renderer, 0.0f, vp.h);
+
+            renderer.BindFontShader();
+            renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
+            renderer.SetFontScale(1.0f);
+
+            char buf[64];
+            StringPrintF(buf, "[M] - Muted: %s", GetAudio().IsMuted() ? "yes" : "no");
+            layout.AddLines(-1);
+            layout.AddText(buf, 0.0f);
+        }
     }
 
 } // bact
