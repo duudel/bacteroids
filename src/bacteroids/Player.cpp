@@ -14,8 +14,7 @@ namespace bact
 {
 
     Player::Player()
-        : GameObject(TYPE)
-        , m_direction(0.0f, 1.0f)
+        : m_direction(0.0f, 1.0f)
         , m_health(100.0f)
         , m_cooldown(0.0f)
     {

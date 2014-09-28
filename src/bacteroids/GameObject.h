@@ -6,8 +6,14 @@
 
 #include "../math/Math.h"
 
+#define BACT_GAME_OBJECT(ClassName, TypeID) \
+    ClassName : public BacteroidsGameObject<TypeID>
+
+#define BACT_GAME_OBJECT_SHADER(ClassName) \
+    template <> ShaderProgramHandle BacteroidsGameObject<ClassName::TYPE>::shader
+
 namespace rob
-{
+    {
     class GameTime;
     class Renderer;
 } // rob
@@ -62,12 +68,29 @@ namespace bact
         virtual void Update(const GameTime &gameTime) { }
         virtual void Render(Renderer *renderer, const BacteroidsUniforms &uniforms) { }
 
+        virtual ShaderProgramHandle GetShader() = 0;
+
     protected:
         int m_type;
         vec2f m_position;
         vec2f m_velocity;
         float m_radius;
         bool m_alive;
+    };
+
+    template <int TypeID>
+    class BacteroidsGameObject : public GameObject
+    {
+    public:
+        static const int TYPE = TypeID;
+        static ShaderProgramHandle shader;
+    public:
+        BacteroidsGameObject()
+            : GameObject(TYPE)
+        { }
+
+        ShaderProgramHandle GetShader() override
+        { return shader; }
     };
 
 } // bact

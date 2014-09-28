@@ -20,6 +20,10 @@ namespace bact
     static const float PLAY_AREA_BOTTOM = -PLAY_AREA_H / 2.0f;
     static const float PLAY_AREA_TOP    = -PLAY_AREA_BOTTOM;
 
+    BACT_GAME_OBJECT_SHADER(Player) = InvalidHandle;
+    BACT_GAME_OBJECT_SHADER(Bacter) = InvalidHandle;
+    BACT_GAME_OBJECT_SHADER(Projectile) = InvalidHandle;
+
 
     BacteroidsState::BacteroidsState(GameData &gameData)
         : m_gameData(gameData)
@@ -55,6 +59,10 @@ namespace bact
 
         renderer.GetGraphics()->AddProgramUniform(m_bacterShader, m_uniforms.m_anim);
         renderer.GetGraphics()->AddProgramUniform(m_bacterShader, m_uniforms.m_velocity);
+
+        Player::shader = m_playerShader;
+        Bacter::shader = m_bacterShader;
+        Projectile::shader = m_projectileShader;
 
         m_soundPlayer.Init(GetAudio(), GetCache());
 
@@ -370,24 +378,26 @@ namespace bact
                 continue;
             }
 
-            switch (obj->GetType())
-            {
-            case Bacter::TYPE:
-                renderer.BindShader(m_bacterShader);
-                break;
+//            switch (obj->GetType())
+//            {
+//            case Bacter::TYPE:
+//                renderer.BindShader(m_bacterShader);
+//                break;
+//
+//            case Player::TYPE:
+//                renderer.BindShader(m_playerShader);
+//                break;
+//
+//            case Projectile::TYPE:
+//                renderer.BindShader(m_projectileShader);
+//                break;
+//
+//            default:
+//                ROB_ASSERT(0);
+//                break;
+//            }
 
-            case Player::TYPE:
-                renderer.BindShader(m_playerShader);
-                break;
-
-            case Projectile::TYPE:
-                renderer.BindShader(m_projectileShader);
-                break;
-
-            default:
-                ROB_ASSERT(0);
-                break;
-            }
+            renderer.BindShader(obj->GetShader());
 
             const vec2f vel2 = obj->GetVelocity();
             const vec4f velocity(vel2.x, vel2.y, 0.0f, 0.0f);

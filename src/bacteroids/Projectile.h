@@ -7,10 +7,8 @@
 namespace bact
 {
 
-    class Projectile : public GameObject
+    class BACT_GAME_OBJECT(Projectile, 3)
     {
-    public:
-        static const int TYPE = 3;
     public:
         Projectile();
 

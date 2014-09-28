@@ -16,10 +16,8 @@ namespace bact
 
     using namespace rob;
 
-    class Bacter : public GameObject
+    class BACT_GAME_OBJECT(Bacter, 2)
     {
-    public:
-        static const int TYPE = 2;
     public:
         Bacter();
 

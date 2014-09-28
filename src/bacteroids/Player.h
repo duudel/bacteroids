@@ -13,10 +13,8 @@ namespace bact
     class SoundPlayer;
     class Input;
 
-    class Player : public GameObject
+    class BACT_GAME_OBJECT(Player, 1)
     {
-    public:
-        static const int TYPE = 1;
     public:
         Player();
 

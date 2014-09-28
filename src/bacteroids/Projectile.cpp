@@ -11,7 +11,6 @@ namespace bact
     using namespace rob;
 
     Projectile::Projectile()
-        : GameObject(TYPE)
     {
         SetRadius(0.2f);
     }

@@ -15,8 +15,7 @@ namespace bact
     const float MIN_BACTER_SIZE = 0.3f;
 
     Bacter::Bacter()
-        : GameObject(TYPE)
-        , m_anim(0.0f)
+        : m_anim(0.0f)
         , m_size(MIN_BACTER_SIZE), m_sizeMod(1.0f)
         , m_target(nullptr)
         , m_points(10)
