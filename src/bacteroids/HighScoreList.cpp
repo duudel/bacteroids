@@ -39,6 +39,7 @@ namespace bact
         in.read(reinterpret_cast<char*>(&m_scoreCount), sizeof(uint32_t));
         if (m_scoreCount > MAX_SCORE_COUNT)
         {
+            m_scoreCount = 0;
             rob::log::Error("Corrupt high score file: ", filename);
             return false;
         }
@@ -48,6 +49,7 @@ namespace bact
         {
             if (!in)
             {
+                m_scoreCount = 0;
                 rob::log::Error("Corrupt high score file, not enough scores: ", filename);
                 return false;
             }
@@ -58,11 +60,13 @@ namespace bact
 
             if (m_scores[i].m_score < 0)
             {
+                m_scoreCount = 0;
                 rob::log::Error("Corrupt high score file, negative score: ", filename);
                 return false;
             }
             if (prevScore > -1 && m_scores[i].m_score > prevScore)
             {
+                m_scoreCount = 0;
                 rob::log::Error("Corrupt high score file, scores scrambled: ", filename);
                 return false;
             }

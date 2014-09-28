@@ -13,7 +13,7 @@
     template <> ShaderProgramHandle BacteroidsGameObject<ClassName::TYPE>::shader
 
 namespace rob
-    {
+{
     class GameTime;
     class Renderer;
 } // rob
