@@ -2,6 +2,7 @@
 #include "BacteroidsState.h"
 
 #include "Shaders.h"
+#include "TextLayout.h"
 
 #include "../graphics/Graphics.h"
 #include "../renderer/Renderer.h"
@@ -19,7 +20,8 @@ namespace bact
     static const float PLAY_AREA_RIGHT  = -PLAY_AREA_LEFT;
     static const float PLAY_AREA_BOTTOM = -PLAY_AREA_H / 2.0f;
     static const float PLAY_AREA_TOP    = -PLAY_AREA_BOTTOM;
-    static const Rect g_playAreaRect(PLAY_AREA_LEFT, PLAY_AREA_BOTTOM, PLAY_AREA_RIGHT, PLAY_AREA_TOP);
+    static const Rect PLAY_AREA(PLAY_AREA_LEFT, PLAY_AREA_BOTTOM,
+                                PLAY_AREA_RIGHT, PLAY_AREA_TOP);
 
 
     BacteroidsState::BacteroidsState(GameData &gameData)
@@ -36,8 +38,9 @@ namespace bact
 
     bool BacteroidsState::Initialize()
     {
-        Renderer &renderer = GetRenderer();
+        GetWindow().GrabMouse();
 
+        Renderer &renderer = GetRenderer();
         m_playerShader = renderer.CompileShaderProgram(g_playerShader.m_vertexShader,
                                                        g_playerShader.m_fragmentShader);
         m_bacterShader = renderer.CompileShaderProgram(g_bacterShader.m_vertexShader,
@@ -69,6 +72,7 @@ namespace bact
         m_quadTree = GetAllocator().AllocateArray<GameObject*>(MAX_OBJECTS);
 
         m_score = 0;
+        m_kills = 0;
 
         m_damageFade.SetFadeAcceleration(-10.0f);
 
@@ -120,9 +124,13 @@ namespace bact
     void BacteroidsState::OnKeyPress(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods)
     {
         if (key == Keyboard::Key::Escape)
-            ChangeState(STATE_MENU);    // TODO: pause/unpause
-        if (key == Keyboard::Key::P)
             TogglePause();
+        if (m_time.IsPaused())
+        {
+            if (key == Keyboard::Key::Q)
+                ChangeState(STATE_MENU);
+        }
+
         if (key == Keyboard::Key::M)
             GetAudio().ToggleMute();
 
@@ -187,6 +195,7 @@ namespace bact
             if (me->CanSplit())
             {
                 m_score += me->GetPoints();
+                m_kills++;
                 me->AddVelocity(obj->GetVelocity() * 0.5f);
                 SplitBacter(me);
             }
@@ -288,7 +297,7 @@ namespace bact
 
         for (size_t i = 0; i < m_objects.Size(); i++)
         {
-            m_objects[i]->Update(gameTime, g_playAreaRect);
+            m_objects[i]->Update(gameTime, PLAY_AREA);
             // TODO: Spontaneous splitting is very much a hack I says. Fix pls.
             if (m_objects[i]->GetType() == Bacter::TYPE)
             {
@@ -314,34 +323,41 @@ namespace bact
     void BacteroidsState::RenderPause()
     {
         Renderer &renderer = GetRenderer();
-        renderer.SetFontScale(4.0f);
         renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
         renderer.BindFontShader();
 
         const Viewport vp = renderer.GetView().m_viewport;
-//            const float fontH = renderer.GetFontHeight();
-        const float textW = renderer.GetTextWidth("Game paused");
-        renderer.DrawText((vp.w - textW) / 2.0f, vp.h / 3.0f, "Game paused");
+
+        TextLayout layout(renderer, vp.w / 2.0f, vp.h / 3.0f);
+
+        renderer.SetFontScale(4.0f);
+        layout.AddTextAlignC("Game paused", 0.0f);
+        layout.AddLine();
+
+        renderer.SetFontScale(1.0f);
+        layout.AddTextAlignC("[Esc] to resume", 0.0f);
+        layout.AddLine();
+        layout.AddTextAlignC("[Q] to exit to main menu", 0.0f);
+        layout.AddLines(2);
+        layout.AddTextAlignC("[M] to mute/unmute", 0.0f);
     }
 
     void BacteroidsState::RenderGameOver()
     {
         Renderer &renderer = GetRenderer();
-        renderer.SetFontScale(4.0f);
         renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
         renderer.BindFontShader();
 
         const Viewport vp = renderer.GetView().m_viewport;
 
-        const float fontH = renderer.GetFontHeight();
-        const char * const gameOver = "Game over";
-        const float gameOverW = renderer.GetTextWidth(gameOver);
-        renderer.DrawText((vp.w - gameOverW) / 2.0f, vp.h / 3.0f, gameOver);
+        TextLayout layout(renderer, vp.w / 2.0f, vp.h / 3.0f);
+
+        renderer.SetFontScale(4.0f);
+        layout.AddTextAlignC("Game over", 0.0f);
+        layout.AddLine();
 
         renderer.SetFontScale(1.0f);
-        const char * const instruction = "Press [space] to continue";
-        const float textW = renderer.GetTextWidth(instruction);
-        renderer.DrawText((vp.w - textW) / 2.0f, vp.h / 3.0f + fontH, instruction);
+        layout.AddTextAlignC("Press [space] to continue", 0.0f);
     }
 
     void BacteroidsState::Render()
@@ -392,16 +408,28 @@ namespace bact
             RenderGameOver();
         }
 
+        TextLayout layout(renderer, 0.0f, 0.0f);
+
+        renderer.BindFontShader();
+        renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
         renderer.SetFontScale(1.0f);
+
         char buf[64];
         StringPrintF(buf, "Score: %i", m_score);
+        layout.AddText(buf, 0.0f);
+        layout.AddLine();
 
-        renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
-        renderer.BindFontShader();
-        renderer.DrawText(0.0f, 0.0f, buf);
+        StringPrintF(buf, "Kills: %i", m_kills);
+        layout.AddText(buf, 0.0f);
+        layout.AddLine();
+
+        const int ptPerKill = (m_kills) ? (m_score / m_kills) : 0;
+        StringPrintF(buf, "pt per kill: %i", ptPerKill);
+        layout.AddText(buf, 0.0f);
+        layout.AddLine();
 
         const float hx = 10.0f;
-        const float hy = 10.0f + renderer.GetFontHeight();
+        const float hy = layout.m_cursor.y + 10.0f;
 
         renderer.BindColorShader();
         renderer.SetColor(Color(0.5f, 0.5f, 0.5f));

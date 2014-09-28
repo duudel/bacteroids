@@ -104,6 +104,7 @@
 		<Unit filename="src/bacteroids/Shaders.cpp" />
 		<Unit filename="src/bacteroids/Shaders.h" />
 		<Unit filename="src/bacteroids/SoundPlayer.h" />
+		<Unit filename="src/bacteroids/TextLayout.h" />
 		<Unit filename="src/bacteroids/Uniforms.h" />
 		<Unit filename="src/filesystem/FileCopy.cpp" />
 		<Unit filename="src/filesystem/FileCopy.h" />

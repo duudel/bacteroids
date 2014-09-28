@@ -77,6 +77,7 @@ namespace bact
         GameObject **m_quadTree;
 
         int m_score;
+        int m_kills;
 
         FadeEffect m_damageFade;
         FadeEffect m_pauseFade;
