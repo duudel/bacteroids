@@ -18,7 +18,7 @@ namespace bact
 //            , m_cache(nullptr)
             , m_shootSound(InvalidSound)
             , m_plDeathSound(InvalidSound)
-            , m_bactDeathSound(InvalidSound)
+            , m_bactSplitSound(InvalidSound)
         { }
 
         void Init(AudioSystem &audio, MasterCache &cache)
@@ -26,8 +26,7 @@ namespace bact
             m_audio = &audio;
             m_shootSound = cache.GetSound("Blip_Select7.wav");
             m_plDeathSound = cache.GetSound("Explosion5.wav");
-            m_bactDeathSound = cache.GetSound("Randomize6.wav");
-//            m_bactDeathSound = cache.GetSound("Hit_Hurt.wav");
+            m_bactSplitSound = cache.GetSound("Randomize6.wav");
         }
 
         void PlayShootSound()
@@ -40,9 +39,9 @@ namespace bact
             m_audio->PlaySound(m_plDeathSound, 0.5f);
         }
 
-        void PlayBacterDeathSound()
+        void PlayBacterSplitSound()
         {
-            m_audio->PlaySound(m_bactDeathSound, 0.5f);
+            m_audio->PlaySound(m_bactSplitSound, 0.5f);
         }
 
     private:
@@ -51,7 +50,7 @@ namespace bact
 
         SoundHandle m_shootSound;
         SoundHandle m_plDeathSound;
-        SoundHandle m_bactDeathSound;
+        SoundHandle m_bactSplitSound;
     };
 
 } // bact

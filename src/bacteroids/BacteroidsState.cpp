@@ -155,6 +155,21 @@ namespace bact
         bacter->SetPosition(m_random.GetDirection() * D);
     }
 
+    void BacteroidsState::SplitBacter(Bacter *bacter)
+    {
+        if (!bacter->DiesIfSplits())
+        {
+            if (m_objects.CanObtainBacter())
+            {
+                Bacter *other = m_objects.ObtainBacter();
+                other->CopyAttributes(bacter);
+                other->Split(m_random);
+            }
+        }
+        bacter->Split(m_random);
+        m_soundPlayer.PlayBacterSplitSound();
+    }
+
     void BacteroidsState::BacterCollision(Bacter *me, GameObject *obj, const vec2f &objToMe, float dist)
     {
         if (obj->GetType() == Bacter::TYPE || obj->GetType() == Player::TYPE)
@@ -172,16 +187,7 @@ namespace bact
             {
                 m_score += me->GetPoints();
                 me->AddVelocity(obj->GetVelocity() * 0.5f);
-                if (!me->DiesIfSplits())
-                {
-                    if (m_objects.CanObtainBacter())
-                    {
-                        Bacter *bacter = m_objects.ObtainBacter();
-                        bacter->CopyAttributes(me);
-                        bacter->Split(m_random, m_soundPlayer);
-                    }
-                }
-                me->Split(m_random, m_soundPlayer);
+                SplitBacter(me);
             }
         }
     }
@@ -290,16 +296,7 @@ namespace bact
                 {
                     if (bacter->CanSplit())
                     {
-                        if (!bacter->DiesIfSplits())
-                        {
-                            if (m_objects.CanObtainBacter())
-                            {
-                                Bacter *other = m_objects.ObtainBacter();
-                                other->CopyAttributes(bacter);
-                                other->Split(m_random, m_soundPlayer);
-                            }
-                        }
-                        bacter->Split(m_random, m_soundPlayer);
+                        SplitBacter(bacter);
                     }
                 }
             }

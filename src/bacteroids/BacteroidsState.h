@@ -46,6 +46,7 @@ namespace bact
         void TogglePause();
 
         void SpawnBacter(float distMod = 1.0f);
+        void SplitBacter(Bacter *bacter);
 
         void BacterCollision(Bacter *me, GameObject *obj, const vec2f &objToMe, float dist);
         void PlayerCollision(Player *me, GameObject *obj, const vec2f &objToMe, float dist);
