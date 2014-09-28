@@ -34,6 +34,7 @@ namespace rob
     {
         ALuint source;
         Sound *playingSound;
+        uint32_t startTime;
 
         Channel()
         {
@@ -41,11 +42,13 @@ namespace rob
             alGenSources(1, &source);
             AL_CHECK;
             playingSound = nullptr;
+            startTime = 0;
         }
 
-        void PlaySound(Sound *sound, float volume)
+        void PlaySound(Sound *sound, float volume, uint32_t currentTime)
         {
             playingSound = sound;
+            startTime = currentTime;
 
             alSourcef(source, AL_PITCH, 1.0f);
             AL_CHECK;
@@ -58,25 +61,33 @@ namespace rob
             alSourcei(source, AL_LOOPING, AL_FALSE);
             AL_CHECK;
 
-            alSourceQueueBuffers(source, 1, &sound->buffer);
+//            alSourceQueueBuffers(source, 1, &sound->buffer);
+            alSourcei(source, AL_BUFFER, sound->buffer);
             AL_CHECK;
 
             alSourcePlay(source);
             AL_CHECK;
         }
 
+        void Stop()
+        { alSourceStop(source); }
+
         void Update()
         {
             if (playingSound == nullptr) return;
 
-            ALint processed = 0;
-            alGetSourceiv(source, AL_BUFFERS_PROCESSED, &processed);
+//            ALint processed = 0;
+//            alGetSourceiv(source, AL_BUFFERS_PROCESSED, &processed);
+            ALint state = 0;
+            alGetSourcei(source, AL_SOURCE_STATE, &state);
             AL_CHECK;
 
-            if (processed > 0)
+//            if (processed > 0)
+            if (state == AL_STOPPED)
             {
-                ALuint buffer = 0;
-                alSourceUnqueueBuffers(source, 1, &buffer);
+//                ALuint buffer = 0;
+//                alSourceUnqueueBuffers(source, 1, &buffer);
+                alSourcei(source, AL_BUFFER, 0);
                 AL_CHECK;
 
                 playingSound = nullptr;
@@ -85,6 +96,9 @@ namespace rob
 
         bool IsFree() const
         { return playingSound == nullptr; }
+
+        uint32_t TimePlayed(uint32_t currentTime)
+        { return currentTime - startTime; }
     };
 
     AudioSystem::AudioSystem(LinearAllocator& alloc)
@@ -212,20 +226,37 @@ namespace rob
         AL_CHECK;
     }
 
-    void AudioSystem::PlaySound(SoundHandle sound, float volume)
+    void AudioSystem::PlaySound(SoundHandle sound, float volume, Time_t currentTime)
     {
         if (IsMuted()) return;
         if (sound == InvalidSound) return;
+
+        uint32_t timeMillis = currentTime / 1000ull;
+
+        size_t longestPlayIndex = 0;
+        uint32_t longestPlayTime = 0;
 
         for (size_t i = 0; i < MAX_CHANNELS; i++)
         {
             if (m_channels[i]->IsFree())
             {
                 Sound *s = m_sounds.Get(sound);
-                m_channels[i]->PlaySound(s, volume);
-                break;
+                m_channels[i]->PlaySound(s, volume, timeMillis);
+                return;
+            }
+
+            uint32_t playTime = m_channels[i]->TimePlayed(timeMillis);
+
+            if (playTime > longestPlayTime)
+            {
+                longestPlayIndex = i;
+                longestPlayTime = playTime;
             }
         }
+
+        Sound *s = m_sounds.Get(sound);
+        m_channels[longestPlayIndex]->Stop();
+        m_channels[longestPlayIndex]->PlaySound(s, volume, timeMillis);
     }
 
     void AudioSystem::Update()

@@ -4,6 +4,7 @@
 
 #include "../audio/AudioSystem.h"
 #include "../resource/MasterCache.h"
+#include "../application/GameTime.h"
 
 namespace bact
 {
@@ -16,6 +17,7 @@ namespace bact
         SoundPlayer()
             : m_audio(nullptr)
 //            , m_cache(nullptr)
+            , m_currentTime(0)
             , m_shootSound(InvalidSound)
             , m_plDeathSound(InvalidSound)
             , m_bactSplitSound(InvalidSound)
@@ -29,24 +31,30 @@ namespace bact
             m_bactSplitSound = cache.GetSound("Randomize6.wav");
         }
 
+        void UpdateTime(const GameTime &gameTime)
+        {
+            m_currentTime = gameTime.GetTotalMicroseconds();
+        }
+
         void PlayShootSound()
         {
-            m_audio->PlaySound(m_shootSound, 1.0f);
+            m_audio->PlaySound(m_shootSound, 1.0f, m_currentTime);
         }
 
         void PlayPlayerDeathSound()
         {
-            m_audio->PlaySound(m_plDeathSound, 0.5f);
+            m_audio->PlaySound(m_plDeathSound, 0.5f, m_currentTime);
         }
 
         void PlayBacterSplitSound()
         {
-            m_audio->PlaySound(m_bactSplitSound, 0.5f);
+            m_audio->PlaySound(m_bactSplitSound, 0.5f, m_currentTime);
         }
 
     private:
         AudioSystem *m_audio;
 //        MasterCache *m_cache;
+        Time_t m_currentTime;
 
         SoundHandle m_shootSound;
         SoundHandle m_plDeathSound;

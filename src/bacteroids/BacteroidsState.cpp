@@ -277,6 +277,8 @@ namespace bact
             num_spawn -= 1.0f;
         }
 
+        m_soundPlayer.UpdateTime(gameTime);
+
         UpdatePlayer(gameTime);
 
         DoCollisions();

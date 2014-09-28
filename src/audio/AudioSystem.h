@@ -34,7 +34,7 @@ namespace rob
         void ToggleMute();
         bool IsMuted() const;
 
-        void PlaySound(SoundHandle sound, float volume = 1.0f);
+        void PlaySound(SoundHandle sound, float volume, Time_t currentTime);
 
         void Update();
 
