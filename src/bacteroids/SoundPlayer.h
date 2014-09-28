@@ -21,6 +21,7 @@ namespace bact
 //            , m_cache(nullptr)
             , m_currentTime(0)
             , m_shootSound(InvalidSound)
+            , m_plDamageSound(InvalidSound)
             , m_plDeathSound(InvalidSound)
             , m_bactSplitSound(InvalidSound)
         { }
@@ -29,6 +30,7 @@ namespace bact
         {
             m_audio = &audio;
             m_shootSound = cache.GetSound("Blip_Select7.wav");
+            m_plDamageSound = cache.GetSound("Jump.wav");
             m_plDeathSound = cache.GetSound("Explosion5.wav");
             m_bactSplitSound = cache.GetSound("Randomize6.wav");
         }
@@ -42,6 +44,12 @@ namespace bact
         {
             x *= PositionScale; y *= PositionScale;
             m_audio->PlaySound(m_shootSound, 1.0f, x, y, m_currentTime);
+        }
+
+        void PlayPlayerDamageSound(float x, float y)
+        {
+            x *= PositionScale; y *= PositionScale;
+            m_audio->PlaySound(m_plDamageSound, 0.5f, x, y, m_currentTime);
         }
 
         void PlayPlayerDeathSound(float x, float y)
@@ -62,6 +70,7 @@ namespace bact
         Time_t m_currentTime;
 
         SoundHandle m_shootSound;
+        SoundHandle m_plDamageSound;
         SoundHandle m_plDeathSound;
         SoundHandle m_bactSplitSound;
     };

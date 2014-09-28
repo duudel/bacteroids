@@ -19,15 +19,22 @@ namespace bact
         : m_direction(0.0f, 1.0f)
         , m_health(100.0f)
         , m_cooldown(0.0f)
+        , m_dmgSoundTimer(0.0f)
     {
         SetRadius(0.8f);
     }
 
-    void Player::TakeHit()
+    void Player::TakeHit(SoundPlayer &sounds)
     {
         m_health -= 0.2f;
         if (m_health <= 0.0f)
             m_alive = false;
+
+        if (m_dmgSoundTimer <= 0.0f)
+        {
+            sounds.PlayPlayerDamageSound(m_position.x, m_position.y);
+            m_dmgSoundTimer = 0.5f;
+        }
     }
 
     float Player::GetHealth() const
@@ -62,6 +69,9 @@ namespace bact
         {
             Shoot(gameTime, projectiles, sounds);
         }
+
+        if (m_dmgSoundTimer > 0.0f)
+            m_dmgSoundTimer -= dt;
     }
 
     void Player::Cooldown(const GameTime &gameTime)

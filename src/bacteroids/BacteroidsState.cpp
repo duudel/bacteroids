@@ -210,7 +210,7 @@ namespace bact
             vec2f p = me->GetPosition();
             me->AddVelocity(v);
             me->SetPosition(p + (v / 2.0f));
-            me->TakeHit();
+            me->TakeHit(m_soundPlayer);
             m_damageFade.Activate(1.0f);
             if (me->IsDead())
             {

@@ -18,7 +18,7 @@ namespace bact
     public:
         Player();
 
-        void TakeHit();
+        void TakeHit(SoundPlayer &sounds);
         float GetHealth() const;
 
         void Update(const GameTime &gameTime, const Input &input, ObjectArray &projectiles, SoundPlayer &sounds);
@@ -32,6 +32,7 @@ namespace bact
         vec2f m_direction;
         float m_health;
         float m_cooldown;
+        float m_dmgSoundTimer;
     };
 
 } // bact
