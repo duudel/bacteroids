@@ -13,6 +13,8 @@
 namespace bact
 {
 
+    BACT_GAME_OBJECT_SHADER(Player) = InvalidHandle;
+
     Player::Player()
         : m_direction(0.0f, 1.0f)
         , m_health(100.0f)
@@ -80,7 +82,6 @@ namespace bact
             if (!projectiles.CanObtainProjectile()) return;
 
             Projectile *p = projectiles.ObtainProjectile();
-//            const vec2f dir = ClampedVectorLength(m_direction, 1.0f);
             vec2f dir = m_direction.SafeNormalized();
             if (dir.Length() < 0.9f) dir = vec2f::UnitX;
             p->SetPosition(m_position + dir * m_radius);

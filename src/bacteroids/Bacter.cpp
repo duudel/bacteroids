@@ -12,6 +12,8 @@
 namespace bact
 {
 
+    BACT_GAME_OBJECT_SHADER(Bacter) = InvalidHandle;
+
     const float MIN_BACTER_SIZE = 0.3f;
 
     Bacter::Bacter()

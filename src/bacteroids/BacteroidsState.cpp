@@ -20,10 +20,6 @@ namespace bact
     static const float PLAY_AREA_BOTTOM = -PLAY_AREA_H / 2.0f;
     static const float PLAY_AREA_TOP    = -PLAY_AREA_BOTTOM;
 
-    BACT_GAME_OBJECT_SHADER(Player) = InvalidHandle;
-    BACT_GAME_OBJECT_SHADER(Bacter) = InvalidHandle;
-    BACT_GAME_OBJECT_SHADER(Projectile) = InvalidHandle;
-
 
     BacteroidsState::BacteroidsState(GameData &gameData)
         : m_gameData(gameData)
@@ -298,13 +294,8 @@ namespace bact
             if (m_objects[i]->GetType() == Bacter::TYPE)
             {
                 Bacter *bacter = (Bacter*)m_objects[i];
-                if (bacter->WantsToSplit())
-                {
-                    if (bacter->CanSplit())
-                    {
-                        SplitBacter(bacter);
-                    }
-                }
+                if (bacter->WantsToSplit() && m_objects.CanObtainBacter())
+                    SplitBacter(bacter);
             }
         }
 
@@ -377,25 +368,6 @@ namespace bact
             {
                 continue;
             }
-
-//            switch (obj->GetType())
-//            {
-//            case Bacter::TYPE:
-//                renderer.BindShader(m_bacterShader);
-//                break;
-//
-//            case Player::TYPE:
-//                renderer.BindShader(m_playerShader);
-//                break;
-//
-//            case Projectile::TYPE:
-//                renderer.BindShader(m_projectileShader);
-//                break;
-//
-//            default:
-//                ROB_ASSERT(0);
-//                break;
-//            }
 
             renderer.BindShader(obj->GetShader());
 
