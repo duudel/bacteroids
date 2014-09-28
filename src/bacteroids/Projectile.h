@@ -15,7 +15,7 @@ namespace bact
         void SetAlive(bool alive)
         { m_alive = alive; }
 
-        void Update(const GameTime &gameTime) override;
+        void Update(const GameTime &gameTime, const Rect &playArea) override;
 
         void Render(Renderer *renderer, const BacteroidsUniforms &uniforms) override;
     };

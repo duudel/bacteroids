@@ -63,7 +63,7 @@ namespace bact
         return;
     }
 
-    void Bacter::Update(const GameTime &gameTime)
+    void Bacter::Update(const GameTime &gameTime, const Rect &playArea)
     {
         const float dt = gameTime.GetDeltaSeconds();
 

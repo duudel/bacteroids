@@ -19,6 +19,7 @@ namespace bact
     static const float PLAY_AREA_RIGHT  = -PLAY_AREA_LEFT;
     static const float PLAY_AREA_BOTTOM = -PLAY_AREA_H / 2.0f;
     static const float PLAY_AREA_TOP    = -PLAY_AREA_BOTTOM;
+    static const Rect g_playAreaRect(PLAY_AREA_LEFT, PLAY_AREA_BOTTOM, PLAY_AREA_RIGHT, PLAY_AREA_TOP);
 
 
     BacteroidsState::BacteroidsState(GameData &gameData)
@@ -35,7 +36,6 @@ namespace bact
 
     bool BacteroidsState::Initialize()
     {
-//            _MM_SET_FLUSH_ZERO_MODE(_MM_FLUSH_ZERO_ON);
         Renderer &renderer = GetRenderer();
 
         m_playerShader = renderer.CompileShaderProgram(g_playerShader.m_vertexShader,
@@ -255,10 +255,8 @@ namespace bact
         vec2f pl_pos = m_player.GetPosition();
         const float pl_radius = m_player.GetRadius();
 
-             if (pl_pos.x < PLAY_AREA_LEFT + pl_radius)   pl_pos.x = PLAY_AREA_LEFT + pl_radius;
-        else if (pl_pos.x > PLAY_AREA_RIGHT - pl_radius)  pl_pos.x = PLAY_AREA_RIGHT - pl_radius;
-             if (pl_pos.y < PLAY_AREA_BOTTOM + pl_radius) pl_pos.y = PLAY_AREA_BOTTOM + pl_radius;
-        else if (pl_pos.y > PLAY_AREA_TOP - pl_radius)    pl_pos.y = PLAY_AREA_TOP - pl_radius;
+        pl_pos.x = Clamp(pl_pos.x, PLAY_AREA_LEFT + pl_radius, PLAY_AREA_RIGHT - pl_radius);
+        pl_pos.y = Clamp(pl_pos.y, PLAY_AREA_BOTTOM + pl_radius, PLAY_AREA_TOP - pl_radius);
 
         m_player.SetPosition(pl_pos);
     }
@@ -289,7 +287,7 @@ namespace bact
 
         for (size_t i = 0; i < m_objects.Size(); i++)
         {
-            m_objects[i]->Update(gameTime);
+            m_objects[i]->Update(gameTime, g_playAreaRect);
             // TODO: Spontaneous splitting is very much a hack I says. Fix pls.
             if (m_objects[i]->GetType() == Bacter::TYPE)
             {
@@ -409,22 +407,6 @@ namespace bact
         renderer.DrawFilledRectangle(hx, hy, hx + 100.0f, hy + 10.0f);
         renderer.SetColor(Color(0.85f, 0.05f, 0.05f));
         renderer.DrawFilledRectangle(hx, hy, hx + m_player.GetHealth(), hy + 10.0f);
-
-//            const float cy = 40.0f;
-//            renderer.DrawText(0.0f, cy, m_textInput.GetText());
-//            const float cx = renderer.GetTextWidth(m_textInput.GetText(), m_textInput.GetCursor());
-//            const float cw = 1.0f;
-//            const float ch = renderer.GetFontHeight();
-//
-//            const float cy2 = 70.0f;
-//            renderer.DrawTextAscii(0.0f, cy2, m_textInput.GetText());
-//            const float cx2 = renderer.GetTextWidthAscii(m_textInput.GetText(), m_textInput.GetCursor());
-//            const float cw2 = 1.0f;
-//            const float ch2 = renderer.GetFontHeight();
-//
-//            renderer.BindColorShader();
-//            renderer.DrawRectangle(cx, cy, cx + cw, cy + ch);
-//            renderer.DrawRectangle(cx2, cy2, cx2 + cw2, cy2 + ch2);
     }
 
 } // bact

@@ -17,13 +17,15 @@ namespace bact
         SetRadius(0.2f);
     }
 
-    void Projectile::Update(const GameTime &gameTime)
+    void Projectile::Update(const GameTime &gameTime, const Rect &playArea)
     {
         const float dt = gameTime.GetDeltaSeconds();
         m_position += m_velocity * dt;
 
          // This kills projectiles that are too far from the origin
-        if (m_position.Length() > 100.0f)
+//        if (m_position.Length() > 100.0f)
+//            m_alive = false;
+        if (!playArea.HasCircle(m_position, -m_radius))
             m_alive = false;
     }
 
