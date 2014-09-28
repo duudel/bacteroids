@@ -87,7 +87,7 @@ namespace bact
             p->SetPosition(m_position + dir * m_radius);
             p->SetVelocity(dir.x * 10.0f, dir.y * 10.0f);
 
-            sounds.PlayShootSound();
+            sounds.PlayShootSound(m_position.x, m_position.y);
         }
     }
 

@@ -11,6 +11,8 @@ namespace bact
 
     using namespace rob;
 
+    constexpr float PositionScale = 0.25f;
+
     class SoundPlayer
     {
     public:
@@ -36,19 +38,22 @@ namespace bact
             m_currentTime = gameTime.GetTotalMicroseconds();
         }
 
-        void PlayShootSound()
+        void PlayShootSound(float x, float y)
         {
-            m_audio->PlaySound(m_shootSound, 1.0f, m_currentTime);
+            x *= PositionScale; y *= PositionScale;
+            m_audio->PlaySound(m_shootSound, 1.0f, x, y, m_currentTime);
         }
 
-        void PlayPlayerDeathSound()
+        void PlayPlayerDeathSound(float x, float y)
         {
-            m_audio->PlaySound(m_plDeathSound, 0.5f, m_currentTime);
+            x *= PositionScale; y *= PositionScale;
+            m_audio->PlaySound(m_plDeathSound, 0.5f, x, y, m_currentTime);
         }
 
-        void PlayBacterSplitSound()
+        void PlayBacterSplitSound(float x, float y)
         {
-            m_audio->PlaySound(m_bactSplitSound, 0.5f, m_currentTime);
+            x *= PositionScale; y *= PositionScale;
+            m_audio->PlaySound(m_bactSplitSound, 0.5f, x, y, m_currentTime);
         }
 
     private:

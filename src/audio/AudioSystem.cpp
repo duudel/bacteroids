@@ -45,7 +45,7 @@ namespace rob
             startTime = 0;
         }
 
-        void PlaySound(Sound *sound, float volume, uint32_t currentTime)
+        void PlaySound(Sound *sound, float volume, float x, float y, uint32_t currentTime)
         {
             playingSound = sound;
             startTime = currentTime;
@@ -54,11 +54,13 @@ namespace rob
             AL_CHECK;
             alSourcef(source, AL_GAIN, volume);
             AL_CHECK;
-            alSource3f(source, AL_POSITION, 0.0f, 0.0f, 0.0f);
+            alSource3f(source, AL_POSITION, x, y, 0.0f);
             AL_CHECK;
             alSource3f(source, AL_VELOCITY, 0.0f, 0.0f, 0.0f);
             AL_CHECK;
             alSourcei(source, AL_LOOPING, AL_FALSE);
+            AL_CHECK;
+            alSourcef(source, AL_MIN_GAIN, volume);
             AL_CHECK;
 
 //            alSourceQueueBuffers(source, 1, &sound->buffer);
@@ -142,6 +144,8 @@ namespace rob
         }
 
         SetMasterVolume(m_masterVolume);
+        alListener3f(AL_POSITION, 0.0f, 0.0f, -2.0f);
+        AL_CHECK;
     }
 
     AudioSystem::~AudioSystem()
@@ -226,7 +230,7 @@ namespace rob
         AL_CHECK;
     }
 
-    void AudioSystem::PlaySound(SoundHandle sound, float volume, Time_t currentTime)
+    void AudioSystem::PlaySound(SoundHandle sound, float volume, float x, float y, Time_t currentTime)
     {
         if (IsMuted()) return;
         if (sound == InvalidSound) return;
@@ -241,7 +245,7 @@ namespace rob
             if (m_channels[i]->IsFree())
             {
                 Sound *s = m_sounds.Get(sound);
-                m_channels[i]->PlaySound(s, volume, timeMillis);
+                m_channels[i]->PlaySound(s, volume, x, y, timeMillis);
                 return;
             }
 
@@ -256,7 +260,7 @@ namespace rob
 
         Sound *s = m_sounds.Get(sound);
         m_channels[longestPlayIndex]->Stop();
-        m_channels[longestPlayIndex]->PlaySound(s, volume, timeMillis);
+        m_channels[longestPlayIndex]->PlaySound(s, volume, x, y, timeMillis);
     }
 
     void AudioSystem::Update()

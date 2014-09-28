@@ -167,7 +167,8 @@ namespace bact
             }
         }
         bacter->Split(m_random);
-        m_soundPlayer.PlayBacterSplitSound();
+        vec2f p = bacter->GetPosition();
+        m_soundPlayer.PlayBacterSplitSound(p.x, p.y);
     }
 
     void BacteroidsState::BacterCollision(Bacter *me, GameObject *obj, const vec2f &objToMe, float dist)
@@ -206,7 +207,7 @@ namespace bact
             {
                 m_damageFade.SetFadeAcceleration(0.0f);
                 m_damageFade.Activate(1.0f);
-                m_soundPlayer.PlayPlayerDeathSound();
+                m_soundPlayer.PlayPlayerDeathSound(p.x, p.y);
             }
         }
     }
