@@ -23,6 +23,26 @@ namespace bact
 
     using namespace rob;
 
+    struct Rect
+    {
+        vec2f p0, p1;
+
+        Rect() : p0(), p1() { }
+        Rect(float x0, float y0, float x1, float y1)
+            : p0(x0, y0), p1(x1, y1) { }
+
+        bool HasPoint(const vec2f &p) const
+        {
+            return (p.x >= p0.x && p.x <= p1.x) &&
+                (p.y >= p0.y && p.y <= p1.y);
+        }
+        bool HasCircle(const vec2f &p, const float radius) const
+        {
+            return (p.x >= p0.x + radius && p.x <= p1.x - radius) &&
+                (p.y >= p0.y + radius && p.y <= p1.y - radius);
+        }
+    };
+
     class GameObject
     {
     public:
@@ -65,7 +85,7 @@ namespace bact
         bool IsDead() const
         { return !m_alive; }
 
-        virtual void Update(const GameTime &gameTime) { }
+        virtual void Update(const GameTime &gameTime, const Rect &playArea) { }
         virtual void Render(Renderer *renderer, const BacteroidsUniforms &uniforms) { }
 
         virtual ShaderProgramHandle GetShader() = 0;
