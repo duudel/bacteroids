@@ -43,6 +43,7 @@ namespace bact
             return false;
         }
 
+        int prevScore = -1;
         for (size_t i = 0; i < m_scoreCount; i++)
         {
             if (!in)
@@ -60,6 +61,12 @@ namespace bact
                 rob::log::Error("Corrupt high score file, negative score: ", filename);
                 return false;
             }
+            if (prevScore > -1 && m_scores[i].m_score > prevScore)
+            {
+                rob::log::Error("Corrupt high score file, scores scrambled: ", filename);
+                return false;
+            }
+            prevScore = m_scores[i].m_score;
         }
         return true;
     }

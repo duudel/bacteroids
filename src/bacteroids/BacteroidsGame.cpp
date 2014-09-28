@@ -150,11 +150,14 @@ namespace bact
             layout.AddLine();
 
             renderer.SetFontScale(1.0f);
-            layout.AddTextAlignC("Press [space] to start", 0.0f);
+            layout.AddTextAlignL("[space]", -100.0f);
+            layout.AddTextAlignL("New game", 0.0f);
             layout.AddLine();
-            layout.AddTextAlignC("Press [return] to show high scores", 0.0f);
+            layout.AddTextAlignL("[return]", -100.0f);
+            layout.AddTextAlignL("High scores", 0.0f);
             layout.AddLine();
-            layout.AddTextAlignC("Press [esc] to exit", 0.0f);
+            layout.AddTextAlignL("[esc]", -100.0f);
+            layout.AddTextAlignL("Quit", 0.0f);
             layout.AddLine();
         }
 
@@ -217,21 +220,22 @@ namespace bact
             layout.AddLines(2);
 
             renderer.SetFontScale(1.2f);
+            renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
             const HighScoreList &highScores = m_gameData.m_highScores;
 
             char buf[20];
             for (size_t i = 0; i < highScores.GetScoreCount(); i++)
             {
-                StringPrintF(buf, "%i.", i + 1);
+                StringPrintF(buf, "%i. ", i + 1);
                 if (i == m_scoreIndex)
                 {
                     renderer.SetColor(Color(0.25f, 1.0f, 0.25f));
                     layout.AddTextAlignL(buf, -260.0f);
                     layout.AddTextInputAlignL(m_nameInput, -200.0f);
+                    renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
                 }
                 else
                 {
-                    renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
                     layout.AddTextAlignL(buf, -260.0f);
                     layout.AddTextAlignL(highScores.GetName(i), -200.0f);
                 }
