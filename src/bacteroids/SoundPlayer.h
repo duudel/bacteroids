@@ -49,7 +49,7 @@ namespace bact
         void PlayPlayerDamageSound(float x, float y)
         {
             x *= PositionScale; y *= PositionScale;
-            m_audio->PlaySound(m_plDamageSound, 0.5f, x, y, m_currentTime);
+            m_audio->PlaySound(m_plDamageSound, 1.0f, x, y, m_currentTime);
         }
 
         void PlayPlayerDeathSound(float x, float y)

@@ -167,20 +167,32 @@ namespace bact
         {
             if (key == Keyboard::Key::Return)
             {
-                if (InsertingNewScore() && m_nameInput.GetLength() > 0)
+                if (InsertingNewScore())
                 {
-                    m_gameData.m_highScores.SetName(m_scoreIndex, m_nameInput.GetText());
-                    m_gameData.m_highScores.Save();
-                    m_scoreIndex = HighScoreList::INVALID_INDEX;
+                    if (m_nameInput.GetLength() > 0)
+                    {
+                        m_gameData.m_highScores.SetName(m_scoreIndex, m_nameInput.GetText());
+                        m_gameData.m_highScores.Save();
+                        m_scoreIndex = HighScoreList::INVALID_INDEX;
+                    }
                 }
                 else
                 {
-                    ChangeState(1);
+                    ChangeState(STATE_MENU);
                 }
             }
             else if (key == Keyboard::Key::Escape)
             {
-                ChangeState(1);
+                if (InsertingNewScore())
+                {
+                    if (m_nameInput.GetLength() > 0)
+                        m_gameData.m_highScores.SetName(m_scoreIndex, m_nameInput.GetText());
+                    else
+                        m_gameData.m_highScores.SetName(m_scoreIndex, "<no name>");
+
+                    m_gameData.m_highScores.Save();
+                }
+                ChangeState(STATE_MENU);
             }
         }
 
