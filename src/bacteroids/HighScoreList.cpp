@@ -22,16 +22,23 @@ namespace bact
         }
     }
 
+    void GetHighScoreFileName(std::string &filename)
+    {
+//        char * const appPath = ::SDL_GetPrefPath("donkions", "Bacteroids");
+//        if (appPath)
+//        {
+//            filename = appPath;
+//            ::SDL_free(appPath);
+//        }
+//        filename += "highscore.lst";
+
+        filename = "highscore.lst";
+    }
+
     bool HighScoreList::Load()
     {
-        char * const appPath = ::SDL_GetPrefPath("donkions", "Bacteroids");
         std::string filename;
-        if (appPath)
-        {
-            filename = appPath;
-            ::SDL_free(appPath);
-        }
-        filename += "highscore.lst";
+        GetHighScoreFileName(filename);
 
         std::ifstream in(filename.c_str(), std::ios::binary);
         if (!in.is_open()) return false;
@@ -77,14 +84,8 @@ namespace bact
 
     bool HighScoreList::Save()
     {
-        char * const appPath = ::SDL_GetPrefPath("donkions", "Bacteroids");
         std::string filename;
-        if (appPath)
-        {
-            filename = appPath;
-            ::SDL_free(appPath);
-        }
-        filename += "highscore.lst";
+        GetHighScoreFileName(filename);
 
         std::ofstream out(filename.c_str(), std::ios::binary);
         if (!out.is_open()) return false;

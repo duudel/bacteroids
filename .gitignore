@@ -34,4 +34,6 @@
 # Ignored directories
 data/
 
+# Ignored files
+highscore.lst
 
