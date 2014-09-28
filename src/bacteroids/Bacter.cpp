@@ -22,7 +22,7 @@ namespace bact
         , m_target(nullptr)
         , m_points(10)
         , m_splitTimer(0.0f)
-        , m_readyToSplitTimer(0.0f)
+        , m_readyToSplitTimer(8.0f)
     {
         SetRadius(1.0f);
     }
@@ -34,7 +34,7 @@ namespace bact
 
     bool Bacter::WantsToSplit() const
     {
-        return (m_readyToSplitTimer >= 6.0f);
+        return (m_readyToSplitTimer <= 0.0f);
     }
 
     bool Bacter::CanSplit() const
@@ -57,7 +57,7 @@ namespace bact
         m_size = m_size / 2.0f;
         m_points = m_points / 2.0f + 0.6f; // points is at least 1
         m_splitTimer = 0.1f;
-        m_readyToSplitTimer = 0.0f;
+        m_readyToSplitTimer = random.GetReal(7.0f, 9.0f);
         RandomizeAnimation(random);
         m_position += random.GetDirection() * 0.1f;
         return;
@@ -86,7 +86,7 @@ namespace bact
                 m_size += 0.05f * dt;
             else
             {
-                m_readyToSplitTimer += dt;
+                m_readyToSplitTimer -= dt;
             }
         }
 
