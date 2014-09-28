@@ -38,8 +38,9 @@ namespace bact
 
     bool BacteroidsState::Initialize()
     {
-        Renderer &renderer = GetRenderer();
+        GetWindow().GrabMouse();
 
+        Renderer &renderer = GetRenderer();
         m_playerShader = renderer.CompileShaderProgram(g_playerShader.m_vertexShader,
                                                        g_playerShader.m_fragmentShader);
         m_bacterShader = renderer.CompileShaderProgram(g_bacterShader.m_vertexShader,
