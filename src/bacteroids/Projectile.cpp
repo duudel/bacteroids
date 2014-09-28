@@ -8,6 +8,8 @@
 namespace bact
 {
 
+    BACT_GAME_OBJECT_SHADER(Projectile) = InvalidHandle;
+
     using namespace rob;
 
     Projectile::Projectile()
