@@ -15,7 +15,10 @@ namespace rob
         , m_textureCount(0)
     {
         for (size_t i = 0; i < MAX_GLYPHS; i++)
+        {
             m_glyphMapping[i] = 0;
+            m_glyph[i].m_textureIdx = -1;
+        }
     }
 
     bool Font::IsReady() const
@@ -56,6 +59,8 @@ namespace rob
     const Glyph& Font::GetGlyph(uint32_t character) const
     {
         ROB_ASSERT(character < MAX_GLYPHS);
+        if (m_glyph[character].m_textureIdx == uint16_t(-1))
+            return m_glyph[uint32_t('?')];
         return m_glyph[character];
     }
 

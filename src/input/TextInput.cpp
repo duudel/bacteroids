@@ -25,8 +25,10 @@ namespace rob
     TextInput::TextInput()
         : m_length(0)
         , m_cursor(0)
+        , m_lengthLimit(MAX_LENGTH)
     {
-        m_text[MAX_LENGTH] = 0;
+        for (size_t i = 0; i <= MAX_LENGTH; i++)
+            m_text[i] = 0;
     }
 
     const char* TextInput::GetText() const
@@ -37,6 +39,12 @@ namespace rob
 
     size_t TextInput::GetCursor() const
     { return m_cursor; }
+
+    void TextInput::SetLengthLimit(size_t limit)
+    { m_lengthLimit = limit > MAX_LENGTH ? MAX_LENGTH : limit; }
+
+    size_t TextInput::LengthLimit() const
+    { return m_lengthLimit; }
 
     bool TextInput::MoveLeft()
     {
@@ -100,15 +108,16 @@ namespace rob
 
     void TextInput::Insert(const char *str)
     {
+        const size_t MAX_L = m_lengthLimit;
         const size_t slen = StringLength(str);
-        size_t l = Min(m_length - 1, MAX_LENGTH - slen - 1);
+        size_t l = Min(m_length - 1, MAX_L - slen - 1);
         while (l >= m_cursor)
         {
             size_t sz = 0, sz2 = 0;
             const char *s = m_text + l;
             SkipUtf8Left(s, m_text, &sz);
             const char *s2 = s;
-            SkipUtf8Right(s2, m_text + MAX_LENGTH, &sz2);
+            SkipUtf8Right(s2, m_text + MAX_L, &sz2);
 
             if (sz != sz2)
             {
@@ -128,8 +137,8 @@ namespace rob
         }
 //        const size_t maxCopy = Min(slen, MAX_LENGTH - m_cursor);
 //        m_cursor += CopyUtf8_N(m_text + m_cursor, str, MAX_LENGTH - m_cursor);
-        m_cursor += CopyUtf8(m_text + m_cursor, str, MAX_LENGTH - m_cursor);
-        m_length = Min(m_length + slen, MAX_LENGTH);
+        m_cursor += CopyUtf8(m_text + m_cursor, str, MAX_L - m_cursor);
+        m_length = Min(m_length + slen, MAX_L);
 
         ROB_ASSERT(m_cursor <= m_length);
         ROB_ASSERT(m_length <= MAX_LENGTH);

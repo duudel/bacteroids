@@ -24,6 +24,12 @@ namespace log
     void PrintValue(void *value);
 
     template <class T>
+    void PrintValue(const T &value)
+    {
+        PrintValue(value.c_str());
+    }
+
+    template <class T>
     void Print(T&& value)
     {
         PrintValue(value);

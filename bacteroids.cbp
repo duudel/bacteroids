@@ -83,6 +83,7 @@
 		<Unit filename="src/audio/AudioSystem.h" />
 		<Unit filename="src/bacteroids/Bacter.cpp" />
 		<Unit filename="src/bacteroids/Bacter.h" />
+		<Unit filename="src/bacteroids/Bacteroids.h" />
 		<Unit filename="src/bacteroids/BacteroidsGame.cpp" />
 		<Unit filename="src/bacteroids/BacteroidsGame.h" />
 		<Unit filename="src/bacteroids/BacteroidsState.cpp" />

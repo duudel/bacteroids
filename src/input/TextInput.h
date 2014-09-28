@@ -18,12 +18,16 @@ namespace rob
         char m_text[MAX_LENGTH + 1];
         size_t m_length;
         size_t m_cursor;
+        size_t m_lengthLimit;
     public:
         TextInput();
 
         const char* GetText() const;
         size_t GetLength() const;
         size_t GetCursor() const;
+
+        void SetLengthLimit(size_t limit);
+        size_t LengthLimit() const;
 
         bool MoveLeft();
         bool MoveRight();

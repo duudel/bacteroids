@@ -41,11 +41,11 @@ namespace rob
         virtual void HandleStateChange(int state) { }
 
         template <class State, class... Args>
-        void ChangeState(Args ...args)
+        void ChangeState(Args&& ...args)
         {
             m_stateAlloc.del_object(m_state);
             m_stateAlloc.Reset();
-            m_state = m_stateAlloc.new_object<State>(args...);
+            m_state = m_stateAlloc.new_object<State>(std::forward<Args&&>(args)...);
             InitState();
         }
 

@@ -6,6 +6,7 @@
 #include "PtrAlign.h"
 
 #include <new>
+#include <functional>
 
 namespace rob
 {
@@ -42,7 +43,7 @@ namespace rob
         T* new_object(Args&& ...args)
         {
             void *ptr = Allocate(sizeof(T), alignof(T));
-            return new (ptr) T(args...);
+            return new (ptr) T(std::forward<Args&&>(args)...);
         }
 
         template <class T>

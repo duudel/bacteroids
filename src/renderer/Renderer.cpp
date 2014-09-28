@@ -391,7 +391,7 @@ namespace rob
                                float &cursorX, float &cursorY,
                                const size_t textureW, const size_t textureH)
     {
-        if (std::isprint(c) && c != ' ')
+        if (c > ' ')
         {
             const float gW = float(glyph.m_width) * m_fontScale;
             const float gH = float(glyph.m_height) * m_fontScale;
