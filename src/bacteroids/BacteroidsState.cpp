@@ -72,6 +72,7 @@ namespace bact
         m_quadTree = GetAllocator().AllocateArray<GameObject*>(MAX_OBJECTS);
 
         m_score = 0;
+        m_kills = 0;
 
         m_damageFade.SetFadeAcceleration(-10.0f);
 
@@ -193,6 +194,7 @@ namespace bact
             if (me->CanSplit())
             {
                 m_score += me->GetPoints();
+                m_kills++;
                 me->AddVelocity(obj->GetVelocity() * 0.5f);
                 SplitBacter(me);
             }
@@ -405,18 +407,28 @@ namespace bact
             RenderGameOver();
         }
 
+        TextLayout layout(renderer, 0.0f, 0.0f);
+
+        renderer.BindFontShader();
+        renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
         renderer.SetFontScale(1.0f);
+
         char buf[64];
         StringPrintF(buf, "Score: %i", m_score);
-        // TODO: total kills
-        // TODO: points/kill
+        layout.AddText(buf, 0.0f);
+        layout.AddLine();
 
-        renderer.SetColor(Color(1.0f, 1.0f, 1.0f));
-        renderer.BindFontShader();
-        renderer.DrawText(0.0f, 0.0f, buf);
+        StringPrintF(buf, "Kills: %i", m_kills);
+        layout.AddText(buf, 0.0f);
+        layout.AddLine();
+
+        const int ptPerKill = (m_kills) ? (m_score / m_kills) : 0;
+        StringPrintF(buf, "pt per kill: %i", ptPerKill);
+        layout.AddText(buf, 0.0f);
+        layout.AddLine();
 
         const float hx = 10.0f;
-        const float hy = 10.0f + renderer.GetFontHeight();
+        const float hy = layout.m_cursor.y + 10.0f;
 
         renderer.BindColorShader();
         renderer.SetColor(Color(0.5f, 0.5f, 0.5f));
