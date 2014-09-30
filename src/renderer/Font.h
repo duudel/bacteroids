@@ -57,6 +57,8 @@ namespace rob
         uint16_t m_horiSpacing;
         uint16_t m_lineSpacing;
 
+        // TODO: Enable dynamic glyph count (no hard coded limit).
+        // The alocations should be done by FontManager.
         static const size_t MAX_GLYPHS = 256;
         Glyph m_glyph[MAX_GLYPHS];
         uint32_t m_glyphMapping[MAX_GLYPHS];
@@ -65,6 +67,9 @@ namespace rob
         static const size_t MAX_TEXTURE_PAGES = 8;
         TextureHandle m_textures[MAX_TEXTURE_PAGES];
         size_t m_textureCount;
+
+        // TODO: Add kerning support
+        // int16_t **m_kerningPairs; (or something?)
     };
 
 } // rob

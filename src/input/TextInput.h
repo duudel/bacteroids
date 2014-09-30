@@ -14,6 +14,9 @@ namespace rob
 
     class TextInput
     {
+        // TODO: Enable dynamic text length, with optional length limit.
+        // This would need an allocator given as a constructor parameter or
+        // the memory would be paseed to the TextInput as constructor parameters.
         static const size_t MAX_LENGTH = 64;
         char m_text[MAX_LENGTH + 1];
         size_t m_length;
