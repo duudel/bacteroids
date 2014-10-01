@@ -50,8 +50,10 @@ namespace rob
 
 //            float alpha = texture2D(u_texture0, v_uv).r;
 
-            float buffer = 0.5;
-            float gamma = 0.02;
+            float buffer = 0.4975;
+            float gamma = 0.014;
+//            float buffer = 0.5;
+//            float gamma = 0.015;
             float dist = texture2D(u_texture0, v_uv).r;
             float alpha = smoothstep(buffer - gamma, buffer + gamma, dist);
 

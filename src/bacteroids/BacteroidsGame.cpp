@@ -56,17 +56,6 @@ namespace bact
             layout.AddTextAlignR("[esc]", -20.0f);
             layout.AddTextAlignL("- Quit", 10.0f);
             layout.AddLine();
-
-//            renderer.SetFontScale(1.0f);
-//            layout.AddTextAlignL("[space]", -100.0f);
-//            layout.AddTextAlignL("New game", 0.0f);
-//            layout.AddLine();
-//            layout.AddTextAlignL("[return]", -100.0f);
-//            layout.AddTextAlignL("High scores", 0.0f);
-//            layout.AddLine();
-//            layout.AddTextAlignL("[esc]", -100.0f);
-//            layout.AddTextAlignL("Quit", 0.0f);
-//            layout.AddLine();
         }
 
         void OnKeyPress(Keyboard::Key key, Keyboard::Scancode scancode, uint32_t mods) override
