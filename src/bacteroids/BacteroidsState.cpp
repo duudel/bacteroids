@@ -128,7 +128,10 @@ namespace bact
         if (m_time.IsPaused())
         {
             if (key == Keyboard::Key::Q)
+            {
                 ChangeState(STATE_MENU);
+                GetWindow().UnGrabMouse();
+            }
         }
 
         if (key == Keyboard::Key::M)
@@ -140,6 +143,7 @@ namespace bact
             {
                 m_gameData.m_score = m_score;
                 ChangeState(STATE_HIGH_SCORE);
+                GetWindow().UnGrabMouse();
             }
         }
     }
@@ -338,20 +342,6 @@ namespace bact
         layout.AddTextAlignC("[Esc] - Resume", 0.0f);
         layout.AddLine();
         layout.AddTextAlignC("[Q] - Exit to main menu", 0.0f);
-
-//        renderer.SetFontScale(1.0f);
-//        layout.AddTextAlignR("[Esc]", -100.0f);
-//        layout.AddTextAlignL("- Resume", 10.0f);
-//        layout.AddLine();
-//        layout.AddTextAlignR("[Q]", -100.0f);
-//        layout.AddTextAlignL("- Exit to main menu", 10.0f);
-
-//        renderer.SetFontScale(1.0f);
-//        layout.AddTextAlignC("[Esc] to resume", 0.0f);
-//        layout.AddLine();
-//        layout.AddTextAlignC("[Q] to exit to main menu", 0.0f);
-//        layout.AddLines(2);
-//        layout.AddTextAlignC("[M] to mute/unmute", 0.0f);
     }
 
     void BacteroidsState::RenderGameOver()

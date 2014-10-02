@@ -114,6 +114,8 @@ namespace bact
     size_t HighScoreList::AddScore(int score)
     {
         const size_t index = GetIndex(score);
+        if (index == INVALID_INDEX)
+            return index;
 
         size_t last = MAX_SCORE_COUNT - 1;
         if (m_scoreCount < MAX_SCORE_COUNT)
