@@ -57,6 +57,7 @@
 			<Add option="-std=c++11" />
 			<Add option="-msse2" />
 			<Add option="-Wno-unused-parameter" />
+			<Add option="-fno-exceptions" />
 		</Compiler>
 		<Linker>
 			<Add option="-lmingw32" />
