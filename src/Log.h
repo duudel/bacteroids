@@ -45,21 +45,21 @@ namespace log
     template <class... Args>
     void Trace(Args&& ...args)
     {
-    #ifdef TRACE_
+    #ifdef ROB_TRACE
         PrintValue("Trace: ");
         Print(args...);
         PrintValue('\n');
-    #endif // TRACE_
+    #endif // ROB_TRACE
     }
 
     template <class... Args>
     void Debug(Args&& ...args)
     {
-    #ifdef DEBUG_
+    #ifdef ROB_DEBUG
         PrintValue("Debug: ");
         Print(args...);
         PrintValue('\n');
-    #endif // DEBUG_
+    #endif
     }
 
     template <class... Args>

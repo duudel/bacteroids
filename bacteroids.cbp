@@ -13,13 +13,16 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
-					<Add option="-DDEBUG_" />
+					<Add option="-DROB_DEBUG" />
 				</Compiler>
+				<Linker>
+					<Add option="-lFreeImage" />
+				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="bin/Release/bacteroids" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
-				<Option type="1" />
+				<Option type="0" />
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
@@ -37,7 +40,7 @@
 					<Add option="-pg" />
 					<Add option="-g" />
 					<Add option="-Og" />
-					<Add option="-DDEBUG_" />
+					<Add option="-DROB_DEBUG" />
 				</Compiler>
 				<Linker>
 					<Add option="-pg -lgmon" />
@@ -50,8 +53,8 @@
 			<Add option="-Wfloat-equal" />
 			<Add option="-Winline" />
 			<Add option="-Wunreachable-code" />
-			<Add option="-std=c++11" />
 			<Add option="-Wall" />
+			<Add option="-std=c++11" />
 			<Add option="-msse2" />
 			<Add option="-Wno-unused-parameter" />
 		</Compiler>
@@ -59,7 +62,6 @@
 			<Add option="-lmingw32" />
 			<Add option="-lSDL2main -lSDL2" />
 			<Add option="-lglew32 -lopengl32" />
-			<Add option="-lFreeImage" />
 			<Add option="-lOpenAL32" />
 		</Linker>
 		<Unit filename="TODO.txt" />
@@ -180,14 +182,38 @@
 		<Unit filename="src/resource/SoundCache.h" />
 		<Unit filename="src/resource/TextureCache.cpp" />
 		<Unit filename="src/resource/TextureCache.h" />
-		<Unit filename="src/resource/builder/MasterBuilder.cpp" />
-		<Unit filename="src/resource/builder/MasterBuilder.h" />
-		<Unit filename="src/resource/builder/ResourceBuilder.cpp" />
-		<Unit filename="src/resource/builder/ResourceBuilder.h" />
-		<Unit filename="src/resource/builder/ResourceCopier.cpp" />
-		<Unit filename="src/resource/builder/ResourceCopier.h" />
-		<Unit filename="src/resource/builder/TextureBuilder.cpp" />
-		<Unit filename="src/resource/builder/TextureBuilder.h" />
+		<Unit filename="src/resource/builder/MasterBuilder.cpp">
+			<Option target="Debug" />
+			<Option target="Profile" />
+		</Unit>
+		<Unit filename="src/resource/builder/MasterBuilder.h">
+			<Option target="Debug" />
+			<Option target="Profile" />
+		</Unit>
+		<Unit filename="src/resource/builder/ResourceBuilder.cpp">
+			<Option target="Debug" />
+			<Option target="Profile" />
+		</Unit>
+		<Unit filename="src/resource/builder/ResourceBuilder.h">
+			<Option target="Debug" />
+			<Option target="Profile" />
+		</Unit>
+		<Unit filename="src/resource/builder/ResourceCopier.cpp">
+			<Option target="Debug" />
+			<Option target="Profile" />
+		</Unit>
+		<Unit filename="src/resource/builder/ResourceCopier.h">
+			<Option target="Debug" />
+			<Option target="Profile" />
+		</Unit>
+		<Unit filename="src/resource/builder/TextureBuilder.cpp">
+			<Option target="Debug" />
+			<Option target="Profile" />
+		</Unit>
+		<Unit filename="src/resource/builder/TextureBuilder.h">
+			<Option target="Debug" />
+			<Option target="Profile" />
+		</Unit>
 		<Unit filename="src/time/MicroTicker.cpp" />
 		<Unit filename="src/time/MicroTicker.h" />
 		<Unit filename="src/time/Time.cpp" />

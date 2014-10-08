@@ -33,11 +33,11 @@ namespace rob
         SDL_GL_SetAttribute(SDL_GL_MULTISAMPLESAMPLES, 2);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 1);
-    #ifdef DEBUG_
+    #ifdef ROB_DEBUG
 //        SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS,
             SDL_GL_CONTEXT_DEBUG_FLAG | SDL_GL_CONTEXT_PROFILE_CORE);
-    #endif // DEBUG_
+    #endif // ROB_DEBUG
 
 
         m_data->m_window = SDL_CreateWindow("Rob engine",

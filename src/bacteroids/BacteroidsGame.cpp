@@ -214,11 +214,11 @@ namespace bact
     bool Bacteroids::Initialize()
     {
         m_window->SetTitle(
-        #if defined(DEBUG_)
+        #if defined(ROB_DEBUG)
             "Bacteroids - Debug"
         #else
             "Bacteroids"
-        #endif // DEBUG_
+        #endif
         );
 //        m_window->GrabMouse();
 

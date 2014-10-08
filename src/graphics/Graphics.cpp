@@ -72,14 +72,14 @@ namespace rob
 
         InitState();
 
-    #ifdef DEBUG_
+    #ifdef ROB_DEBUG
         if (::glewIsSupported("GL_ARB_debug_output"))
         {
             ::glDebugMessageCallback(&gl_debug_callback, nullptr);
             ::glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
             m_hasDebugOutput = true;
         }
-    #endif // DEBUG_
+    #endif // ROB_DEBUG
 
         ::glEnable(GL_BLEND);
         ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
