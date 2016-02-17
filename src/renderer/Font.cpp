@@ -14,7 +14,7 @@ namespace rob
         , m_glyphCount(0)
         , m_textureCount(0)
     {
-        for (size_t i = 0; i < MAX_GLYPHS; i++)
+        for (size_t_32 i = 0; i < MAX_GLYPHS; i++)
         {
             m_glyphMapping[i] = 0;
             m_glyph[i].m_textureIdx = -1;
@@ -50,7 +50,7 @@ namespace rob
 
     void Font::AddGlyph(uint32_t character, const Glyph &glyph)
     {
-        const size_t index = m_glyphCount++;
+        const size_t_32 index = m_glyphCount++;
         ROB_ASSERT(index < MAX_GLYPHS);
         m_glyphMapping[index] = character;
         m_glyph[character] = glyph;
@@ -64,30 +64,30 @@ namespace rob
         return m_glyph[character];
     }
 
-    const Glyph& Font::GetGlyphByIndex(size_t index) const
+    const Glyph& Font::GetGlyphByIndex(size_t_32 index) const
     {
         ROB_ASSERT(index < m_glyphCount);
         const uint32_t character = m_glyphMapping[index];
         return GetGlyph(character);
     }
 
-    size_t Font::GetGlyphCount() const
+    size_t_32 Font::GetGlyphCount() const
     { return m_glyphCount; }
 
-    void Font::AddTexture(size_t page, TextureHandle texture)
+    void Font::AddTexture(size_t_32 page, TextureHandle texture)
     {
         ROB_ASSERT(page < MAX_TEXTURE_PAGES);
         m_textures[page] = texture;
         m_textureCount = (page + 1 > m_textureCount) ? page + 1 : m_textureCount;
     }
 
-    TextureHandle Font::GetTexture(size_t page) const
+    TextureHandle Font::GetTexture(size_t_32 page) const
     {
         ROB_ASSERT(page < MAX_TEXTURE_PAGES);
         return m_textures[page];
     }
 
-    size_t Font::GetTextureCount() const
+    size_t_32 Font::GetTextureCount() const
     { return m_textureCount; }
 
 } // rob

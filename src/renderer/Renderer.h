@@ -80,11 +80,11 @@ namespace rob
 
         void DrawText(float x, float y, const char *text);
         float GetTextWidth(const char *text) const;
-        float GetTextWidth(const char *text, size_t charCount) const;
+        float GetTextWidth(const char *text, size_t_32 charCount) const;
 
         void DrawTextAscii(float x, float y, const char *text);
         float GetTextWidthAscii(const char *text) const;
-        float GetTextWidthAscii(const char *text, size_t charCount) const;
+        float GetTextWidthAscii(const char *text, size_t_32 charCount) const;
 
         void SetFontScale(float scale);
         float GetFontScale() const;
@@ -96,7 +96,7 @@ namespace rob
         void AddFontVertex(FontVertex *&vertex, const float x, const float y, const float u, const float v);
         void AddFontQuad(FontVertex *&vertex, const uint32_t c, const Glyph &glyph,
                            float &cursorX, float &cursorY,
-                           const size_t textureW, const size_t textureH);
+                           const size_t_32 textureW, const size_t_32 textureH);
 
     private:
         LinearAllocator m_alloc;

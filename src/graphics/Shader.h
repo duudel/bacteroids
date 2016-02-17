@@ -21,8 +21,8 @@ namespace rob
 
         bool IsCompiled() const;
 
-        size_t GetCompileInfoSize() const;
-        void GetCompileInfo(char *buffer, size_t bufferSize) const;
+        size_t_32 GetCompileInfoSize() const;
+        void GetCompileInfo(char *buffer, size_t_32 bufferSize) const;
 
     protected:
         GLuint m_object;

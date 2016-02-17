@@ -19,9 +19,9 @@ namespace bact
 
     using rob::LinearAllocator;
 
-    static const size_t MAX_BACTERS = 500;
-    static const size_t MAX_PROJECTILES = 200;
-    static const size_t MAX_OBJECTS = MAX_BACTERS + MAX_PROJECTILES + 1;
+    static const size_t_32 MAX_BACTERS = 500;
+    static const size_t_32 MAX_PROJECTILES = 200;
+    static const size_t_32 MAX_OBJECTS = MAX_BACTERS + MAX_PROJECTILES + 1;
 
     class ObjectArray
     {
@@ -30,9 +30,9 @@ namespace bact
 
         void Init(LinearAllocator &alloc);
 
-        GameObject *operator[] (size_t i);
+        GameObject *operator[] (size_t_32 i);
 
-        size_t Size() const
+        size_t_32 Size() const
         { return m_size; }
         bool CanObtainBacter() const
         { return (m_bacterCount < MAX_BACTERS); }
@@ -45,13 +45,13 @@ namespace bact
         Bacter *ObtainBacter();
         Projectile *ObtainProjectile();
 
-        void Remove(size_t i);
+        void Remove(size_t_32 i);
         void RemoveAll();
 
     private:
-        size_t m_size;
-        size_t m_bacterCount;
-        size_t m_projectileCount;
+        size_t_32 m_size;
+        size_t_32 m_bacterCount;
+        size_t_32 m_projectileCount;
 
         GameObject **m_objects;
         Pool<Bacter> m_bacterPool;

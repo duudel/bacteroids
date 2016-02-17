@@ -34,7 +34,7 @@ namespace rob
         [Texture::FMT_RGBA] = GL_RGBA,
     };
 
-    void Texture::TexImage(size_t w, size_t h, Format fmt, const void * const data)
+    void Texture::TexImage(size_t_32 w, size_t_32 h, Format fmt, const void * const data)
     {
         m_width = w;
         m_height = h;
@@ -50,10 +50,10 @@ namespace rob
         GL_CHECK;
     }
 
-    size_t Texture::GetWidth() const
+    size_t_32 Texture::GetWidth() const
     { return m_width; }
 
-    size_t Texture::GetHeight() const
+    size_t_32 Texture::GetHeight() const
     { return m_height; }
 
 } // rob

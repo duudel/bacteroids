@@ -18,10 +18,10 @@ namespace fs
     void Close(File file)
     { std::fclose(file); }
 
-    void Read(File file, char *data, size_t dataSize)
+    void Read(File file, char *data, size_t_32 dataSize)
     { ::fread(data, 1, dataSize, file); }
 
-    void Write(File file, const char *data, size_t dataSize)
+    void Write(File file, const char *data, size_t_32 dataSize)
     { ::fwrite(data, 1, dataSize, file); }
 
 } // fs

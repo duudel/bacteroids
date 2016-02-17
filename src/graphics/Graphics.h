@@ -46,7 +46,7 @@ namespace rob
     class Graphics
     {
     public:
-        static const size_t MAX_TEXTURE_UNITS = 8;
+        static const size_t_32 MAX_TEXTURE_UNITS = 8;
 
     public:
         Graphics(LinearAllocator &alloc);
@@ -61,14 +61,14 @@ namespace rob
         void Clear();
         void SetClearColor(float r, float g, float b);
 
-        void SetTexture(size_t unit, TextureHandle texture);
+        void SetTexture(size_t_32 unit, TextureHandle texture);
         void SetVertexBuffer(VertexBufferHandle buffer);
         void SetIndexBuffer(IndexBufferHandle buffer);
         void SetShaderProgram(ShaderProgramHandle program);
 
         void UpdateState();
 
-        void BindTexture(size_t unit, TextureHandle texture);
+        void BindTexture(size_t_32 unit, TextureHandle texture);
         void BindVertexBuffer(VertexBufferHandle buffer);
         void BindIndexBuffer(IndexBufferHandle buffer);
         void BindShaderProgram(ShaderProgramHandle program);
@@ -79,13 +79,13 @@ namespace rob
         void SetUniform(UniformHandle u, const vec4f &value);
         void SetUniform(UniformHandle u, const mat4f &value);
 
-        void SetAttrib(size_t attr, size_t size, size_t stride, size_t offset);
+        void SetAttrib(size_t_32 attr, size_t_32 size, size_t_32 stride, size_t_32 offset);
 
-        void DrawTriangleArrays(size_t first, size_t count);
-        void DrawTriangleStripArrays(size_t first, size_t count);
-        void DrawTriangleFanArrays(size_t first, size_t count);
-        void DrawLineArrays(size_t first, size_t count);
-        void DrawLineLoopArrays(size_t first, size_t count);
+        void DrawTriangleArrays(size_t_32 first, size_t_32 count);
+        void DrawTriangleStripArrays(size_t_32 first, size_t_32 count);
+        void DrawTriangleFanArrays(size_t_32 first, size_t_32 count);
+        void DrawLineArrays(size_t_32 first, size_t_32 count);
+        void DrawLineLoopArrays(size_t_32 first, size_t_32 count);
 
 
         TextureHandle CreateTexture();

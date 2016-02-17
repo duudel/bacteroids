@@ -15,7 +15,7 @@ namespace rob
         void* Obtain();
         void Return(void *ptr);
 
-        char* AddElements(void *start, size_t size, size_t elementSize, size_t elementAlign);
+        char* AddElements(void *start, size_t_32 size, size_t_32 elementSize, size_t_32 elementAlign);
 
     private:
         Freelist *m_next;

@@ -14,10 +14,10 @@ namespace bact
     {
     public:
         void SetKey(Keyboard::Scancode key, bool down)
-        { m_keys[static_cast<size_t>(key)] = down; }
+        { m_keys[static_cast<size_t_32>(key)] = down; }
 
         bool KeyDown(Keyboard::Scancode key) const
-        { return m_keys[static_cast<size_t>(key)]; }
+        { return m_keys[static_cast<size_t_32>(key)]; }
 
         void UpdateMouse()
         { GetMouseState(m_mouse); }
@@ -32,7 +32,7 @@ namespace bact
         { return m_mouse.GetDeltaPosition(); }
 
     private:
-        bool m_keys[static_cast<size_t>(Keyboard::Scancode::NUM_KEYS)];
+        bool m_keys[static_cast<size_t_32>(Keyboard::Scancode::NUM_KEYS)];
         Mouse m_mouse;
     };
 

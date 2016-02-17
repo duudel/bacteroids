@@ -14,7 +14,7 @@
 namespace rob
 {
 
-    static const size_t STATIC_MEMORY_SIZE = 4 * 1024 * 1024;
+    static const size_t_32 STATIC_MEMORY_SIZE = 4 * 1024 * 1024;
 
     Game::Game()
         : m_staticAlloc(STATIC_MEMORY_SIZE)
@@ -36,7 +36,7 @@ namespace rob
 
         log::Info("GL debug output: ", (m_graphics->HasDebugOutput()?"yes":"no"));
 
-        const size_t freeMemory = STATIC_MEMORY_SIZE - m_staticAlloc.GetAllocatedSize();
+        const size_t_32 freeMemory = STATIC_MEMORY_SIZE - m_staticAlloc.GetAllocatedSize();
         log::Info("Static memory used: ", m_staticAlloc.GetAllocatedSize(), " B from ",
                   STATIC_MEMORY_SIZE, " B total", " (", freeMemory ," B free)");
         m_stateAlloc.SetMemory(m_staticAlloc.Allocate(freeMemory), freeMemory);
@@ -119,7 +119,7 @@ namespace rob
     void Game::OnResize(int w, int h)
     { m_state->Resize(w, h); }
 
-    void Memory(size_t totalBytes, size_t &MB, size_t &kB, size_t &B)
+    void Memory(size_t_32 totalBytes, size_t_32 &MB, size_t_32 &kB, size_t_32 &B)
     {
         B = totalBytes;
         kB = B / 1024;
@@ -128,11 +128,11 @@ namespace rob
         kB -= MB * 1024;
     }
 
-    void ReportMemoryUsage(const size_t used, const size_t total)
+    void ReportMemoryUsage(const size_t_32 used, const size_t_32 total)
     {
-        const size_t free = total - used;
+        const size_t_32 free = total - used;
         log::Info("State memory usage:");
-        size_t MB, kB, B;
+        size_t_32 MB, kB, B;
         Memory(used, MB, kB, B);
         log::Info("  used:  ", MB, " MB ", kB, " kB ", B, " B");
         Memory(free, MB, kB, B);

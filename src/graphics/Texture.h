@@ -26,15 +26,15 @@ namespace rob
         /// If data is null, no data is written to the image, but the storage for
         /// the image is reserved.
         /// \pre This texture must be bind to the graphics context before calling this method.
-        void TexImage(size_t w, size_t h, Format fmt, const void * const data);
+        void TexImage(size_t_32 w, size_t_32 h, Format fmt, const void * const data);
 
-        size_t GetWidth() const;
-        size_t GetHeight() const;
+        size_t_32 GetWidth() const;
+        size_t_32 GetHeight() const;
 
     private:
         GLuint m_object;
-        size_t m_width;
-        size_t m_height;
+        size_t_32 m_width;
+        size_t_32 m_height;
         Format m_format;
     };
 

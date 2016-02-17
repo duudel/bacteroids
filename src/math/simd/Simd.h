@@ -19,7 +19,7 @@ namespace simd
 
     // The S template parameter is for debugging. It can be used to instantiate both
     // scalar and SIMD versions.
-    template <class T, size_t S>
+    template <class T, size_t_32 S>
     struct Simd;
 
 } // simd
@@ -45,7 +45,7 @@ namespace simd
 
     // The S template parameter is for debugging. It can be used to instantiate both
     // scalar and SIMD versions.
-    template <class T, size_t S>
+    template <class T, size_t_32 S>
     struct Constants
     {
         typedef typename Simd<T, S>::v4 v4;
@@ -55,13 +55,13 @@ namespace simd
         static const v4 MASK_W;
     };
 
-    template <class T, size_t S>
+    template <class T, size_t_32 S>
     const typename Constants<T, S>::v4 Constants<T, S>::MASK_X = Simd<T, S>::Set(float_bits.full, 0.0f, 0.0f, 0.0f);
-    template <class T, size_t S>
+    template <class T, size_t_32 S>
     const typename Constants<T, S>::v4 Constants<T, S>::MASK_Y = Simd<T, S>::Set(0.0f, float_bits.full, 0.0f, 0.0f);
-    template <class T, size_t S>
+    template <class T, size_t_32 S>
     const typename Constants<T, S>::v4 Constants<T, S>::MASK_Z = Simd<T, S>::Set(0.0f, 0.0f, float_bits.full, 0.0f);
-    template <class T, size_t S>
+    template <class T, size_t_32 S>
     const typename Constants<T, S>::v4 Constants<T, S>::MASK_W = Simd<T, S>::Set(0.0f, 0.0f, 0.0f, float_bits.full);
 
 } // simd

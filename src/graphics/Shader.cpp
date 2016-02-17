@@ -34,14 +34,14 @@ namespace rob
     bool Shader::IsCompiled() const
     { return m_compiled; }
 
-    size_t Shader::GetCompileInfoSize() const
+    size_t_32 Shader::GetCompileInfoSize() const
     {
         GLint len = 0;
         ::glGetShaderiv(m_object, GL_INFO_LOG_LENGTH, &len);
-        return static_cast<size_t>(len);
+        return static_cast<size_t_32>(len);
     }
 
-    void Shader::GetCompileInfo(char *buffer, size_t bufferSize) const
+    void Shader::GetCompileInfo(char *buffer, size_t_32 bufferSize) const
     { ::glGetShaderInfoLog(m_object, bufferSize, nullptr, buffer); }
 
 

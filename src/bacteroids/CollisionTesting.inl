@@ -1,11 +1,11 @@
 
 #define BUCKETED_COLLISION 1
 #if defined(BUCKETED_COLLISION)
-    size_t num_objects = m_objects.Size();
+    size_t_32 num_objects = m_objects.Size();
 
-    size_t q[5] = {0};
+    size_t_32 q[5] = {0};
 
-    for (size_t i = 0; i < num_objects; i++)
+    for (size_t_32 i = 0; i < num_objects; i++)
     {
         GameObject *o = m_objects[i];
         vec2f p = o->GetPosition();
@@ -13,11 +13,11 @@
 
         if (p.x + r < 0.0f && p.y + r < 0.0f)
         {
-            size_t q0 = q[0]++;
-            size_t q1 = q[1]++;
-            size_t q2 = q[2]++;
-            size_t q3 = q[3]++;
-            size_t q4 = q[4]++;
+            size_t_32 q0 = q[0]++;
+            size_t_32 q1 = q[1]++;
+            size_t_32 q2 = q[2]++;
+            size_t_32 q3 = q[3]++;
+            size_t_32 q4 = q[4]++;
             m_quadTree[q4] = m_quadTree[q3];
             m_quadTree[q3] = m_quadTree[q2];
             m_quadTree[q2] = m_quadTree[q1];
@@ -26,10 +26,10 @@
         }
         else if (p.x + r < 0.0f && p.y - r > 0.0f)
         {
-            size_t q1 = q[1]++;
-            size_t q2 = q[2]++;
-            size_t q3 = q[3]++;
-            size_t q4 = q[4]++;
+            size_t_32 q1 = q[1]++;
+            size_t_32 q2 = q[2]++;
+            size_t_32 q3 = q[3]++;
+            size_t_32 q4 = q[4]++;
             m_quadTree[q4] = m_quadTree[q3];
             m_quadTree[q3] = m_quadTree[q2];
             m_quadTree[q2] = m_quadTree[q1];
@@ -37,28 +37,28 @@
         }
         else if (p.x - r > 0.0f && p.y + r < 0.0f)
         {
-            size_t q2 = q[2]++;
-            size_t q3 = q[3]++;
-            size_t q4 = q[4]++;
+            size_t_32 q2 = q[2]++;
+            size_t_32 q3 = q[3]++;
+            size_t_32 q4 = q[4]++;
             m_quadTree[q4] = m_quadTree[q3];
             m_quadTree[q3] = m_quadTree[q2];
             m_quadTree[q2] = o;
         }
         else if (p.x - r > 0.0f && p.y - r > 0.0f)
         {
-            size_t q3 = q[3]++;
-            size_t q4 = q[4]++;
+            size_t_32 q3 = q[3]++;
+            size_t_32 q4 = q[4]++;
             m_quadTree[q4] = m_quadTree[q3];
             m_quadTree[q3] = o;
         }
         else
         {
-            size_t q4 = q[4]++;
+            size_t_32 q4 = q[4]++;
             m_quadTree[q4] = o;
         }
     }
 
-    for (size_t k = 0, i = 0; k < 5; k++)
+    for (size_t_32 k = 0, i = 0; k < 5; k++)
     {
         for (; i < q[k]; i++)
         {
@@ -66,7 +66,7 @@
             vec2f p1 = obj1->GetPosition();
             float r1 = obj1->GetRadius();
 
-            for (size_t j = i + 1; j < q[k]; j++)
+            for (size_t_32 j = i + 1; j < q[k]; j++)
             {
                 GameObject *obj2 = m_quadTree[j];
                 vec2f p2 = obj2->GetPosition();
@@ -84,7 +84,7 @@
 
             if (k == 4) continue;
 
-            for (size_t j = q[3]; j < q[4]; j++)
+            for (size_t_32 j = q[3]; j < q[4]; j++)
             {
                 GameObject *obj2 = m_quadTree[j];
                 vec2f p2 = obj2->GetPosition();
@@ -102,15 +102,15 @@
         }
     }
 #else
-    size_t num_objects = m_objects.Size();
+    size_t_32 num_objects = m_objects.Size();
 
-    for (size_t i = 0; i < num_objects; i++)
+    for (size_t_32 i = 0; i < num_objects; i++)
     {
         GameObject *obj1 = m_objects[i];
         vec2f p1 = obj1->GetPosition();
         float r1 = obj1->GetRadius();
 
-        for (size_t j = i + 1; j < num_objects; j++)
+        for (size_t_32 j = i + 1; j < num_objects; j++)
         {
             GameObject *obj2 = m_objects[j];
             vec2f p2 = obj2->GetPosition();

@@ -9,24 +9,24 @@
 namespace rob
 {
 
-    inline size_t StringLength(const char *str)
+    inline size_t_32 StringLength(const char *str)
     { return std::strlen(str); }
 
-    inline size_t CopyString(char *dest, const char *src, size_t num)
+    inline size_t_32 CopyString(char *dest, const char *src, size_t_32 num)
     {
-        size_t i = 0;
+        size_t_32 i = 0;
         for (; i < num && *src; i++, src++)
             dest[i] = *src;
         return i;
     }
 
-    template <size_t N>
+    template <size_t_32 N>
     void CopyString(char (&dest)[N], const char *src)
     { CopyString(dest, src, N); }
 
-    inline size_t CopyStringN(char *dest, const char *src, size_t num)
+    inline size_t_32 CopyStringN(char *dest, const char *src, size_t_32 num)
     {
-        size_t i = 0;
+        size_t_32 i = 0;
         for (; i < num && *src; i++, src++)
             dest[i] = *src;
         for (; i < num; i++)
@@ -34,16 +34,16 @@ namespace rob
         return i;
     }
 
-    template <size_t N>
+    template <size_t_32 N>
     void CopyStringN(char (&dest)[N], const char *src)
     { CopyStringN(dest, src, N); }
 
     template <class ...Args>
-    size_t StringPrintF(char *buf, size_t bufSize, const char * const fmt, Args ...args)
+    size_t_32 StringPrintF(char *buf, size_t_32 bufSize, const char * const fmt, Args ...args)
     { return snprintf(buf, bufSize, fmt, args...); }
 
-    template <size_t N, class ...Args>
-    size_t StringPrintF(char (&buf)[N], const char * const fmt, Args ...args)
+    template <size_t_32 N, class ...Args>
+    size_t_32 StringPrintF(char (&buf)[N], const char * const fmt, Args ...args)
     { return snprintf(buf, N, fmt, args...); }
 
 
@@ -93,7 +93,7 @@ namespace rob
         return (c6 & 0x3F) | ((c5 & 0x3F) << 6) | ((c4 & 0x3F) << 12) | ((c3 & 0x3F) << 18) | ((c2 & 0x3F) << 24) | ((c1 & 0x1) << 30);
     }
 
-    inline size_t CopyUtf8Codepoint(const char *&str, const char * const end, char *&buf, const char * const bufEnd)
+    inline size_t_32 CopyUtf8Codepoint(const char *&str, const char * const end, char *&buf, const char * const bufEnd)
     {
         if (str == end) return 0;
         const uint32_t c1 = uint8_t(*str++);
@@ -173,7 +173,7 @@ namespace rob
         return 6;
     }
 
-    inline uint32_t SkipUtf8Right(const char *&str, const char * const end, size_t *sz = 0)
+    inline uint32_t SkipUtf8Right(const char *&str, const char * const end, size_t_32 *sz = 0)
     {
         if (sz) *sz = 0;
         if (str == end) return 0;
@@ -236,12 +236,12 @@ namespace rob
 
     inline bool IsUtf8Trail(uint8_t c) { return (c >> 6) == 0x2; }
 
-    inline uint32_t SkipUtf8Left(const char *&str, const char * const start, size_t *sz = 0)
+    inline uint32_t SkipUtf8Left(const char *&str, const char * const start, size_t_32 *sz = 0)
     {
         if (sz) *sz = 0;
         if (str == start) return 0;
         str--;
-        size_t size = 1;
+        size_t_32 size = 1;
         while (IsUtf8Trail(*str)) { str--; size++; }
         if (sz) *sz = size;
         const char *s = str;
@@ -252,12 +252,12 @@ namespace rob
     /// specifies the total size of the \c dst buffer. The \c dst will
     /// be filled with '\0', if \c scr is not long enough to fill it.
     /// Returns the number of bytes copied.
-    inline size_t CopyUtf8_N(char *dest, const char *src, size_t destSize)
+    inline size_t_32 CopyUtf8_N(char *dest, const char *src, size_t_32 destSize)
     {
-        const size_t slen = StringLength(src);
+        const size_t_32 slen = StringLength(src);
         const char * const end = src + slen;
         const char * const dend = dest + destSize;
-        size_t sz = 0;
+        size_t_32 sz = 0;
         while (src != end && dest != dend)
             sz += CopyUtf8Codepoint(src, end, dest, dend);
         while (dest != dend)
@@ -269,12 +269,12 @@ namespace rob
     /// specifies the total size of the \c dst buffer. The amount
     /// of copied bytes is \c min(srclength, dstSize).
     /// Returns the number of bytes copied.
-    inline size_t CopyUtf8(char *dest, const char *src, size_t destSize)
+    inline size_t_32 CopyUtf8(char *dest, const char *src, size_t_32 destSize)
     {
-        const size_t slen = StringLength(src);
+        const size_t_32 slen = StringLength(src);
         const char * const end = src + slen;
         const char * const dend = dest + destSize;
-        size_t sz = 0;
+        size_t_32 sz = 0;
         while (src != end && dest != dend)
             sz += CopyUtf8Codepoint(src, end, dest, dend);
         return sz;
@@ -287,13 +287,13 @@ namespace rob
         static uint32_t Decode(const char *&str, const char * const end)
         { return (str != end) ? *str++ : 0; }
 
-        static size_t Copy(char *dest, const char *src, size_t destSize)
+        static size_t_32 Copy(char *dest, const char *src, size_t_32 destSize)
         { return CopyString(dest, src, destSize); }
 
-        static size_t CopyN(char *dest, const char *src, size_t destSize)
+        static size_t_32 CopyN(char *dest, const char *src, size_t_32 destSize)
         { return CopyStringN(dest, src, destSize); }
 
-        static uint32_t SkipRight(const char *&str, const char * const end, size_t *sz = 0)
+        static uint32_t SkipRight(const char *&str, const char * const end, size_t_32 *sz = 0)
         {
             if (sz) *sz = 0;
             if (str == end) return 0;
@@ -301,7 +301,7 @@ namespace rob
             return Decode(str, end);
         }
 
-        static uint32_t SkipLeft(const char *&str, const char * const start, size_t *sz = 0)
+        static uint32_t SkipLeft(const char *&str, const char * const start, size_t_32 *sz = 0)
         {
             if (sz) *sz = 0;
             if (str == start) return 0;
@@ -315,16 +315,16 @@ namespace rob
         static uint32_t Decode(const char *&str, const char * const end)
         { return DecodeUtf8(str, end); }
 
-        static size_t Copy(char *dest, const char *src, size_t dstSize)
+        static size_t_32 Copy(char *dest, const char *src, size_t_32 dstSize)
         { return CopyUtf8(dest, src, dstSize); }
 
-        static size_t CopyN(char *dest, const char *src, size_t dstSize)
+        static size_t_32 CopyN(char *dest, const char *src, size_t_32 dstSize)
         { return CopyUtf8_N(dest, src, dstSize); }
 
-        static uint32_t SkipRight(const char *&str, const char * const end, size_t *sz = 0)
+        static uint32_t SkipRight(const char *&str, const char * const end, size_t_32 *sz = 0)
         { return SkipUtf8Right(str, end, sz); }
 
-        static uint32_t SkipLeft(const char *&str, const char * const start, size_t *sz = 0)
+        static uint32_t SkipLeft(const char *&str, const char * const start, size_t_32 *sz = 0)
         { return SkipUtf8Left(str, start, sz); }
     };
 

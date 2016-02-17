@@ -36,14 +36,14 @@ namespace rob
 
     void FontCache::Unload(Font font)
     {
-//        for (size_t i = 0; i < font.GetTextureCount(); i++)
+//        for (size_t_32 i = 0; i < font.GetTextureCount(); i++)
 //            m_cache->UnloadTexture(font.GetTexture(i));
     }
 
     void ChangePageTextureExtension(char (&buffer)[64])
     {
-        size_t pos = 0;
-        for (size_t i = 0; i < 64 && buffer[i]; i++)
+        size_t_32 pos = 0;
+        for (size_t_32 i = 0; i < 64 && buffer[i]; i++)
         {
             if (buffer[i] == '.') pos = i;
         }
@@ -72,7 +72,7 @@ namespace rob
             return false;
         }
 
-        size_t pageCount = 0;
+        size_t_32 pageCount = 0;
 
         while (in)
         {
@@ -100,8 +100,8 @@ namespace rob
                     block.outline           = ReadValue<uint8_t>(in);
 
                     // Skip font name
-                    const size_t block_read_size = in.tellg() - pos;
-                    const size_t block_discard_size = block_size - block_read_size;
+                    const size_t_32 block_read_size = in.tellg() - pos;
+                    const size_t_32 block_discard_size = block_size - block_read_size;
                     in.seekg(block_discard_size, std::ios::cur);
 
                     font.SetLineSpacing(block.spacing_vertical);
@@ -131,12 +131,12 @@ namespace rob
             case BmfPageBlock::TYPE:
                 {
                     char pageName[64];
-                    size_t pageNameLen = 0;
+                    size_t_32 pageNameLen = 0;
                     const std::ios::streampos startPos = in.tellg();
-                    for (size_t i = 0; i < pageCount; i++)
+                    for (size_t_32 i = 0; i < pageCount; i++)
                     {
                         in.seekg(startPos + std::ios::streamoff(i * pageNameLen), std::ios::beg);
-                        size_t len = ReadString(in, pageName);
+                        size_t_32 len = ReadString(in, pageName);
                         if (!pageNameLen) pageNameLen = len;
 
 //                        log::Info("FontCache: page: ", pageName, ", id: ", ResourceID(+pageName));
@@ -151,8 +151,8 @@ namespace rob
 
             case BmfCharBlock::TYPE:
                 {
-                    const size_t characterCount = block_size / 20;
-                    for (size_t i = 0; i < characterCount; i++)
+                    const size_t_32 characterCount = block_size / 20;
+                    for (size_t_32 i = 0; i < characterCount; i++)
                     {
                         BmfCharBlock block;
                         block.id        = ReadValue<uint32_t>(in);
@@ -184,8 +184,8 @@ namespace rob
             case BmfKerningPairBlock::TYPE:
                 {
                     in.seekg(block_size, std::ios::cur);
-//                    const size_t kerningPairs = block_size / 10;
-//                    for (size_t i = 0; i < kerningPairs; i++)
+//                    const size_t_32 kerningPairs = block_size / 10;
+//                    for (size_t_32 i = 0; i < kerningPairs; i++)
 //                    {
 //                        BmfKerningPairBlock block;
 //                        block.first = ReadValue<uint32_t>(in);

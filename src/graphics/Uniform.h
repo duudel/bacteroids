@@ -27,7 +27,7 @@ namespace rob
         void SetValue(const vec4f &value);
         void SetValue(const mat4f &value);
 
-        static const size_t MAX_NAME_LENGTH = 32;
+        static const size_t_32 MAX_NAME_LENGTH = 32;
 
         UniformType m_type;
         union

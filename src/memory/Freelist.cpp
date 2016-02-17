@@ -26,12 +26,14 @@ namespace rob
         m_next = head;
     }
 
-    char* Freelist::AddElements(void *start, size_t size, size_t elementSize, size_t elementAlign)
+    char* Freelist::AddElements(void *start, size_t_32 size, size_t_32 elementSize, size_t_32 elementAlign)
     {
+        elementSize = elementSize < sizeof(void*) ? sizeof(void*) : elementSize;
+
         char *it = static_cast<char*>(start);
         const char * const end = it + size;
 
-        const size_t alignedSize = align(elementSize, elementAlign);
+        const size_t_32 alignedSize = align(elementSize, elementAlign);
 
         it = ptr_align(it, elementAlign);
         char *s = it;

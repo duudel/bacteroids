@@ -18,13 +18,13 @@ namespace bact
         m_projectileCount = 0;
 
         m_objects = alloc.AllocateArray<GameObject*>(MAX_OBJECTS);
-        const size_t bacterPoolSize = GetArraySize<Bacter>(MAX_BACTERS);
+        const size_t_32 bacterPoolSize = GetArraySize<Bacter>(MAX_BACTERS);
         m_bacterPool.SetMemory(alloc.AllocateArray<Bacter>(MAX_BACTERS), bacterPoolSize);
-        const size_t projectilePoolSize = GetArraySize<Projectile>(MAX_PROJECTILES);
+        const size_t_32 projectilePoolSize = GetArraySize<Projectile>(MAX_PROJECTILES);
         m_projectilePool.SetMemory(alloc.AllocateArray<Projectile>(MAX_PROJECTILES), projectilePoolSize);
     }
 
-    GameObject *ObjectArray::operator[] (size_t i)
+    GameObject *ObjectArray::operator[] (size_t_32 i)
     {
         ROB_ASSERT(i < m_size);
         return m_objects[i];
@@ -50,7 +50,7 @@ namespace bact
         return proj;
     }
 
-    void ObjectArray::Remove(size_t i)
+    void ObjectArray::Remove(size_t_32 i)
     {
         ROB_ASSERT(i < m_size); // means also "m_size > 0"
 

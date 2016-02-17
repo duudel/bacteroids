@@ -76,7 +76,7 @@ namespace bact
 
         m_damageFade.SetFadeAcceleration(-10.0f);
 
-        for (size_t i = 0; i < 6; i++)
+        for (size_t_32 i = 0; i < 6; i++)
             SpawnBacter(0.5f);
 
         return true;
@@ -299,7 +299,7 @@ namespace bact
 
         DoCollisions();
 
-        for (size_t i = 0; i < m_objects.Size(); i++)
+        for (size_t_32 i = 0; i < m_objects.Size(); i++)
         {
             m_objects[i]->Update(gameTime, PLAY_AREA);
             // TODO: Spontaneous splitting is very much a hack I says. Fix pls. Solution CES?
@@ -311,7 +311,7 @@ namespace bact
             }
         }
 
-        for (size_t i = 0; i < m_objects.Size(); )
+        for (size_t_32 i = 0; i < m_objects.Size(); )
         {
             if (!m_objects[i]->IsAlive())
             {
@@ -373,7 +373,7 @@ namespace bact
         renderer.SetColor(Color(0.05f, 0.13f, 0.15f));
         renderer.DrawFilledRectangle(PLAY_AREA_LEFT, PLAY_AREA_BOTTOM, PLAY_AREA_RIGHT, PLAY_AREA_TOP);
 
-        for (size_t i = 0; i < m_objects.Size(); i++)
+        for (size_t_32 i = 0; i < m_objects.Size(); i++)
         {
             GameObject *obj = m_objects[i];
 

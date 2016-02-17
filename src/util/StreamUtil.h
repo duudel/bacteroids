@@ -15,8 +15,8 @@ namespace rob
         return value;
     }
 
-    template <size_t N>
-    inline size_t ReadString(std::istream &file, char (&buffer)[N])
+    template <size_t_32 N>
+    inline size_t_32 ReadString(std::istream &file, char (&buffer)[N])
     {
         file.getline(buffer, N, '\0');
         return file.gcount();

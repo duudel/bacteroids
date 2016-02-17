@@ -17,20 +17,20 @@ namespace rob
         // TODO: Enable dynamic text length, with optional length limit.
         // This would need an allocator given as a constructor parameter or
         // the memory would be paseed to the TextInput as constructor parameters.
-        static const size_t MAX_LENGTH = 64;
+        static const size_t_32 MAX_LENGTH = 64;
         char m_text[MAX_LENGTH + 1];
-        size_t m_length;
-        size_t m_cursor;
-        size_t m_lengthLimit;
+        size_t_32 m_length;
+        size_t_32 m_cursor;
+        size_t_32 m_lengthLimit;
     public:
         TextInput();
 
         const char* GetText() const;
-        size_t GetLength() const;
-        size_t GetCursor() const;
+        size_t_32 GetLength() const;
+        size_t_32 GetCursor() const;
 
-        void SetLengthLimit(size_t limit);
-        size_t LengthLimit() const;
+        void SetLengthLimit(size_t_32 limit);
+        size_t_32 LengthLimit() const;
 
         bool MoveLeft();
         bool MoveRight();

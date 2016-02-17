@@ -48,7 +48,7 @@ namespace rob
         Texture::Format texFormat;
 
         const FREE_IMAGE_COLOR_TYPE colorType = ::FreeImage_GetColorType(bitmap);
-        const size_t bpp = ::FreeImage_GetBPP(bitmap);
+        const size_t_32 bpp = ::FreeImage_GetBPP(bitmap);
         switch (colorType)
         {
         case FIC_RGB:
@@ -68,10 +68,10 @@ namespace rob
             return false;
         }
 
-        const size_t width = ::FreeImage_GetWidth(bitmap);
-        const size_t height = ::FreeImage_GetHeight(bitmap);
-        const size_t bytesPerPixel = static_cast<size_t>(texFormat);
-        const size_t imageSize = width * height * bytesPerPixel;
+        const size_t_32 width = ::FreeImage_GetWidth(bitmap);
+        const size_t_32 height = ::FreeImage_GetHeight(bitmap);
+        const size_t_32 bytesPerPixel = static_cast<size_t_32>(texFormat);
+        const size_t_32 imageSize = width * height * bytesPerPixel;
 
 //        log::Info("Image info: ", width, "x", height, "x", bpp, ", bytespp", bytesPerPixel);
 
@@ -79,10 +79,10 @@ namespace rob
         unsigned char *data = imageData;
         if (texFormat == Texture::FMT_RGB)
         {
-            for(size_t y = 0; y < height; y++)
+            for(size_t_32 y = 0; y < height; y++)
             {
                 const BYTE *bits = FreeImage_GetScanLine(bitmap, y);
-                for(size_t x = 0; x < width; x++)
+                for(size_t_32 x = 0; x < width; x++)
                 {
                     data[0] = bits[FI_RGBA_RED];
                     data[1] = bits[FI_RGBA_GREEN];
@@ -95,10 +95,10 @@ namespace rob
         }
         else
         {
-            for(size_t y = 0; y < height; y++)
+            for(size_t_32 y = 0; y < height; y++)
             {
                 const BYTE *bits = FreeImage_GetScanLine(bitmap, y);
-                for(size_t x = 0; x < width; x++)
+                for(size_t_32 x = 0; x < width; x++)
                 {
                     data[0] = bits[FI_RGBA_RED];
                     data[1] = bits[FI_RGBA_GREEN];
@@ -122,10 +122,10 @@ namespace rob
         }
         else
         {
-            out.write(reinterpret_cast<const char*>(&width), sizeof(size_t));
-            out.write(reinterpret_cast<const char*>(&height), sizeof(size_t));
-            const size_t st_format = static_cast<size_t>(texFormat);
-            out.write(reinterpret_cast<const char*>(&st_format), sizeof(size_t));
+            out.write(reinterpret_cast<const char*>(&width), sizeof(size_t_32));
+            out.write(reinterpret_cast<const char*>(&height), sizeof(size_t_32));
+            const size_t_32 st_format = static_cast<size_t_32>(texFormat);
+            out.write(reinterpret_cast<const char*>(&st_format), sizeof(size_t_32));
             out.write(reinterpret_cast<const char*>(imageData), imageSize);
 
             result = true;

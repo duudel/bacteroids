@@ -10,10 +10,10 @@ namespace rob
     template <class T>
     class Vector2;
 
-    template <class T, size_t S = 0>
+    template <class T, size_t_32 S = 0>
     class Vector4;
 
-    template <class T, size_t S = 0>
+    template <class T, size_t_32 S = 0>
     class Matrix4;
 
 

@@ -121,7 +121,7 @@ namespace bact
             const HighScoreList &highScores = m_gameData.m_highScores;
 
             char buf[20];
-            for (size_t i = 0; i < highScores.GetScoreCount(); i++)
+            for (size_t_32 i = 0; i < highScores.GetScoreCount(); i++)
             {
                 StringPrintF(buf, "%i. ", i + 1);
                 if (i == m_scoreIndex)
@@ -202,7 +202,7 @@ namespace bact
         }
     private:
         GameData &m_gameData;
-        size_t m_scoreIndex;
+        size_t_32 m_scoreIndex;
         TextInput m_nameInput;
     };
 

@@ -7,7 +7,7 @@
 namespace rob
 {
 
-    template <class T, size_t S>
+    template <class T, size_t_32 S>
     struct Vector4
     {
         typedef typename simd::Simd<T, S> simd_;
@@ -249,22 +249,22 @@ namespace rob
         }
     };
 
-    template <class T, size_t S>
+    template <class T, size_t_32 S>
     Vector4<T, S> Vector4<T, S>::Zero(0);
 
-    template <class T, size_t S>
+    template <class T, size_t_32 S>
     Vector4<T, S> Vector4<T, S>::Unit(1);
 
-    template <class T, size_t S>
+    template <class T, size_t_32 S>
     Vector4<T, S> Vector4<T, S>::UnitX(1, 0, 0, 0);
 
-    template <class T, size_t S>
+    template <class T, size_t_32 S>
     Vector4<T, S> Vector4<T, S>::UnitY(0, 1, 0, 0);
 
-    template <class T, size_t S>
+    template <class T, size_t_32 S>
     Vector4<T, S> Vector4<T, S>::UnitZ(0, 0, 1, 0);
 
-    template <class T, size_t S>
+    template <class T, size_t_32 S>
     Vector4<T, S> Vector4<T, S>::UnitW(0, 0, 0, 1);
 
 } // rob

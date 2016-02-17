@@ -1,5 +1,6 @@
 
 #include "FileCopy.h"
+#include "../Types.h"
 
 #include <fstream>
 
@@ -14,7 +15,7 @@ namespace rob
         {
             char buf[512];
             in.read(buf, 512);
-            size_t size = in.gcount();
+            size_t_32 size = in.gcount();
             out.write(buf, size);
         }
     }

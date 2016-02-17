@@ -17,7 +17,7 @@ namespace rob
     typedef unsigned int SoundHandle;
     static const SoundHandle InvalidSound = ~0;
 
-    static const size_t MAX_CHANNELS = 16;
+    static const size_t_32 MAX_CHANNELS = 16;
 
     class AudioSystem
     {

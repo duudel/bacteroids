@@ -19,18 +19,18 @@ namespace rob
 
         /// Resizes this buffer object and sets it dynamic or static.
         /// \pre This buffer must be bind before calling this method.
-        void Resize(size_t sizeBytes, bool dynamic);
+        void Resize(size_t_32 sizeBytes, bool dynamic);
         /// Writes data to this buffer.
         /// \pre This buffer must be bind before calling this method.
-        void Write(size_t offset, size_t size, const void *data);
+        void Write(size_t_32 offset, size_t_32 size, const void *data);
 
-        size_t GetSize() const;
+        size_t_32 GetSize() const;
         bool IsDynamic() const;
 
     protected:
         GLuint m_object;
         GLenum m_target;
-        size_t m_sizeBytes;
+        size_t_32 m_sizeBytes;
         bool m_dynamic;
     };
 

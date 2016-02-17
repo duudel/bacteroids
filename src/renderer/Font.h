@@ -44,12 +44,12 @@ namespace rob
         void AddGlyph(uint32_t index, const Glyph &glyph);
         const Glyph& GetGlyph(uint32_t character) const;
 
-        const Glyph& GetGlyphByIndex(size_t index) const;
-        size_t GetGlyphCount() const;
+        const Glyph& GetGlyphByIndex(size_t_32 index) const;
+        size_t_32 GetGlyphCount() const;
 
-        void AddTexture(size_t page, TextureHandle texture);
-        TextureHandle GetTexture(size_t page) const;
-        size_t GetTextureCount() const;
+        void AddTexture(size_t_32 page, TextureHandle texture);
+        TextureHandle GetTexture(size_t_32 page) const;
+        size_t_32 GetTextureCount() const;
 
     private:
         uint16_t m_base;
@@ -59,14 +59,14 @@ namespace rob
 
         // TODO: Enable dynamic glyph count (no hard coded limit).
         // The alocations should be done by FontManager.
-        static const size_t MAX_GLYPHS = 256;
+        static const size_t_32 MAX_GLYPHS = 256;
         Glyph m_glyph[MAX_GLYPHS];
         uint32_t m_glyphMapping[MAX_GLYPHS];
-        size_t m_glyphCount;
+        size_t_32 m_glyphCount;
 
-        static const size_t MAX_TEXTURE_PAGES = 8;
+        static const size_t_32 MAX_TEXTURE_PAGES = 8;
         TextureHandle m_textures[MAX_TEXTURE_PAGES];
-        size_t m_textureCount;
+        size_t_32 m_textureCount;
 
         // TODO: Add kerning support
         // int16_t **m_kerningPairs; (or something?)

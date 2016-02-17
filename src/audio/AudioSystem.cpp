@@ -133,12 +133,12 @@ namespace rob
         alcMakeContextCurrent(m_context);
         AL_CHECK;
 
-        const size_t allocSize = 1024;
+        const size_t_32 allocSize = 1024;
         m_sounds.SetMemory(alloc.Allocate(allocSize, alignof(Sound)), allocSize);
-        const size_t channelPoolSize = GetArraySize<Channel>(MAX_CHANNELS);
+        const size_t_32 channelPoolSize = GetArraySize<Channel>(MAX_CHANNELS);
         m_channelPool.SetMemory(alloc.AllocateArray<Channel>(MAX_CHANNELS), channelPoolSize);
 
-        for (size_t i = 0; i < MAX_CHANNELS; i++)
+        for (size_t_32 i = 0; i < MAX_CHANNELS; i++)
         {
             m_channels[i] = m_channelPool.Obtain();
         }
@@ -150,7 +150,7 @@ namespace rob
 
     AudioSystem::~AudioSystem()
     {
-        for (size_t i = 0; i < MAX_CHANNELS; i++)
+        for (size_t_32 i = 0; i < MAX_CHANNELS; i++)
         {
             m_channelPool.Return(m_channels[i]);
         }
@@ -237,10 +237,10 @@ namespace rob
 
         uint32_t timeMillis = currentTime / 1000ull;
 
-        size_t longestPlayIndex = 0;
+        size_t_32 longestPlayIndex = 0;
         uint32_t longestPlayTime = 0;
 
-        for (size_t i = 0; i < MAX_CHANNELS; i++)
+        for (size_t_32 i = 0; i < MAX_CHANNELS; i++)
         {
             if (m_channels[i]->IsFree())
             {
@@ -265,7 +265,7 @@ namespace rob
 
     void AudioSystem::Update()
     {
-        for (size_t i = 0; i < MAX_CHANNELS; i++)
+        for (size_t_32 i = 0; i < MAX_CHANNELS; i++)
         {
             m_channels[i]->Update();
         }

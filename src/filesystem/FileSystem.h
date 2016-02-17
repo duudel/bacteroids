@@ -2,6 +2,8 @@
 #ifndef H_ROB_FILE_SYSTEM_H
 #define H_ROB_FILE_SYSTEM_H
 
+#include "../Types.h"
+
 #include <cstdio>
 
 namespace rob
@@ -16,13 +18,13 @@ namespace fs
     File OpenToAppend(const char * const filename);
     void Close(File file);
 
-    void Read(File file, char *data, size_t dataSize);
+    void Read(File file, char *data, size_t_32 dataSize);
 
     template <class T>
     void Read(File file, T &value)
     { Read(file, reinterpret_cast<char*>(&value), sizeof(T)); }
 
-    void Write(File file, const char *data, size_t dataSize);
+    void Write(File file, const char *data, size_t_32 dataSize);
 
     template <class T>
     void Write(File file, const T &value)

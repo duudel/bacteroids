@@ -20,7 +20,7 @@ namespace rob
 {
 
     void __stdcall gl_debug_callback(GLenum source, GLenum type, GLuint id, GLenum severity,
-                                  GLsizei length, const GLchar *message, GLvoid *userParam)
+                                  GLsizei length, const GLchar *message, const GLvoid *userParam)
     {
         const char *src = "undefined";
         switch (source)
@@ -84,7 +84,7 @@ namespace rob
         ::glEnable(GL_BLEND);
         ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        const size_t blockSize = 1024;
+        const size_t_32 blockSize = 1024;
         m_textures.SetMemory(alloc.Allocate(blockSize), blockSize);
         m_vertexBuffers.SetMemory(alloc.Allocate(blockSize), blockSize);
         m_indexBuffers.SetMemory(alloc.Allocate(blockSize), blockSize);
@@ -98,7 +98,7 @@ namespace rob
 
     void Graphics::InitState()
     {
-        for (size_t i = 0; i < MAX_TEXTURE_UNITS; i++)
+        for (size_t_32 i = 0; i < MAX_TEXTURE_UNITS; i++)
             m_bind.texture[i] = InvalidHandle;
         m_bind.vertexBuffer = InvalidHandle;
         m_bind.indexBuffer = InvalidHandle;
@@ -147,7 +147,7 @@ namespace rob
     { ::glClearColor(r, g, b, 1.0f); }
 
 
-    void Graphics::SetTexture(size_t unit, TextureHandle texture)
+    void Graphics::SetTexture(size_t_32 unit, TextureHandle texture)
     {
         ROB_ASSERT(unit < MAX_TEXTURE_UNITS);
         m_state.texture[unit] = texture;
@@ -164,7 +164,7 @@ namespace rob
 
     void Graphics::UpdateState()
     {
-        for (size_t i = 0; i < MAX_TEXTURE_UNITS; i++)
+        for (size_t_32 i = 0; i < MAX_TEXTURE_UNITS; i++)
         {
             BindTexture(i, m_state.texture[i]);
         }
@@ -172,7 +172,7 @@ namespace rob
         BindIndexBuffer(m_state.indexBuffer);
     }
 
-    void Graphics::BindTexture(size_t unit, TextureHandle texture)
+    void Graphics::BindTexture(size_t_32 unit, TextureHandle texture)
     {
         ROB_ASSERT(unit < MAX_TEXTURE_UNITS);
 
@@ -316,7 +316,7 @@ namespace rob
     }
 
 
-    void Graphics::SetAttrib(size_t attr, size_t size, size_t stride, size_t offset)
+    void Graphics::SetAttrib(size_t_32 attr, size_t_32 size, size_t_32 stride, size_t_32 offset)
     {
         ROB_ASSERT(attr < 8);
         ::glEnableVertexAttribArray(attr);
@@ -326,31 +326,31 @@ namespace rob
     }
 
 
-    void Graphics::DrawTriangleArrays(size_t first, size_t count)
+    void Graphics::DrawTriangleArrays(size_t_32 first, size_t_32 count)
     {
         ::glDrawArrays(GL_TRIANGLES, first, count);
         GL_CHECK;
     }
 
-    void Graphics::DrawTriangleStripArrays(size_t first, size_t count)
+    void Graphics::DrawTriangleStripArrays(size_t_32 first, size_t_32 count)
     {
         ::glDrawArrays(GL_TRIANGLE_STRIP, first, count);
         GL_CHECK;
     }
 
-    void Graphics::DrawTriangleFanArrays(size_t first, size_t count)
+    void Graphics::DrawTriangleFanArrays(size_t_32 first, size_t_32 count)
     {
         ::glDrawArrays(GL_TRIANGLE_FAN, first, count);
         GL_CHECK;
     }
 
-    void Graphics::DrawLineArrays(size_t first, size_t count)
+    void Graphics::DrawLineArrays(size_t_32 first, size_t_32 count)
     {
         ::glDrawArrays(GL_LINES, first, count);
         GL_CHECK;
     }
 
-    void Graphics::DrawLineLoopArrays(size_t first, size_t count)
+    void Graphics::DrawLineLoopArrays(size_t_32 first, size_t_32 count)
     {
         ::glDrawArrays(GL_LINE_LOOP, first, count);
         GL_CHECK;

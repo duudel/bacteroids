@@ -10,9 +10,9 @@ namespace bact
     class HighScoreList
     {
     public:
-        static const size_t MAX_NAME_LENGTH = 16;
-        static const size_t MAX_SCORE_COUNT = 10;
-        static const size_t INVALID_INDEX = MAX_SCORE_COUNT;
+        static const size_t_32 MAX_NAME_LENGTH = 16;
+        static const size_t_32 MAX_SCORE_COUNT = 10;
+        static const size_t_32 INVALID_INDEX = MAX_SCORE_COUNT;
     public:
         HighScoreList();
 
@@ -22,14 +22,14 @@ namespace bact
         bool IsHighScore(int score) const;
 
         /// Adds the new high score and returns it's index.
-        size_t AddScore(int score);
-        void SetName(size_t index, const char * const name);
+        size_t_32 AddScore(int score);
+        void SetName(size_t_32 index, const char * const name);
 
-        size_t GetIndex(int score) const;
+        size_t_32 GetIndex(int score) const;
 
-        const char* GetName(size_t index) const;
-        int GetScore(size_t index) const;
-        size_t GetScoreCount() const;
+        const char* GetName(size_t_32 index) const;
+        int GetScore(size_t_32 index) const;
+        size_t_32 GetScoreCount() const;
 
     private:
         struct Score
@@ -38,7 +38,7 @@ namespace bact
             int m_score;
         };
         Score m_scores[MAX_SCORE_COUNT];
-        size_t m_scoreCount;
+        size_t_32 m_scoreCount;
     };
 
 } // bact

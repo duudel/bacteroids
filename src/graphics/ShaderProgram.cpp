@@ -18,7 +18,7 @@ namespace rob
     {
         m_object = ::glCreateProgram();
 
-        for (size_t i = 0; i < MAX_UNIFORMS; i++)
+        for (size_t_32 i = 0; i < MAX_UNIFORMS; i++)
         {
             UniformInfo &info = m_uniforms[i];
             info.handle = InvalidHandle;
@@ -53,19 +53,19 @@ namespace rob
     bool ShaderProgram::IsLinked() const
     { return m_linked; }
 
-    size_t ShaderProgram::GetLinkInfoSize() const
+    size_t_32 ShaderProgram::GetLinkInfoSize() const
     {
         GLint len = 0;
         ::glGetProgramiv(m_object, GL_INFO_LOG_LENGTH, &len);
-        return static_cast<size_t>(len);
+        return static_cast<size_t_32>(len);
     }
 
-    void ShaderProgram::GetLinkInfo(char *buffer, size_t bufferSize) const
+    void ShaderProgram::GetLinkInfo(char *buffer, size_t_32 bufferSize) const
     { ::glGetProgramInfoLog(m_object, bufferSize, nullptr, buffer); }
 
     bool ShaderProgram::AddUniform(UniformHandle handle, const char *name)
     {
-        for (size_t i = 0; i < m_uniformCount; i++)
+        for (size_t_32 i = 0; i < m_uniformCount; i++)
         {
             UniformInfo &info = m_uniforms[i];
             // NOTE: Uniform has already been added, or the uniform was
@@ -97,7 +97,7 @@ namespace rob
 
     void ShaderProgram::UpdateUniforms(Graphics *graphics)
     {
-        for (size_t i = 0; i < m_uniformCount; i++)
+        for (size_t_32 i = 0; i < m_uniformCount; i++)
         {
             UniformInfo &info = m_uniforms[i];
             const Uniform* u = graphics->GetUniform(info.handle);
@@ -111,7 +111,7 @@ namespace rob
 
     void ShaderProgram::RemoveUniforms(Graphics *graphics)
     {
-        for (size_t i = 0; i < m_uniformCount; i++)
+        for (size_t_32 i = 0; i < m_uniformCount; i++)
         {
             UniformInfo &info = m_uniforms[i];
             graphics->DecRefUniform(info.handle);

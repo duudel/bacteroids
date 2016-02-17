@@ -15,7 +15,7 @@ namespace bact
     HighScoreList::HighScoreList()
         : m_scoreCount(0)
     {
-        for (size_t i = 0; i < MAX_SCORE_COUNT; i++)
+        for (size_t_32 i = 0; i < MAX_SCORE_COUNT; i++)
         {
             rob::CopyStringN(m_scores[i].m_name, "");
             m_scores[i].m_score = 0;
@@ -52,7 +52,7 @@ namespace bact
         }
 
         int prevScore = -1;
-        for (size_t i = 0; i < m_scoreCount; i++)
+        for (size_t_32 i = 0; i < m_scoreCount; i++)
         {
             if (!in)
             {
@@ -91,16 +91,16 @@ namespace bact
         if (!out.is_open()) return false;
 
         out.write(reinterpret_cast<const char*>(&m_scoreCount), sizeof(uint32_t));
-        for (size_t i = 0; i < m_scoreCount; i++)
+        for (size_t_32 i = 0; i < m_scoreCount; i++)
         {
             out.write(reinterpret_cast<const char*>(&m_scores[i]), sizeof(Score));
         }
         return true;
     }
 
-    size_t HighScoreList::GetIndex(int score) const
+    size_t_32 HighScoreList::GetIndex(int score) const
     {
-        for (size_t i = 0; i < m_scoreCount; i++)
+        for (size_t_32 i = 0; i < m_scoreCount; i++)
         {
             if (score > m_scores[i].m_score)
                 return i;
@@ -111,17 +111,17 @@ namespace bact
     bool HighScoreList::IsHighScore(int score) const
     { return GetIndex(score) < MAX_SCORE_COUNT; }
 
-    size_t HighScoreList::AddScore(int score)
+    size_t_32 HighScoreList::AddScore(int score)
     {
-        const size_t index = GetIndex(score);
+        const size_t_32 index = GetIndex(score);
         if (index == INVALID_INDEX)
             return index;
 
-        size_t last = MAX_SCORE_COUNT - 1;
+        size_t_32 last = MAX_SCORE_COUNT - 1;
         if (m_scoreCount < MAX_SCORE_COUNT)
             last = m_scoreCount++;
 
-        for (size_t i = last; i > index; i--)
+        for (size_t_32 i = last; i > index; i--)
             m_scores[i] = m_scores[i - 1];
 
         rob::CopyStringN(m_scores[index].m_name, "");
@@ -130,26 +130,26 @@ namespace bact
         return index;
     }
 
-    void HighScoreList::SetName(size_t index, const char * const name)
+    void HighScoreList::SetName(size_t_32 index, const char * const name)
     {
         ROB_ASSERT(index < m_scoreCount);
         rob::CopyStringN(m_scores[index].m_name, name);
         m_scores[index].m_name[MAX_NAME_LENGTH - 1] = 0;
     }
 
-    const char* HighScoreList::GetName(size_t index) const
+    const char* HighScoreList::GetName(size_t_32 index) const
     {
         ROB_ASSERT(index < m_scoreCount);
         return m_scores[index].m_name;
     }
 
-    int HighScoreList::GetScore(size_t index) const
+    int HighScoreList::GetScore(size_t_32 index) const
     {
         ROB_ASSERT(index < m_scoreCount);
         return m_scores[index].m_score;
     }
 
-    size_t HighScoreList::GetScoreCount() const
+    size_t_32 HighScoreList::GetScoreCount() const
     { return m_scoreCount; }
 
 } // bact

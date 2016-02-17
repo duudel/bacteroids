@@ -27,7 +27,7 @@ namespace rob
         ~Pool()
         { ROB_ASSERT(m_allocations == 0); }
 
-        size_t GetAllocationCount() const
+        size_t_32 GetAllocationCount() const
         { return m_allocations; }
 
         T* Obtain()
@@ -38,7 +38,7 @@ namespace rob
             return new (ptr) T();
         }
 
-        T* Get(size_t index)
+        T* Get(size_t_32 index)
         { return m_start + index; }
 
         void Return(T *object)
@@ -50,10 +50,10 @@ namespace rob
             m_allocations--;
         }
 
-        size_t IndexOf(const T *object) const
-        { return static_cast<size_t>(object - m_start); }
+        size_t_32 IndexOf(const T *object) const
+        { return static_cast<size_t_32>(object - m_start); }
 
-        void SetMemory(void *start, size_t size)
+        void SetMemory(void *start, size_t_32 size)
         {
             ROB_ASSERT(m_start == nullptr); // Not memory set previously
 
@@ -66,7 +66,7 @@ namespace rob
         Freelist m_objects;
         T *m_start;
         T *m_end;
-        size_t m_allocations;
+        size_t_32 m_allocations;
     };
 
 } // rob

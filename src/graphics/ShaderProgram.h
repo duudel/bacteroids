@@ -26,8 +26,8 @@ namespace rob
 
         bool IsLinked() const;
 
-        size_t GetLinkInfoSize() const;
-        void GetLinkInfo(char *buffer, size_t bufferSize) const;
+        size_t_32 GetLinkInfoSize() const;
+        void GetLinkInfo(char *buffer, size_t_32 bufferSize) const;
 
         /// Adds the uniform \c handle to the shader program's uniforms.
         /// Returns true, if the uniform was added, false otherwise.
@@ -48,7 +48,7 @@ namespace rob
         GLuint m_object;
         bool m_linked;
 
-        static const size_t MAX_UNIFORMS = 8;
+        static const size_t_32 MAX_UNIFORMS = 8;
 
         struct UniformInfo
         {
@@ -56,7 +56,7 @@ namespace rob
             GLint           location;
             uint32_t        generation;
         } m_uniforms[MAX_UNIFORMS];
-        size_t m_uniformCount;
+        size_t_32 m_uniformCount;
     };
 
 } // rob

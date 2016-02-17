@@ -7,10 +7,10 @@
 namespace rob
 {
 
-    static constexpr size_t seed1 = 16777619u;
-    static constexpr size_t seed2 = 2166136261u;
+    static constexpr size_t_32 seed1 = 16777619u;
+    static constexpr size_t_32 seed2 = 2166136261u;
 
-    template <size_t N, size_t I>
+    template <size_t_32 N, size_t_32 I>
     struct FnvHash
     {
         static uint32_t Hash(const char (&str)[N])
@@ -19,7 +19,7 @@ namespace rob
         }
     };
 
-    template <size_t N>
+    template <size_t_32 N>
     struct FnvHash<N, 1>
     {
         static uint32_t Hash(const char (&str)[N])
@@ -60,7 +60,7 @@ namespace rob
             : m_id(id)
         { }
 
-        template <size_t N>
+        template <size_t_32 N>
         ResourceID(const char (&str)[N])
             : m_id(FnvHash<N, N>::Hash(str))
         { }

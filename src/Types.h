@@ -5,7 +5,7 @@
 namespace rob
 {
 
-    typedef unsigned int size_t;
+    typedef unsigned int size_t_32;
 
     typedef signed char         int8_t;
     typedef unsigned char       uint8_t;
@@ -18,7 +18,7 @@ namespace rob
 
     typedef uint64_t Time_t;
 
-    template <size_t S>
+    template <size_t_32 S>
     struct sized_int;
 
     template <> struct sized_int<1>
@@ -50,7 +50,7 @@ namespace rob
 
 } // rob
 
-using rob::size_t;
+using rob::size_t_32;
 
 using rob::int8_t;
 using rob::uint8_t;

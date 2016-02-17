@@ -19,21 +19,21 @@ namespace rob
         LinearAllocator& operator = (LinearAllocator &) = delete;
 
         LinearAllocator();
-        LinearAllocator(size_t size);
-        LinearAllocator(void *start, size_t size);
+        LinearAllocator(size_t_32 size);
+        LinearAllocator(void *start, size_t_32 size);
         ~LinearAllocator();
 
-        void SetMemory(void *start, size_t size);
-        size_t GetAllocatedSize() const;
-        size_t GetTotalSize() const;
+        void SetMemory(void *start, size_t_32 size);
+        size_t_32 GetAllocatedSize() const;
+        size_t_32 GetTotalSize() const;
 
-        void* Allocate(size_t size);
-        void* Allocate(size_t size, size_t alignment);
+        void* Allocate(size_t_32 size);
+        void* Allocate(size_t_32 size, size_t_32 alignment);
 
         template <class T>
-        T* AllocateArray(size_t count)
+        T* AllocateArray(size_t_32 count)
         {
-            const size_t size = GetArraySize<T>(count);
+            const size_t_32 size = GetArraySize<T>(count);
             return static_cast<T*>(Allocate(size, alignof(T)));
         }
 

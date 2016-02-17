@@ -18,14 +18,14 @@ namespace simd
     } float_bits;
 
 
-    template <class T, size_t S = 0>
+    template <class T, size_t_32 S = 0>
     struct Simd
     {
         struct v4
         {
             T v[4];
-            inline T& operator [](size_t i) { return v[i]; }
-            inline T operator [](size_t i) const { return v[i]; }
+            inline T& operator [](size_t_32 i) { return v[i]; }
+            inline T operator [](size_t_32 i) const { return v[i]; }
         };
         typedef const v4&   v4_arg;
         typedef v4&         v4_argr;

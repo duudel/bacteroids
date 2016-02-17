@@ -26,21 +26,21 @@ namespace rob
             return InvalidHandle;
         }
 
-        size_t width = 0;
-        size_t height = 0;
-        size_t st_format = 0;
-        in.read(reinterpret_cast<char*>(&width), sizeof(size_t));
-        in.read(reinterpret_cast<char*>(&height), sizeof(size_t));
-        in.read(reinterpret_cast<char*>(&st_format), sizeof(size_t));
+        size_t_32 width = 0;
+        size_t_32 height = 0;
+        size_t_32 st_format = 0;
+        in.read(reinterpret_cast<char*>(&width), sizeof(size_t_32));
+        in.read(reinterpret_cast<char*>(&height), sizeof(size_t_32));
+        in.read(reinterpret_cast<char*>(&st_format), sizeof(size_t_32));
         if (!in)
         {
             log::Error("Invalid texture file ", filename);
             texture = InvalidHandle;
             return false;
         }
-        const size_t imageSize = width * height * st_format;
+        const size_t_32 imageSize = width * height * st_format;
 
-        const size_t IMAGE_DATA_ALIGN = 4;
+        const size_t_32 IMAGE_DATA_ALIGN = 4;
         LinearAllocator alloc(imageSize + IMAGE_DATA_ALIGN - 1);
         char *imageData = static_cast<char*>(alloc.Allocate(imageSize, IMAGE_DATA_ALIGN));
 

@@ -87,8 +87,8 @@ namespace rob
         return p;
     }
 
-    static const size_t RENDERER_MEMORY = 4 * 1024;
-    static const size_t MAX_VERTEX_BUFFER_SIZE = 1 * 1024 * 1024;
+    static const size_t_32 RENDERER_MEMORY = 4 * 1024;
+    static const size_t_32 MAX_VERTEX_BUFFER_SIZE = 1 * 1024 * 1024;
 
     Renderer::Renderer(Graphics *graphics, MasterCache *cache, LinearAllocator &alloc)
         : m_alloc(alloc.Allocate(RENDERER_MEMORY), RENDERER_MEMORY)
@@ -193,7 +193,7 @@ namespace rob
     {
         const float dx = x1 - x0;
         const float dy = y1 - y0;
-        const size_t vertexCount = 2;
+        const size_t_32 vertexCount = 2;
         ColorVertex* vertices = m_vb_alloc.AllocateArray<ColorVertex>(vertexCount);
         vertices[0] = { 0.0f, 0.0f, m_color.r, m_color.g, m_color.b, m_color.a };
         vertices[1] = { dx, dy, m_color.r, m_color.g, m_color.b, m_color.a };
@@ -214,7 +214,7 @@ namespace rob
     {
         const float w = x1 - x0;
         const float h = y1 - y0;
-        const size_t vertexCount = 4;
+        const size_t_32 vertexCount = 4;
         ColorVertex* vertices = m_vb_alloc.AllocateArray<ColorVertex>(vertexCount);
         vertices[0] = { 0.0f, 0.0f, m_color.r, m_color.g, m_color.b, m_color.a };
         vertices[1] = { w, 0.0f, m_color.r, m_color.g, m_color.b, m_color.a };
@@ -237,7 +237,7 @@ namespace rob
     {
         const float w = x1 - x0;
         const float h = y1 - y0;
-        const size_t vertexCount = 4;
+        const size_t_32 vertexCount = 4;
         ColorVertex* vertices = m_vb_alloc.AllocateArray<ColorVertex>(vertexCount);
         vertices[0] = { 0.0f, 0.0f, m_color.r, m_color.g, m_color.b, m_color.a };
         vertices[1] = { w, 0.0f, m_color.r, m_color.g, m_color.b, m_color.a };
@@ -256,30 +256,30 @@ namespace rob
         m_vb_alloc.Reset();
     }
 
-    static const size_t CIRCLE_SEGMENTS = 48;
+    static const size_t_32 CIRCLE_SEGMENTS = 48;
     static const float SEG_RADIUS_SCALE = 1.0f;
 
     void Renderer::DrawCirlce(float x, float y, float radius)
     {
-        const size_t segs = CIRCLE_SEGMENTS * (radius / SEG_RADIUS_SCALE);
-        const size_t segments = Min((segs + 3) & ~0x3, CIRCLE_SEGMENTS);
-        const size_t quarter = segments / 4;
-        const size_t vertexCount = segments;
+        const size_t_32 segs = CIRCLE_SEGMENTS * (radius / SEG_RADIUS_SCALE);
+        const size_t_32 segments = Min((segs + 3) & ~0x3, CIRCLE_SEGMENTS);
+        const size_t_32 quarter = segments / 4;
+        const size_t_32 vertexCount = segments;
         ColorVertex* vertices = m_vb_alloc.AllocateArray<ColorVertex>(vertexCount);
 
         float angle = 0.0f;
         const float deltaAngle = 2.0f * PI_f / segments;
-        for (size_t i = 0; i < quarter; i++, angle += deltaAngle)
+        for (size_t_32 i = 0; i < quarter; i++, angle += deltaAngle)
         {
             float sn, cs;
             rob::FastSinCos(angle, sn, cs);
             sn *= radius;
             cs *= radius;
 
-            const size_t i0 = i;
-            const size_t i1 = i0 + quarter;
-            const size_t i2 = i1 + quarter;
-            const size_t i3 = i2 + quarter;
+            const size_t_32 i0 = i;
+            const size_t_32 i1 = i0 + quarter;
+            const size_t_32 i2 = i1 + quarter;
+            const size_t_32 i3 = i2 + quarter;
             vertices[i0] = { -cs, -sn, m_color.r, m_color.g, m_color.b, m_color.a };
             vertices[i1] = { +sn, -cs, m_color.r, m_color.g, m_color.b, m_color.a };
             vertices[i2] = { +cs, +sn, m_color.r, m_color.g, m_color.b, m_color.a };
@@ -300,26 +300,26 @@ namespace rob
 
     void Renderer::DrawFilledCirlce(float x, float y, float radius)
     {
-        const size_t segs = CIRCLE_SEGMENTS * (radius / SEG_RADIUS_SCALE);
-        const size_t segments = Min((segs + 3) & ~0x3, CIRCLE_SEGMENTS);
-        const size_t quarter = segments / 4;
-        const size_t vertexCount = segments + 2;
+        const size_t_32 segs = CIRCLE_SEGMENTS * (radius / SEG_RADIUS_SCALE);
+        const size_t_32 segments = Min((segs + 3) & ~0x3, CIRCLE_SEGMENTS);
+        const size_t_32 quarter = segments / 4;
+        const size_t_32 vertexCount = segments + 2;
         ColorVertex* vertices = m_vb_alloc.AllocateArray<ColorVertex>(vertexCount);
 
         float angle = 0.0f;
         const float deltaAngle = 2.0f * PI_f / segments;
         vertices[0] = { 0.0f, 0.0f, m_color.r, m_color.g, m_color.b, m_color.a };
-        for (size_t i = 0; i < quarter; i++, angle += deltaAngle)
+        for (size_t_32 i = 0; i < quarter; i++, angle += deltaAngle)
         {
             float sn, cs;
             rob::FastSinCos(angle, sn, cs);
             sn *= radius;
             cs *= radius;
 
-            const size_t i0 = 1 + i;
-            const size_t i1 = i0 + quarter;
-            const size_t i2 = i1 + quarter;
-            const size_t i3 = i2 + quarter;
+            const size_t_32 i0 = 1 + i;
+            const size_t_32 i1 = i0 + quarter;
+            const size_t_32 i2 = i1 + quarter;
+            const size_t_32 i3 = i2 + quarter;
             vertices[i0] = { -cs, -sn, m_color.r, m_color.g, m_color.b, m_color.a };
             vertices[i1] = { +sn, -cs, m_color.r, m_color.g, m_color.b, m_color.a };
             vertices[i2] = { +cs, +sn, m_color.r, m_color.g, m_color.b, m_color.a };
@@ -341,26 +341,26 @@ namespace rob
 
     void Renderer::DrawFilledCirlce(float x, float y, float radius, const Color &center)
     {
-        const size_t segs = CIRCLE_SEGMENTS * (radius / SEG_RADIUS_SCALE);
-        const size_t segments = Min((segs + 3) & ~0x3, CIRCLE_SEGMENTS);
-        const size_t quarter = segments / 4;
-        const size_t vertexCount = segments + 2;
+        const size_t_32 segs = CIRCLE_SEGMENTS * (radius / SEG_RADIUS_SCALE);
+        const size_t_32 segments = Min((segs + 3) & ~0x3, CIRCLE_SEGMENTS);
+        const size_t_32 quarter = segments / 4;
+        const size_t_32 vertexCount = segments + 2;
         ColorVertex* vertices = m_vb_alloc.AllocateArray<ColorVertex>(vertexCount);
 
         float angle = 0.0f;
         const float deltaAngle = 2.0f * PI_f / segments;
         vertices[0] = { 0.0f, 0.0f, center.r, center.g, center.b, center.a };
-        for (size_t i = 0; i < quarter; i++, angle += deltaAngle)
+        for (size_t_32 i = 0; i < quarter; i++, angle += deltaAngle)
         {
             float sn, cs;
             rob::FastSinCos(angle, sn, cs);
             sn *= radius;
             cs *= radius;
 
-            const size_t i0 = 1 + i;
-            const size_t i1 = i0 + quarter;
-            const size_t i2 = i1 + quarter;
-            const size_t i3 = i2 + quarter;
+            const size_t_32 i0 = 1 + i;
+            const size_t_32 i1 = i0 + quarter;
+            const size_t_32 i2 = i1 + quarter;
+            const size_t_32 i3 = i2 + quarter;
             vertices[i0] = { -cs, -sn, m_color.r, m_color.g, m_color.b, m_color.a };
             vertices[i1] = { +sn, -cs, m_color.r, m_color.g, m_color.b, m_color.a };
             vertices[i2] = { +cs, +sn, m_color.r, m_color.g, m_color.b, m_color.a };
@@ -390,7 +390,7 @@ namespace rob
 
     void Renderer::AddFontQuad(FontVertex *&vertex, const uint32_t c, const Glyph &glyph,
                                float &cursorX, float &cursorY,
-                               const size_t textureW, const size_t textureH)
+                               const size_t_32 textureW, const size_t_32 textureH)
     {
         if (c > ' ')
         {
@@ -426,8 +426,8 @@ namespace rob
         m_graphics->SetAttrib(1, 4, sizeof(FontVertex), sizeof(float) * 4);
         VertexBuffer *buffer = m_graphics->GetVertexBuffer(m_vertexBuffer);
 
-        const size_t textLen = StringLength(text);
-        const size_t maxVertexCount = textLen * 6;
+        const size_t_32 textLen = StringLength(text);
+        const size_t_32 maxVertexCount = textLen * 6;
         FontVertex * const verticesStart = m_vb_alloc.AllocateArray<FontVertex>(maxVertexCount);
         float cursorX = x;
         float cursorY = y;
@@ -447,8 +447,8 @@ namespace rob
                 const TextureHandle textureHandle = m_font.GetTexture(texturePage);
                 const Texture *texture = m_graphics->GetTexture(textureHandle);
 
-                const size_t textureW = texture->GetWidth();
-                const size_t textureH = texture->GetHeight();
+                const size_t_32 textureW = texture->GetWidth();
+                const size_t_32 textureH = texture->GetHeight();
 
                 AddFontQuad(vertex, c, glyph, cursorX, cursorY, textureW, textureH);
 
@@ -465,7 +465,7 @@ namespace rob
                     AddFontQuad(vertex, c, glyph, cursorX, cursorY, textureW, textureH);
                 }
 
-                const size_t vertexCount = vertex - verticesStart;
+                const size_t_32 vertexCount = vertex - verticesStart;
                 buffer->Write(0, vertexCount * sizeof(FontVertex), verticesStart);
 
                 m_graphics->BindTexture(0, textureHandle);
@@ -487,7 +487,7 @@ namespace rob
         return width;
     }
 
-    float Renderer::GetTextWidth(const char *text, size_t charCount) const
+    float Renderer::GetTextWidth(const char *text, size_t_32 charCount) const
     {
         float width = 0.0f;
         int charC = charCount;
@@ -512,8 +512,8 @@ namespace rob
         m_graphics->SetAttrib(1, 4, sizeof(FontVertex), sizeof(float) * 4);
         VertexBuffer *buffer = m_graphics->GetVertexBuffer(m_vertexBuffer);
 
-        const size_t textLen = StringLength(text);
-        const size_t maxVertexCount = textLen * 6;
+        const size_t_32 textLen = StringLength(text);
+        const size_t_32 maxVertexCount = textLen * 6;
         FontVertex * const verticesStart = m_vb_alloc.AllocateArray<FontVertex>(maxVertexCount);
         float cursorX = x;
         float cursorY = y;
@@ -530,8 +530,8 @@ namespace rob
             const TextureHandle textureHandle = m_font.GetTexture(texturePage);
             const Texture *texture = m_graphics->GetTexture(textureHandle);
 
-            const size_t textureW = texture->GetWidth();
-            const size_t textureH = texture->GetHeight();
+            const size_t_32 textureW = texture->GetWidth();
+            const size_t_32 textureH = texture->GetHeight();
 
             AddFontQuad(vertex, c, glyph, cursorX, cursorY, textureW, textureH);
             while (text != end)
@@ -543,7 +543,7 @@ namespace rob
                 AddFontQuad(vertex, c, glyph, cursorX, cursorY, textureW, textureH);
             }
 
-            const size_t vertexCount = vertex - verticesStart;
+            const size_t_32 vertexCount = vertex - verticesStart;
             buffer->Write(0, vertexCount * sizeof(FontVertex), verticesStart);
 
             m_graphics->BindTexture(0, textureHandle);
@@ -564,7 +564,7 @@ namespace rob
         return width;
     }
 
-    float Renderer::GetTextWidthAscii(const char *text, size_t charCount) const
+    float Renderer::GetTextWidthAscii(const char *text, size_t_32 charCount) const
     {
         float width = 0.0f;
         for (; *text && charCount; charCount--)

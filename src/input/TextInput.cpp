@@ -27,23 +27,23 @@ namespace rob
         , m_cursor(0)
         , m_lengthLimit(MAX_LENGTH)
     {
-        for (size_t i = 0; i <= MAX_LENGTH; i++)
+        for (size_t_32 i = 0; i <= MAX_LENGTH; i++)
             m_text[i] = 0;
     }
 
     const char* TextInput::GetText() const
     { return m_text; }
 
-    size_t TextInput::GetLength() const
+    size_t_32 TextInput::GetLength() const
     { return m_length; }
 
-    size_t TextInput::GetCursor() const
+    size_t_32 TextInput::GetCursor() const
     { return m_cursor; }
 
-    void TextInput::SetLengthLimit(size_t limit)
+    void TextInput::SetLengthLimit(size_t_32 limit)
     { m_lengthLimit = limit > MAX_LENGTH ? MAX_LENGTH : limit; }
 
-    size_t TextInput::LengthLimit() const
+    size_t_32 TextInput::LengthLimit() const
     { return m_lengthLimit; }
 
     bool TextInput::MoveLeft()
@@ -108,12 +108,12 @@ namespace rob
 
     void TextInput::Insert(const char *str)
     {
-        const size_t MAX_L = m_lengthLimit;
-        const size_t slen = StringLength(str);
-        size_t l = Min(m_length - 1, MAX_L - slen - 1);
+        const size_t_32 MAX_L = m_lengthLimit;
+        const size_t_32 slen = StringLength(str);
+        size_t_32 l = Min(m_length - 1, MAX_L - slen - 1);
         while (l >= m_cursor)
         {
-            size_t sz = 0, sz2 = 0;
+            size_t_32 sz = 0, sz2 = 0;
             const char *s = m_text + l;
             SkipUtf8Left(s, m_text, &sz);
             const char *s2 = s;
@@ -127,15 +127,15 @@ namespace rob
             }
             else
             {
-                for (size_t i = 0; i < sz; i++)
+                for (size_t_32 i = 0; i < sz; i++)
                     m_text[l + slen - i] = m_text[l - i];
             }
 
-            const size_t diff = (m_text + l) - s;
+            const size_t_32 diff = (m_text + l) - s;
             if (l == 0) break;
             l -= diff;
         }
-//        const size_t maxCopy = Min(slen, MAX_LENGTH - m_cursor);
+//        const size_t_32 maxCopy = Min(slen, MAX_LENGTH - m_cursor);
 //        m_cursor += CopyUtf8_N(m_text + m_cursor, str, MAX_LENGTH - m_cursor);
         m_cursor += CopyUtf8(m_text + m_cursor, str, MAX_L - m_cursor);
         m_length = Min(m_length + slen, MAX_L);
@@ -148,7 +148,7 @@ namespace rob
     {
         if (m_cursor < m_length)
         {
-            size_t oldCursor = m_cursor;
+            size_t_32 oldCursor = m_cursor;
             MoveRight();
 //            CopyString(m_text + oldCursor, m_text + m_cursor, MAX_LENGTH + 1 - oldCursor);
             CopyUtf8_N(m_text + oldCursor, m_text + m_cursor, MAX_LENGTH - oldCursor);
@@ -161,7 +161,7 @@ namespace rob
     {
         if (m_cursor > 0)
         {
-            size_t oldCursor = m_cursor;
+            size_t_32 oldCursor = m_cursor;
             MoveLeft();
 //            CopyString(m_text + m_cursor, m_text + oldCursor, MAX_LENGTH + 1 - oldCursor);
             CopyUtf8_N(m_text + m_cursor, m_text + oldCursor, MAX_LENGTH - m_cursor);
@@ -173,7 +173,7 @@ namespace rob
     {
         if (m_cursor < m_length)
         {
-            size_t oldCursor = m_cursor;
+            size_t_32 oldCursor = m_cursor;
             MoveWordRight();
 //            CopyString(m_text + oldCursor, m_text + m_cursor, MAX_LENGTH + 1 - oldCursor);
             CopyUtf8_N(m_text + oldCursor, m_text + m_cursor, MAX_LENGTH - oldCursor);
@@ -186,7 +186,7 @@ namespace rob
     {
         if (m_cursor > 0)
         {
-            size_t oldCursor = m_cursor;
+            size_t_32 oldCursor = m_cursor;
             MoveWordLeft();
 //            CopyString(m_text + m_cursor, m_text + oldCursor, MAX_LENGTH + 1 - oldCursor);
             CopyUtf8_N(m_text + m_cursor, m_text + oldCursor, MAX_LENGTH - m_cursor);

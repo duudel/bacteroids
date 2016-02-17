@@ -39,7 +39,7 @@ namespace rob
         void SetPosition(int x, int y, int dx, int dy);
 
     private:
-        bool m_buttons[static_cast<size_t>(MouseButton::NUM_BUTTONS)];
+        bool m_buttons[static_cast<size_t_32>(MouseButton::NUM_BUTTONS)];
         vec2f m_position;
         vec2f m_delta;
     };

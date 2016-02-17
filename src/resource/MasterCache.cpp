@@ -26,10 +26,10 @@ namespace rob
             ResourceID id(file.c_str());
             Resource resource;
             const std::string filepath = directory + file;
-            const size_t len = filepath.length();
+            const size_t_32 len = filepath.length();
             if (len < sizeof(resource.m_filepath))
             {
-                for (size_t i = 0; i < len; i++)
+                for (size_t_32 i = 0; i < len; i++)
                     resource.m_filepath[i] = filepath[i];
                 resource.m_filepath[len] = 0;
             }

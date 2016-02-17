@@ -7,11 +7,11 @@
 namespace rob
 {
 
-    template <class T, size_t S>
+    template <class T, size_t_32 S>
     struct Vector4;
 
     /// Row major 4x4 matrix.
-    template <class T, size_t S>
+    template <class T, size_t_32 S>
     struct Matrix4
     {
         typedef simd::Simd<T, S> simd_;
@@ -308,13 +308,13 @@ namespace rob
 
     };
 
-    template <class T, size_t S>
+    template <class T, size_t_32 S>
     Matrix4<T, S> Matrix4<T, S>::Identity(1, 0, 0, 0,
                                           0, 1, 0, 0,
                                           0, 0, 1, 0,
                                           0, 0, 0, 1);
 
-    template <class T, size_t S>
+    template <class T, size_t_32 S>
     Matrix4<T, S> Matrix4<T, S>::Zero(0);
 
 } // rob
