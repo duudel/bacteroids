@@ -63,7 +63,7 @@
 			<Add option="-lmingw32" />
 			<Add option="-lSDL2main -lSDL2" />
 			<Add option="-lglew32 -lopengl32" />
-			<Add option="-lOpenAL32" />
+			<Add option="-lopenal" />
 		</Linker>
 		<Unit filename="TODO.txt" />
 		<Unit filename="src/Assert.cpp" />
